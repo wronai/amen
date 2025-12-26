@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INTENT-ITERATIVE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .log-entry { font-family: monospace; font-size: 0.875rem; }
+        .code-block { 
+            background: #1e1e1e; 
+            color: #d4d4d4; 
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        .btn-amen {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+    <nav class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+        <div class="flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-cyan-400">⚡ INTENT-ITERATIVE</h1>
+            <span class="text-gray-400 text-sm">v0.1.0 MVP</span>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Tabs -->
+        <div class="flex space-x-4 mb-6 border-b border-gray-700">
+            <button onclick="showTab('editor')" class="tab-btn px-4 py-2 text-cyan-400 border-b-2 border-cyan-400" data-tab="editor">
+                📝 DSL Editor
+            </button>
+            <button onclick="showTab('plan')" class="tab-btn px-4 py-2 text-gray-400 hover:text-white" data-tab="plan">
+                🔍 Dry-Run
+            </button>
+            <button onclick="showTab('iterate')" class="tab-btn px-4 py-2 text-gray-400 hover:text-white" data-tab="iterate">
+                🔄 Iterate
+            </button>
+            <button onclick="showTab('execute')" class="tab-btn px-4 py-2 text-gray-400 hover:text-white" data-tab="execute">
+                🚀 Execute
+            </button>
+            <button onclick="showTab('history')" class="tab-btn px-4 py-2 text-gray-400 hover:text-white" data-tab="history">
+                📋 History
+            </button>
+        </div>
+
+        <!-- Editor Tab -->
+        <div id="tab-editor" class="tab-content active">
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">DSL Editor</h2>
+                    <textarea id="dsl-input" 
+                        class="w-full h-96 bg-gray-800 border border-gray-600 rounded-lg p-4 font-mono text-sm text-green-400 focus:outline-none focus:border-cyan-500"
+                        placeholder="Enter your DSL here...">INTENT:
+  name: my-api
+  goal: Create a simple REST API
+
+ENVIRONMENT:
+  runtime: docker
+  base_image: python:3.12-slim
+
+IMPLEMENTATION:
+  language: python
+  framework: fastapi
+  actions:
+    - api.expose GET /ping
+    - api.expose GET /health
+    - api.expose POST /users
+
+EXECUTION:
+  mode: dry-run</textarea>
+                    <div class="mt-4 flex space-x-4">
+                        <button onclick="parseDSL()" class="bg-cyan-600 hover:bg-cyan-700 px-6 py-2 rounded-lg font-semibold transition">
+                            Parse DSL
+                        </button>
+                        <button onclick="loadExample('fastapi')" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg transition">
+                            FastAPI Example
+                        </button>
+                        <button onclick="loadExample('express')" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg transition">
+                            Express Example
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">Parsed IR</h2>
+                    <div id="ir-output" class="code-block h-96 rounded-lg p-4 overflow-auto">
+                        <span class="text-gray-500">// Parsed IR will appear here</span>
+                    </div>
+                    <div id="parse-status" class="mt-4 text-sm"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dry-Run Tab -->
+        <div id="tab-plan" class="tab-content">
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">Dry-Run Logs</h2>
+                    <div id="plan-logs" class="bg-gray-800 rounded-lg p-4 h-64 overflow-auto font-mono text-sm">
+                        <span class="text-gray-500">Run dry-run to see logs...</span>
+                    </div>
+                    <div class="mt-4 grid grid-cols-2 gap-4">
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h3 class="font-semibold text-cyan-400 mb-2">Estimated Resources</h3>
+                            <div id="resources" class="text-sm">-</div>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h3 class="font-semibold text-yellow-400 mb-2">Warnings</h3>
+                            <div id="warnings" class="text-sm">-</div>
+                        </div>
+                    </div>
+                    <button onclick="runPlan()" class="mt-4 bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg font-semibold transition">
+                        🔍 Run Dry-Run
+                    </button>
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">Generated Code</h2>
+                    <div id="generated-code" class="code-block h-80 rounded-lg p-4 overflow-auto text-sm">
+                        <span class="text-gray-500">// Generated code will appear here</span>
+                    </div>
+                    <h2 class="text-xl font-semibold mt-4 mb-4">Dockerfile</h2>
+                    <div id="dockerfile" class="code-block h-32 rounded-lg p-4 overflow-auto text-sm">
+                        <span class="text-gray-500"># Dockerfile will appear here</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Iterate Tab -->
+        <div id="tab-iterate" class="tab-content">
+            <div class="max-w-2xl mx-auto">
+                <h2 class="text-xl font-semibold mb-4">Iterative Refinement</h2>
+                <p class="text-gray-400 mb-6">Modify your intent by adding changes below. Each change will be recorded in the iteration history.</p>
+                
+                <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Add Action</label>
+                        <input type="text" id="iter-action" 
+                            class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-cyan-500"
+                            placeholder="e.g., api.expose POST /users">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Change Framework</label>
+                        <select id="iter-framework" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2">
+                            <option value="">-- No change --</option>
+                            <option value="fastapi">FastAPI</option>
+                            <option value="flask">Flask</option>
+                            <option value="express">Express</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Change Language</label>
+                        <select id="iter-language" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2">
+                            <option value="">-- No change --</option>
+                            <option value="python">Python</option>
+                            <option value="node">Node.js</option>
+                        </select>
+                    </div>
+                    <button onclick="applyIteration()" class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg font-semibold transition">
+                        🔄 Apply Changes
+                    </button>
+                </div>
+
+                <h3 class="text-lg font-semibold mb-4">Iteration History</h3>
+                <div id="iteration-history" class="bg-gray-800 rounded-lg p-4 h-48 overflow-auto">
+                    <span class="text-gray-500">No iterations yet</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Execute Tab -->
+        <div id="tab-execute" class="tab-content">
+            <div class="max-w-2xl mx-auto text-center">
+                <h2 class="text-3xl font-bold mb-4">AMEN Boundary</h2>
+                <p class="text-gray-400 mb-8">
+                    This is the point of no return. Clicking AMEN will execute your intent with real side effects.
+                </p>
+                
+                <div id="amen-status" class="bg-gray-800 rounded-lg p-6 mb-8">
+                    <div class="grid grid-cols-2 gap-4 text-left">
+                        <div>
+                            <span class="text-gray-400">Intent:</span>
+                            <span id="exec-name" class="ml-2 font-semibold">-</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">Mode:</span>
+                            <span id="exec-mode" class="ml-2 font-semibold">-</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">Actions:</span>
+                            <span id="exec-actions" class="ml-2 font-semibold">-</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">Iterations:</span>
+                            <span id="exec-iterations" class="ml-2 font-semibold">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="amen-buttons" class="space-x-4">
+                    <button onclick="approveAmen()" class="btn-amen text-white px-12 py-4 rounded-lg font-bold text-xl transition">
+                        ✝ AMEN
+                    </button>
+                </div>
+
+                <div id="execution-result" class="mt-8 text-left hidden">
+                    <h3 class="text-xl font-semibold mb-4">Execution Result</h3>
+                    <div id="exec-logs" class="bg-gray-800 rounded-lg p-4 h-48 overflow-auto font-mono text-sm mb-4">
+                    </div>
+                    <div id="exec-endpoints" class="bg-gray-800 rounded-lg p-4">
+                        <h4 class="font-semibold text-green-400 mb-2">Available Endpoints</h4>
+                        <div id="endpoints-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="tab-history" class="tab-content">
+            <h2 class="text-xl font-semibold mb-4">Stored Intents</h2>
+            <div id="intents-list" class="grid grid-cols-3 gap-4">
+                <div class="text-gray-500">No intents stored yet</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentIntentId = null;
+        let currentIR = null;
+
+        // Tab navigation
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('text-cyan-400', 'border-b-2', 'border-cyan-400');
+                el.classList.add('text-gray-400');
+            });
+            
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('text-cyan-400', 'border-b-2', 'border-cyan-400');
+            document.querySelector(`[data-tab="${tabName}"]`).classList.remove('text-gray-400');
+            
+            if (tabName === 'execute' && currentIR) {
+                updateExecuteTab();
+            }
+            if (tabName === 'history') {
+                loadIntents();
+            }
+        }
+
+        // Parse DSL
+        async function parseDSL() {
+            const content = document.getElementById('dsl-input').value;
+            
+            try {
+                const response = await fetch('/api/intents/parse', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentIntentId = data.id;
+                    currentIR = data.intent;
+                    document.getElementById('ir-output').textContent = JSON.stringify(data.intent, null, 2);
+                    document.getElementById('parse-status').innerHTML = 
+                        '<span class="text-green-400">✓ Parsed successfully! ID: ' + data.id + '</span>';
+                } else {
+                    document.getElementById('parse-status').innerHTML = 
+                        '<span class="text-red-400">✗ ' + data.detail + '</span>';
+                }
+            } catch (error) {
+                document.getElementById('parse-status').innerHTML = 
+                    '<span class="text-red-400">✗ Error: ' + error.message + '</span>';
+            }
+        }
+
+        // Run dry-run
+        async function runPlan() {
+            if (!currentIntentId) {
+                alert('Parse a DSL first!');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/intents/${currentIntentId}/plan`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                document.getElementById('plan-logs').innerHTML = data.logs
+                    .map(log => `<div class="log-entry text-green-400">${log}</div>`)
+                    .join('');
+                
+                document.getElementById('generated-code').textContent = data.generated_code || '// No code generated';
+                document.getElementById('dockerfile').textContent = data.dockerfile || '# No Dockerfile generated';
+                
+                document.getElementById('resources').innerHTML = Object.entries(data.estimated_resources)
+                    .map(([k, v]) => `<div>${k}: ${v}</div>`)
+                    .join('');
+                
+                document.getElementById('warnings').innerHTML = data.warnings.length > 0
+                    ? data.warnings.map(w => `<div class="text-yellow-400">⚠ ${w}</div>`).join('')
+                    : '<span class="text-gray-500">None</span>';
+                    
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Apply iteration
+        async function applyIteration() {
+            if (!currentIntentId) {
+                alert('Parse a DSL first!');
+                return;
+            }
+            
+            const changes = {};
+            const action = document.getElementById('iter-action').value.trim();
+            const framework = document.getElementById('iter-framework').value;
+            const language = document.getElementById('iter-language').value;
+            
+            if (action) changes.action = action;
+            if (framework) changes.framework = framework;
+            if (language) changes.language = language;
+            
+            if (Object.keys(changes).length === 0) {
+                alert('No changes specified!');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/intents/${currentIntentId}/iterate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ changes, source: 'web' })
+                });
+                
+                const data = await response.json();
+                currentIR = data.intent;
+                
+                // Update history display
+                const historyDiv = document.getElementById('iteration-history');
+                const iterations = data.intent.iteration_history || [];
+                historyDiv.innerHTML = iterations.length > 0
+                    ? iterations.map(it => `
+                        <div class="border-b border-gray-700 py-2">
+                            <span class="text-cyan-400">#${it.iteration}</span>
+                            <span class="text-gray-400 text-sm ml-2">${it.timestamp}</span>
+                            <div class="text-sm text-gray-300 mt-1">${JSON.stringify(it.changes)}</div>
+                        </div>
+                    `).join('')
+                    : '<span class="text-gray-500">No iterations yet</span>';
+                
+                // Clear inputs
+                document.getElementById('iter-action').value = '';
+                document.getElementById('iter-framework').value = '';
+                document.getElementById('iter-language').value = '';
+                
+                // Update IR display
+                document.getElementById('ir-output').textContent = JSON.stringify(data.intent, null, 2);
+                
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Update execute tab
+        function updateExecuteTab() {
+            if (currentIR) {
+                document.getElementById('exec-name').textContent = currentIR.intent?.name || '-';
+                document.getElementById('exec-mode').textContent = currentIR.execution_mode || '-';
+                document.getElementById('exec-actions').textContent = currentIR.implementation?.actions?.length || 0;
+                document.getElementById('exec-iterations').textContent = currentIR.iteration_count || 0;
+            }
+        }
+
+        // Approve AMEN
+        async function approveAmen() {
+            if (!currentIntentId) {
+                alert('Parse a DSL first!');
+                return;
+            }
+            
+            if (!confirm('Are you sure? This will execute with real side effects.')) {
+                return;
+            }
+            
+            try {
+                // First approve
+                await fetch(`/api/intents/${currentIntentId}/amen`, { method: 'POST' });
+                
+                // Then execute
+                const response = await fetch(`/api/intents/${currentIntentId}/execute`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                
+                const data = await response.json();
+                
+                document.getElementById('execution-result').classList.remove('hidden');
+                document.getElementById('exec-logs').innerHTML = data.logs
+                    .map(log => `<div class="log-entry ${data.success ? 'text-green-400' : 'text-red-400'}">${log}</div>`)
+                    .join('');
+                
+                if (data.endpoints && data.endpoints.length > 0) {
+                    document.getElementById('endpoints-list').innerHTML = data.endpoints
+                        .map(ep => `<a href="${ep}" target="_blank" class="text-cyan-400 hover:underline block">${ep}</a>`)
+                        .join('');
+                }
+                
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Load intents list
+        async function loadIntents() {
+            try {
+                const response = await fetch('/api/intents');
+                const data = await response.json();
+                
+                const listDiv = document.getElementById('intents-list');
+                if (data.intents.length === 0) {
+                    listDiv.innerHTML = '<div class="text-gray-500">No intents stored yet</div>';
+                } else {
+                    listDiv.innerHTML = data.intents.map(intent => `
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h3 class="font-semibold text-cyan-400">${intent.name}</h3>
+                            <p class="text-sm text-gray-400 mt-1">${intent.goal}</p>
+                            <div class="mt-2 text-xs">
+                                <span class="text-gray-500">Mode:</span> ${intent.mode}
+                                <span class="ml-2 text-gray-500">AMEN:</span> ${intent.amen_approved ? '✓' : '✗'}
+                            </div>
+                            <button onclick="loadIntent('${intent.id}')" class="mt-2 text-sm text-cyan-400 hover:underline">
+                                Load →
+                            </button>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading intents:', error);
+            }
+        }
+
+        // Load example DSL
+        function loadExample(type) {
+            const examples = {
+                fastapi: `INTENT:
+  name: fastapi-demo
+  goal: Create a FastAPI REST service
+
+ENVIRONMENT:
+  runtime: docker
+  base_image: python:3.12-slim
+
+IMPLEMENTATION:
+  language: python
+  framework: fastapi
+  actions:
+    - api.expose GET /ping
+    - api.expose GET /health
+    - api.expose POST /items
+    - api.expose GET /items
+
+EXECUTION:
+  mode: dry-run`,
+                express: `INTENT:
+  name: express-demo
+  goal: Create an Express.js REST service
+
+ENVIRONMENT:
+  runtime: docker
+  base_image: node:20-slim
+
+IMPLEMENTATION:
+  language: node
+  framework: express
+  actions:
+    - api.expose GET /ping
+    - api.expose GET /status
+    - api.expose POST /data
+
+EXECUTION:
+  mode: dry-run`
+            };
+            
+            document.getElementById('dsl-input').value = examples[type] || '';
+        }
+
+        // Load intent by ID
+        async function loadIntent(id) {
+            try {
+                const response = await fetch(`/api/intents/${id}`);
+                const data = await response.json();
+                currentIntentId = id;
+                currentIR = data;
+                document.getElementById('ir-output').textContent = JSON.stringify(data, null, 2);
+                showTab('editor');
+            } catch (error) {
+                alert('Error loading intent: ' + error.message);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadIntents();
+        });
+    </script>
+</body>
+</html>

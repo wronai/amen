@@ -1,0 +1,28 @@
+INTENT:
+  name: user-api
+  goal: Create a REST API for user management
+  description: Simple CRUD API for users with health endpoints
+
+ENVIRONMENT:
+  runtime: docker
+  base_image: python:3.12-slim
+  ports:
+    - 8000
+  env_vars:
+    DEBUG: "true"
+    LOG_LEVEL: "info"
+
+IMPLEMENTATION:
+  language: python
+  framework: fastapi
+  actions:
+    - api.expose GET /ping
+    - api.expose GET /health
+    - api.expose GET /users
+    - api.expose POST /users
+    - api.expose GET /users/{id}
+    - api.expose PUT /users/{id}
+    - api.expose DELETE /users/{id}
+
+EXECUTION:
+  mode: dry-run
