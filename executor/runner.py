@@ -1,5 +1,5 @@
 """
-INTENT-ITERATIVE: Executor
+amen: Executor
 Handles actual execution of approved intents (after AMEN boundary).
 """
 

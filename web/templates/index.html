@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INTENT-ITERATIVE</title>
+    <title>amen</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .tab-content { display: none; }
@@ -29,7 +29,7 @@
 <body class="bg-gray-900 text-gray-100 min-h-screen">
     <nav class="bg-gray-800 border-b border-gray-700 px-6 py-4">
         <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-cyan-400">⚡ INTENT-ITERATIVE</h1>
+            <h1 class="text-2xl font-bold text-cyan-400">⚡ amen</h1>
             <span class="text-gray-400 text-sm">v0.1.0 MVP</span>
         </div>
     </nav>
@@ -45,6 +45,9 @@
             </button>
             <button onclick="showTab('iterate')" class="tab-btn px-4 py-2 text-gray-400 hover:text-white" data-tab="iterate">
                 🔄 Iterate
+            </button>
+            <button onclick="showTab('ai')" class="tab-btn px-4 py-2 text-gray-400 hover:text-white" data-tab="ai">
+                🤖 AI Assistant
             </button>
             <button onclick="showTab('execute')" class="tab-btn px-4 py-2 text-gray-400 hover:text-white" data-tab="execute">
                 🚀 Execute
@@ -174,6 +177,83 @@ EXECUTION:
                 <h3 class="text-lg font-semibold mb-4">Iteration History</h3>
                 <div id="iteration-history" class="bg-gray-800 rounded-lg p-4 h-48 overflow-auto">
                     <span class="text-gray-500">No iterations yet</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Assistant Tab -->
+        <div id="tab-ai" class="tab-content">
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">🤖 AI Assistant</h2>
+                    
+                    <!-- AI Status -->
+                    <div id="ai-status" class="bg-gray-800 rounded-lg p-4 mb-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-400">AI Gateway Status</span>
+                            <span id="ai-status-badge" class="px-2 py-1 rounded text-sm bg-gray-600">Checking...</span>
+                        </div>
+                        <div id="ai-model" class="text-sm text-gray-500 mt-2">-</div>
+                    </div>
+
+                    <!-- Suggestions -->
+                    <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                        <h3 class="font-semibold text-cyan-400 mb-3">Get Suggestions</h3>
+                        <div class="mb-3">
+                            <label class="block text-sm text-gray-400 mb-1">Focus Area (optional)</label>
+                            <select id="ai-focus" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm">
+                                <option value="">All areas</option>
+                                <option value="security">Security</option>
+                                <option value="performance">Performance</option>
+                                <option value="features">Features</option>
+                            </select>
+                        </div>
+                        <button onclick="getAiSuggestions()" class="w-full bg-cyan-600 hover:bg-cyan-700 px-4 py-2 rounded font-semibold transition">
+                            🔍 Analyze Intent
+                        </button>
+                    </div>
+
+                    <!-- Chat -->
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <h3 class="font-semibold text-green-400 mb-3">Chat with AI</h3>
+                        <div id="ai-chat-messages" class="h-32 overflow-auto mb-3 text-sm">
+                            <div class="text-gray-500">Ask anything about your intent...</div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <input type="text" id="ai-chat-input" 
+                                class="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm"
+                                placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendAiChat()">
+                            <button onclick="sendAiChat()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition">
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">Suggestions</h2>
+                    <div id="ai-suggestions" class="bg-gray-800 rounded-lg p-4 h-64 overflow-auto mb-4">
+                        <span class="text-gray-500">Click "Analyze Intent" to get AI suggestions</span>
+                    </div>
+
+                    <h2 class="text-xl font-semibold mb-4">Next Steps</h2>
+                    <div id="ai-next-steps" class="bg-gray-800 rounded-lg p-4 h-32 overflow-auto mb-4">
+                        <span class="text-gray-500">-</span>
+                    </div>
+
+                    <div class="flex space-x-4">
+                        <button onclick="autoApplySuggestions()" class="flex-1 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded font-semibold transition">
+                            ⚡ Auto-Apply Suggestions
+                        </button>
+                        <button onclick="checkAiHealth()" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded transition">
+                            🔧 Check Status
+                        </button>
+                    </div>
+
+                    <h2 class="text-xl font-semibold mt-6 mb-4">Available Models</h2>
+                    <div id="ai-models" class="bg-gray-800 rounded-lg p-4 h-32 overflow-auto">
+                        <span class="text-gray-500">Loading models...</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -519,7 +599,168 @@ EXECUTION:
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadIntents();
+            checkAiHealth();
+            loadAiModels();
         });
+
+        // AI Functions
+        async function checkAiHealth() {
+            try {
+                const response = await fetch('/api/ai/status');
+                const data = await response.json();
+                
+                const badge = document.getElementById('ai-status-badge');
+                const modelDiv = document.getElementById('ai-model');
+                
+                if (data.available && data.ollama_connected) {
+                    badge.textContent = 'Connected';
+                    badge.className = 'px-2 py-1 rounded text-sm bg-green-600';
+                    modelDiv.textContent = `Model: ${data.default_model} | Ollama: ${data.ollama_url}`;
+                } else if (data.available) {
+                    badge.textContent = 'Ollama Offline';
+                    badge.className = 'px-2 py-1 rounded text-sm bg-yellow-600';
+                    modelDiv.textContent = data.error || 'Ollama not running';
+                } else {
+                    badge.textContent = 'Not Available';
+                    badge.className = 'px-2 py-1 rounded text-sm bg-red-600';
+                    modelDiv.textContent = data.error || 'Install litellm';
+                }
+            } catch (error) {
+                document.getElementById('ai-status-badge').textContent = 'Error';
+                document.getElementById('ai-status-badge').className = 'px-2 py-1 rounded text-sm bg-red-600';
+            }
+        }
+
+        async function loadAiModels() {
+            try {
+                const response = await fetch('/api/ai/models?max_params=12');
+                const data = await response.json();
+                
+                const modelsDiv = document.getElementById('ai-models');
+                modelsDiv.innerHTML = data.models.map(m => `
+                    <div class="flex justify-between text-sm py-1 border-b border-gray-700">
+                        <span class="${m.name.includes(data.default) ? 'text-cyan-400' : ''}">${m.name}</span>
+                        <span class="text-gray-500">${m.parameters_billions}B</span>
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('ai-models').innerHTML = '<span class="text-red-400">Failed to load models</span>';
+            }
+        }
+
+        async function getAiSuggestions() {
+            if (!currentIntentId) {
+                alert('Parse a DSL first!');
+                return;
+            }
+            
+            const focus = document.getElementById('ai-focus').value;
+            const suggestionsDiv = document.getElementById('ai-suggestions');
+            const nextStepsDiv = document.getElementById('ai-next-steps');
+            
+            suggestionsDiv.innerHTML = '<span class="text-cyan-400">Analyzing...</span>';
+            
+            try {
+                const response = await fetch(`/api/intents/${currentIntentId}/ai/suggest`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ focus: focus || null })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    if (data.suggestions && data.suggestions.length > 0) {
+                        suggestionsDiv.innerHTML = data.suggestions.map((s, i) => `
+                            <div class="border-b border-gray-700 py-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-semibold text-${s.priority === 'high' ? 'red' : s.priority === 'medium' ? 'yellow' : 'cyan'}-400">
+                                        ${i+1}. [${s.priority.toUpperCase()}] ${s.type}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-300 mt-1">${s.description}</div>
+                                ${s.action_code ? `<div class="text-sm text-green-400 mt-1">→ ${s.action_code}</div>` : ''}
+                            </div>
+                        `).join('');
+                    } else {
+                        suggestionsDiv.innerHTML = '<span class="text-green-400">✓ Intent looks good! No suggestions.</span>';
+                    }
+                    
+                    if (data.next_steps && data.next_steps.length > 0) {
+                        nextStepsDiv.innerHTML = data.next_steps.map(s => `
+                            <div class="text-sm py-1">• ${s}</div>
+                        `).join('');
+                    }
+                } else {
+                    suggestionsDiv.innerHTML = `<span class="text-red-400">Error: ${data.detail}</span>`;
+                }
+            } catch (error) {
+                suggestionsDiv.innerHTML = `<span class="text-red-400">Error: ${error.message}</span>`;
+            }
+        }
+
+        async function autoApplySuggestions() {
+            if (!currentIntentId) {
+                alert('Parse a DSL first!');
+                return;
+            }
+            
+            if (!confirm('Apply AI suggestions automatically?')) return;
+            
+            try {
+                const response = await fetch(`/api/intents/${currentIntentId}/ai/apply`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    if (data.applied_changes.length > 0) {
+                        alert(`Applied ${data.applied_changes.length} changes:\n${data.applied_changes.join('\n')}`);
+                        currentIR = data.intent;
+                        document.getElementById('ir-output').textContent = JSON.stringify(data.intent, null, 2);
+                    } else {
+                        alert('No changes to apply');
+                    }
+                } else {
+                    alert('Error: ' + data.detail);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function sendAiChat() {
+            const input = document.getElementById('ai-chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            const messagesDiv = document.getElementById('ai-chat-messages');
+            messagesDiv.innerHTML += `<div class="text-cyan-400 py-1">You: ${message}</div>`;
+            input.value = '';
+            
+            const context = currentIR ? `Intent: ${currentIR.intent?.name}, Goal: ${currentIR.intent?.goal}` : '';
+            
+            try {
+                const response = await fetch('/api/ai/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, context })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messagesDiv.innerHTML += `<div class="text-green-400 py-1">AI: ${data.response}</div>`;
+                } else {
+                    messagesDiv.innerHTML += `<div class="text-red-400 py-1">Error: ${data.detail}</div>`;
+                }
+                
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } catch (error) {
+                messagesDiv.innerHTML += `<div class="text-red-400 py-1">Error: ${error.message}</div>`;
+            }
+        }
     </script>
 </body>
 </html>

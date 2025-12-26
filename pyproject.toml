@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "intent-iterative"
+name = "amen"
 version = "0.1.0"
 description = "DSL-based intent execution system with iterative refinement"
 readme = "README.md"
@@ -41,9 +41,9 @@ dev = [
 intent-cli = "cli.main:main"
 
 [project.urls]
-Homepage = "https://github.com/softreck/intent-iterative"
-Documentation = "https://github.com/softreck/intent-iterative#readme"
-Repository = "https://github.com/softreck/intent-iterative"
+Homepage = "https://github.com/softreck/amen"
+Documentation = "https://github.com/softreck/amen#readme"
+Repository = "https://github.com/softreck/amen"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

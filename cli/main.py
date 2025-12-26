@@ -18,6 +18,14 @@ from parser.dsl_parser import DSLParser, parse_dsl, parse_dsl_file, ParseError, 
 from planner.simulator import Planner, plan_intent
 from executor.runner import Executor, execute_intent
 
+# AI Gateway imports (optional)
+try:
+    from ai_gateway.gateway import AIGateway, GatewayConfig, get_gateway, OLLAMA_MODELS
+    from ai_gateway.feedback_loop import FeedbackLoop, create_feedback_loop
+    AI_AVAILABLE = True
+except ImportError:
+    AI_AVAILABLE = False
+
 
 class Colors:
     """ANSI color codes for terminal output."""
@@ -320,7 +328,10 @@ EXECUTION:
     def interactive_mode(self):
         """Run interactive shell."""
         self.print_header("INTENT-ITERATIVE Shell")
-        print("Commands: new, load, plan, iterate, amen, execute, show, save, help, exit\n")
+        print("Commands: new, load, plan, iterate, amen, execute, show, save, help, exit")
+        if AI_AVAILABLE:
+            print(f"{Colors.CYAN}AI Commands: suggest, apply, chat, models, ai-health{Colors.RESET}")
+        print()
         
         while True:
             try:
@@ -364,6 +375,18 @@ EXECUTION:
                         self.print_error("Usage: save <filepath>")
                 elif cmd == 'help':
                     self._show_help()
+                # AI Commands
+                elif cmd == 'suggest':
+                    self.cmd_ai_suggest(focus=args if args else None)
+                elif cmd == 'apply':
+                    self.cmd_ai_apply()
+                elif cmd == 'chat':
+                    self.cmd_ai_chat(message=args if args else None)
+                elif cmd == 'models':
+                    max_p = float(args) if args else 12.0
+                    self.cmd_models(max_p)
+                elif cmd in ('ai-health', 'aihealth', 'health'):
+                    self.cmd_ai_health()
                 else:
                     self.print_error(f"Unknown command: {cmd}")
                     print("Type 'help' for available commands.")
@@ -374,6 +397,179 @@ EXECUTION:
             except EOFError:
                 print("\nGoodbye!")
                 break
+    
+    def cmd_ai_suggest(self, focus: str = None, ir: IntentIR = None):
+        """Get AI-powered suggestions for the current intent."""
+        if not AI_AVAILABLE:
+            self.print_error("AI Gateway not available. Install litellm: pip install litellm")
+            return None
+        
+        ir = ir or self.current_ir
+        if not ir:
+            self.print_error("No intent loaded.")
+            return None
+        
+        self.print_header("AI Suggestions")
+        self.print_info(f"Analyzing intent with LLM...")
+        
+        try:
+            loop = create_feedback_loop()
+            result = loop.analyze(ir, focus)
+            
+            if not result.success:
+                self.print_error(f"Analysis failed: {result.error}")
+                return result
+            
+            self.print_success(f"Analysis complete (model: {result.model_used})")
+            
+            if result.suggestions:
+                print(f"\n{Colors.BOLD}Suggestions ({len(result.suggestions)}):{Colors.RESET}")
+                for i, s in enumerate(result.suggestions, 1):
+                    priority_color = {
+                        "high": Colors.RED,
+                        "medium": Colors.YELLOW,
+                        "low": Colors.CYAN
+                    }.get(s.priority, Colors.RESET)
+                    
+                    print(f"\n  {Colors.BOLD}{i}. [{priority_color}{s.priority.upper()}{Colors.RESET}] {s.type}")
+                    print(f"     {s.description}")
+                    if s.action_code:
+                        print(f"     {Colors.GREEN}→ {s.action_code}{Colors.RESET}")
+            else:
+                self.print_info("No suggestions - intent looks good!")
+            
+            # Show next steps
+            next_steps = loop.suggest_next_steps(ir)
+            if next_steps:
+                print(f"\n{Colors.BOLD}Next Steps:{Colors.RESET}")
+                for step in next_steps[:5]:
+                    print(f"  • {step}")
+            
+            return result
+        
+        except Exception as e:
+            self.print_error(f"Error: {e}")
+            return None
+    
+    def cmd_ai_apply(self, ir: IntentIR = None):
+        """Apply AI suggestions automatically."""
+        if not AI_AVAILABLE:
+            self.print_error("AI Gateway not available.")
+            return None
+        
+        ir = ir or self.current_ir
+        if not ir:
+            self.print_error("No intent loaded.")
+            return None
+        
+        self.print_header("Auto-Apply AI Suggestions")
+        
+        loop = create_feedback_loop()
+        result = loop.iterate(ir, auto_apply=True)
+        
+        if result.applied_changes:
+            for change in result.applied_changes:
+                self.print_success(change)
+            self.print_info(f"Total changes: {len(result.applied_changes)}")
+        else:
+            self.print_info("No changes applied.")
+        
+        if result.warnings:
+            for warning in result.warnings:
+                self.print_warning(warning)
+        
+        return result
+    
+    def cmd_ai_chat(self, message: str = None, ir: IntentIR = None):
+        """Chat with AI about the intent."""
+        if not AI_AVAILABLE:
+            self.print_error("AI Gateway not available.")
+            return None
+        
+        ir = ir or self.current_ir
+        
+        self.print_header("AI Chat")
+        
+        if not message:
+            print("Chat with AI about your intent. Type 'exit' to quit.\n")
+            
+            gateway = get_gateway()
+            context = ""
+            if ir:
+                context = f"Current intent: {ir.intent.name}\nGoal: {ir.intent.goal}\nActions: {len(ir.implementation.actions)}"
+            
+            while True:
+                try:
+                    user_input = input(f"{Colors.CYAN}You>{Colors.RESET} ").strip()
+                    if user_input.lower() in ('exit', 'quit', 'q'):
+                        break
+                    if not user_input:
+                        continue
+                    
+                    prompt = user_input
+                    if context:
+                        prompt = f"{context}\n\nUser: {user_input}"
+                    
+                    response = gateway.complete(prompt, temperature=0.7)
+                    
+                    if response["success"]:
+                        print(f"\n{Colors.GREEN}AI>{Colors.RESET} {response['content']}\n")
+                    else:
+                        self.print_error(f"Error: {response.get('error')}")
+                
+                except KeyboardInterrupt:
+                    print()
+                    break
+        else:
+            gateway = get_gateway()
+            response = gateway.complete(message)
+            if response["success"]:
+                print(f"\n{response['content']}\n")
+            else:
+                self.print_error(f"Error: {response.get('error')}")
+    
+    def cmd_models(self, max_params: float = 12.0):
+        """List available AI models."""
+        if not AI_AVAILABLE:
+            self.print_error("AI Gateway not available.")
+            return
+        
+        self.print_header(f"Available Models (≤{max_params}B)")
+        
+        gateway = get_gateway()
+        models = gateway.list_models(max_params)
+        
+        print(f"{'Model':<20} {'Size':<8} {'Context':<10} {'Description'}")
+        print("-" * 70)
+        
+        for m in models:
+            size = f"{m['parameters_billions']}B"
+            ctx = f"{m['context_window']//1000}K"
+            print(f"{m['name']:<20} {size:<8} {ctx:<10} {m['description'][:30]}")
+        
+        print(f"\n{Colors.CYAN}Default:{Colors.RESET} {gateway.config.default_model}")
+        print(f"{Colors.CYAN}Ollama URL:{Colors.RESET} {gateway.config.ollama_base_url}")
+    
+    def cmd_ai_health(self):
+        """Check AI Gateway health."""
+        if not AI_AVAILABLE:
+            self.print_error("AI Gateway not available. Install: pip install litellm")
+            return
+        
+        self.print_header("AI Gateway Health Check")
+        
+        gateway = get_gateway()
+        health = gateway.health_check()
+        
+        print(f"LiteLLM Available: {Colors.GREEN if health['litellm_available'] else Colors.RED}{health['litellm_available']}{Colors.RESET}")
+        print(f"Ollama URL: {health['ollama_url']}")
+        print(f"Default Model: {health['default_model']}")
+        print(f"Available Models: {health['available_models']}")
+        
+        if health.get('ollama_connected'):
+            self.print_success("Ollama connection: OK")
+        else:
+            self.print_error(f"Ollama connection: FAILED - {health.get('error', 'Unknown error')}")
     
     def _show_help(self):
         help_text = """
@@ -389,8 +585,15 @@ Available Commands:
   help           - Show this help
   exit           - Exit shell
 
+AI Commands (requires Ollama):
+  suggest        - Get AI-powered improvement suggestions
+  apply          - Auto-apply AI suggestions
+  chat           - Interactive chat with AI
+  models         - List available AI models
+  ai-health      - Check AI Gateway status
+
 Workflow:
-  1. new/load → 2. plan → 3. iterate (repeat) → 4. amen → 5. execute
+  1. new/load → 2. plan → 3. suggest → 4. iterate → 5. amen → 6. execute
 """
         print(help_text)
 
