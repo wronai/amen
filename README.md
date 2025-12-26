@@ -7,7 +7,7 @@
 
 ## Overview
 
-amen is a system that allows you to:
+INTENT-ITERATIVE is a system that allows you to:
 
 1. **Define intents** using a simple YAML-based DSL
 2. **Simulate execution** with dry-run planning
@@ -57,14 +57,35 @@ amen is a system that allows you to:
 
 ```bash
 # Clone repository
-git clone https://github.com/softreck/amen.git
-cd amen
+git clone https://github.com/softreck/intent-iterative.git
+cd intent-iterative
 
-# Install dependencies
+# Full setup (recommended)
+make setup
+
+# Or manual install
 pip install -r requirements.txt
+pip install litellm
+cp .env.example .env
+```
 
-# Or install as package
-pip install -e .
+### Configuration (.env)
+
+Copy `.env.example` to `.env` and adjust:
+
+```bash
+# Server
+HOST=0.0.0.0
+PORT=8080
+
+# AI Gateway
+OLLAMA_BASE_URL=http://localhost:11434
+DEFAULT_MODEL=llama3.2
+MAX_MODEL_PARAMS=12.0
+
+# Execution (no AMEN prompt by default)
+SKIP_AMEN_CONFIRMATION=true
+CONTAINER_PORT=8000
 ```
 
 ### AI Gateway Setup (Ollama)
@@ -73,28 +94,38 @@ pip install -e .
 # Install Ollama
 curl -fsSL https://ollama.com/install.sh | sh
 
-# Start Ollama server
+# Start and pull model
+make ollama-start
+make ollama-pull
+
+# Or manually
 ollama serve
-
-# Pull default model (Llama 3.2 3B)
 ollama pull llama3.2
+```
 
-# Or use other models (≤12B)
-ollama pull mistral
-ollama pull mistral-nemo
-ollama pull gemma2
-ollama pull codellama
+### Using Makefile
+
+```bash
+make help          # Show all commands
+make setup         # Full setup
+make web           # Start web server
+make shell         # Interactive shell
+make execute       # Execute example intent
+make test          # Run all tests
+make ollama-models # List available models
+make clean         # Clean temp files
 ```
 
 ### Shell Interface
 
 ```bash
 # Start interactive shell
-python -m cli.main
+make shell
+# Or: python -m cli.main
 
-# Or use commands directly
-python -m cli.main new my-api --goal "Create REST API"
-python -m cli.main plan examples/user-api.intent.yaml
+# Execute intent directly (no AMEN prompt)
+make execute
+# Or: python -m cli.main execute examples/user-api.intent.yaml
 ```
 
 **Interactive Shell Commands:**
@@ -267,7 +298,7 @@ pytest --cov=. --cov-report=html
 ## Project Structure
 
 ```
-amen/
+intent-iterative/
 ├── ir/                 # Intermediate Representation models
 ├── parser/             # DSL parser
 ├── planner/            # Dry-run simulator
@@ -282,7 +313,9 @@ amen/
 │   ├── test_web.py
 │   └── test_ai_gateway.py
 ├── examples/           # Example DSL files
-├── config.py           # Configuration
+├── config.py           # Configuration loader
+├── Makefile            # Build automation
+├── .env.example        # Environment template
 ├── requirements.txt
 └── README.md
 ```

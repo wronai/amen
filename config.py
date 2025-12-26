@@ -1,6 +1,7 @@
 """
-amen: Configuration
+INTENT-ITERATIVE: Configuration
 Environment-based configuration for all components.
+Loads from .env file if present.
 """
 
 import os
@@ -9,57 +10,95 @@ from typing import Optional
 from dataclasses import dataclass, field
 
 
+def load_dotenv(env_path: Path = None):
+    """Load environment variables from .env file."""
+    if env_path is None:
+        # Look for .env in project root
+        env_path = Path(__file__).parent / ".env"
+    
+    if not env_path.exists():
+        return
+    
+    with open(env_path) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" in line:
+                key, value = line.split("=", 1)
+                key = key.strip()
+                value = value.strip().strip('"').strip("'")
+                # Only set if not already in environment
+                if key not in os.environ:
+                    os.environ[key] = value
+
+
+# Load .env on module import
+load_dotenv()
+
+
+def get_env(key: str, default: str = None) -> Optional[str]:
+    """Get environment variable."""
+    return os.getenv(key, default)
+
+
+def get_env_bool(key: str, default: bool = False) -> bool:
+    """Get boolean environment variable."""
+    value = os.getenv(key, str(default)).lower()
+    return value in ("true", "1", "yes", "on")
+
+
+def get_env_int(key: str, default: int = 0) -> int:
+    """Get integer environment variable."""
+    try:
+        return int(os.getenv(key, str(default)))
+    except ValueError:
+        return default
+
+
+def get_env_float(key: str, default: float = 0.0) -> float:
+    """Get float environment variable."""
+    try:
+        return float(os.getenv(key, str(default)))
+    except ValueError:
+        return default
+
+
 @dataclass
 class AppConfig:
     """Main application configuration."""
     
     # General
-    debug: bool = False
-    log_level: str = "INFO"
+    debug: bool = field(default_factory=lambda: get_env_bool("DEBUG", False))
+    log_level: str = field(default_factory=lambda: get_env("LOG_LEVEL", "INFO"))
     
     # Web server
-    host: str = "0.0.0.0"
-    port: int = 8080
+    host: str = field(default_factory=lambda: get_env("HOST", "0.0.0.0"))
+    port: int = field(default_factory=lambda: get_env_int("PORT", 8080))
     
     # AI Gateway
-    ai_enabled: bool = True
-    default_model: str = "llama3.2"
-    max_model_params: float = 12.0
+    ai_enabled: bool = field(default_factory=lambda: get_env_bool("AI_ENABLED", True))
+    default_model: str = field(default_factory=lambda: get_env("DEFAULT_MODEL", "llama3.2"))
+    max_model_params: float = field(default_factory=lambda: get_env_float("MAX_MODEL_PARAMS", 12.0))
     
     # Ollama
-    ollama_base_url: str = "http://localhost:11434"
-    ollama_timeout: int = 120
+    ollama_base_url: str = field(default_factory=lambda: get_env("OLLAMA_BASE_URL", "http://localhost:11434"))
+    ollama_timeout: int = field(default_factory=lambda: get_env_int("OLLAMA_TIMEOUT", 120))
     
     # Optional API keys
-    openai_api_key: Optional[str] = None
-    anthropic_api_key: Optional[str] = None
-    openrouter_api_key: Optional[str] = None
+    openai_api_key: Optional[str] = field(default_factory=lambda: get_env("OPENAI_API_KEY"))
+    anthropic_api_key: Optional[str] = field(default_factory=lambda: get_env("ANTHROPIC_API_KEY"))
+    openrouter_api_key: Optional[str] = field(default_factory=lambda: get_env("OPENROUTER_API_KEY"))
     
     # Execution
-    docker_enabled: bool = True
-    workspace_dir: str = "/tmp/amen"
+    docker_enabled: bool = field(default_factory=lambda: get_env_bool("DOCKER_ENABLED", True))
+    workspace_dir: str = field(default_factory=lambda: get_env("WORKSPACE_DIR", "/tmp/intent-iterative"))
+    auto_execute: bool = field(default_factory=lambda: get_env_bool("AUTO_EXECUTE", True))
+    skip_amen_confirmation: bool = field(default_factory=lambda: get_env_bool("SKIP_AMEN_CONFIRMATION", True))
     
-    def __post_init__(self):
-        """Load from environment variables."""
-        self.debug = os.getenv("DEBUG", "false").lower() == "true"
-        self.log_level = os.getenv("LOG_LEVEL", self.log_level)
-        
-        self.host = os.getenv("HOST", self.host)
-        self.port = int(os.getenv("PORT", self.port))
-        
-        self.ai_enabled = os.getenv("AI_ENABLED", "true").lower() == "true"
-        self.default_model = os.getenv("DEFAULT_MODEL", self.default_model)
-        self.max_model_params = float(os.getenv("MAX_MODEL_PARAMS", self.max_model_params))
-        
-        self.ollama_base_url = os.getenv("OLLAMA_BASE_URL", self.ollama_base_url)
-        self.ollama_timeout = int(os.getenv("OLLAMA_TIMEOUT", self.ollama_timeout))
-        
-        self.openai_api_key = os.getenv("OPENAI_API_KEY")
-        self.anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
-        self.openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
-        
-        self.docker_enabled = os.getenv("DOCKER_ENABLED", "true").lower() == "true"
-        self.workspace_dir = os.getenv("WORKSPACE_DIR", self.workspace_dir)
+    # Docker container settings
+    container_port: int = field(default_factory=lambda: get_env_int("CONTAINER_PORT", 8000))
+    container_prefix: str = field(default_factory=lambda: get_env("CONTAINER_PREFIX", "intent"))
 
 
 # Global config instance
@@ -74,8 +113,17 @@ def get_config() -> AppConfig:
     return _config
 
 
+def reload_config() -> AppConfig:
+    """Force reload configuration."""
+    global _config
+    load_dotenv()
+    _config = AppConfig()
+    return _config
+
+
 def configure(**kwargs) -> AppConfig:
     """Configure application with custom settings."""
     global _config
     _config = AppConfig(**kwargs)
     return _config
+

@@ -1,5 +1,5 @@
 """
-amen: Executor
+INTENT-ITERATIVE: Executor
 Handles actual execution of approved intents (after AMEN boundary).
 """
 
@@ -14,6 +14,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from ir.models import IntentIR, ExecutionMode, RuntimeType
+from config import get_config
 
 
 class ExecutionError(Exception):
@@ -55,24 +56,35 @@ class Executor:
     """
     
     def __init__(self, workspace: str = None):
+        self.config = get_config()
+        workspace = workspace or self.config.workspace_dir
         self.workspace = Path(workspace) if workspace else Path(tempfile.mkdtemp(prefix="intent-"))
         self.workspace.mkdir(parents=True, exist_ok=True)
     
-    def execute(self, ir: IntentIR) -> ExecutionResult:
+    def execute(self, ir: IntentIR, skip_amen_check: bool = None) -> ExecutionResult:
         """Execute an approved intent."""
         result = ExecutionResult()
         start_time = datetime.now()
         
-        # Check AMEN approval
-        if not ir.amen_approved:
-            result.error = "Intent not approved. Call approve_amen() first."
-            result.add_log("ERROR: Execution blocked - AMEN boundary not passed")
-            return result
+        # Check if we should skip AMEN check
+        skip_check = skip_amen_check if skip_amen_check is not None else self.config.skip_amen_confirmation
         
-        if ir.execution_mode != ExecutionMode.TRANSACTIONAL:
-            result.error = "Intent is in dry-run mode. Change to transactional mode."
-            result.add_log("ERROR: Execution blocked - still in dry-run mode")
-            return result
+        # Check AMEN approval (unless skipped)
+        if not skip_check:
+            if not ir.amen_approved:
+                result.error = "Intent not approved. Call approve_amen() first."
+                result.add_log("ERROR: Execution blocked - AMEN boundary not passed")
+                return result
+            
+            if ir.execution_mode != ExecutionMode.TRANSACTIONAL:
+                result.error = "Intent is in dry-run mode. Change to transactional mode."
+                result.add_log("ERROR: Execution blocked - still in dry-run mode")
+                return result
+        else:
+            # Auto-approve if skipping check
+            if not ir.amen_approved:
+                ir.approve_amen()
+                result.add_log("Auto-approved intent (SKIP_AMEN_CONFIRMATION=true)")
         
         result.add_log(f"Starting execution for: {ir.intent.name}")
         result.add_log(f"Workspace: {self.workspace}")
@@ -144,10 +156,36 @@ class Executor:
             result.artifacts["package.json"] = str(package_json)
             result.add_log("Written: package.json")
     
+    def _find_available_port(self, start_port: int = 8000) -> int:
+        """Find an available port starting from start_port."""
+        import socket
+        port = start_port
+        max_attempts = 100
+        
+        for _ in range(max_attempts):
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.bind(('', port))
+                    return port
+            except OSError:
+                port += 1
+        
+        return start_port + max_attempts  # Fallback
+    
     def _execute_docker(self, ir: IntentIR, result: ExecutionResult):
         """Build and run Docker container."""
-        image_name = f"intent-{ir.intent.name}:latest"
-        container_name = f"intent-{ir.intent.name}-{ir.id}"
+        prefix = self.config.container_prefix
+        image_name = f"{prefix}-{ir.intent.name}:latest"
+        container_name = f"{prefix}-{ir.intent.name}-{ir.id}"
+        
+        # Find available port
+        requested_port = self.config.container_port
+        if ir.environment.ports:
+            requested_port = ir.environment.ports[0]
+        
+        host_port = self._find_available_port(requested_port)
+        if host_port != requested_port:
+            result.add_log(f"Port {requested_port} in use, using {host_port}")
         
         result.add_log(f"Building Docker image: {image_name}")
         
@@ -167,11 +205,19 @@ class Executor:
         
         result.add_log("Docker image built successfully")
         
+        # Stop existing container with same name if exists
+        subprocess.run(
+            ["docker", "rm", "-f", container_name],
+            capture_output=True,
+            timeout=30
+        )
+        
         # Run container
+        container_port = self.config.container_port
         run_cmd = [
             "docker", "run", "-d",
             "--name", container_name,
-            "-p", "8000:8000",
+            "-p", f"{host_port}:{container_port}",
         ]
         
         # Add environment variables
@@ -180,8 +226,9 @@ class Executor:
         
         # Add additional ports
         for port in ir.environment.ports:
-            if port != 8000:
-                run_cmd.extend(["-p", f"{port}:{port}"])
+            if port != container_port:
+                extra_host_port = self._find_available_port(port)
+                run_cmd.extend(["-p", f"{extra_host_port}:{port}"])
         
         run_cmd.append(image_name)
         
@@ -203,10 +250,10 @@ class Executor:
         result.add_log(f"Container started: {result.container_id}")
         
         # Record endpoints
-        result.endpoints.append("http://localhost:8000")
+        result.endpoints.append(f"http://localhost:{host_port}")
         for action in ir.implementation.actions:
             if action.type.value == "api.expose":
-                result.endpoints.append(f"http://localhost:8000{action.target}")
+                result.endpoints.append(f"http://localhost:{host_port}{action.target}")
     
     def _execute_local(self, ir: IntentIR, result: ExecutionResult):
         """Execute locally without Docker."""
@@ -232,7 +279,8 @@ class Executor:
         result.add_log("Application would start here (non-blocking in production)")
         
         # In production, we'd use subprocess.Popen for non-blocking execution
-        result.endpoints.append("http://localhost:8000")
+        port = self._find_available_port(self.config.container_port)
+        result.endpoints.append(f"http://localhost:{port}")
     
     def cleanup(self):
         """Clean up workspace."""
@@ -240,7 +288,7 @@ class Executor:
             shutil.rmtree(self.workspace)
 
 
-def execute_intent(ir: IntentIR, workspace: str = None) -> ExecutionResult:
+def execute_intent(ir: IntentIR, workspace: str = None, skip_amen_check: bool = None) -> ExecutionResult:
     """Convenience function to execute an approved intent."""
     executor = Executor(workspace)
-    return executor.execute(ir)
+    return executor.execute(ir, skip_amen_check=skip_amen_check)

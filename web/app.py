@@ -404,4 +404,7 @@ def create_app() -> FastAPI:
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    from config import get_config
+    
+    config = get_config()
+    uvicorn.run(app, host=config.host, port=config.port)

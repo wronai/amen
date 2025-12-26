@@ -202,8 +202,8 @@ OLLAMA_MODELS: Dict[str, ModelConfig] = {
 class GatewayConfig:
     """AI Gateway configuration."""
     default_provider: ModelProvider = ModelProvider.OLLAMA
-    default_model: str = "llama3.2"
-    ollama_base_url: str = "http://localhost:11434"
+    default_model: str = None
+    ollama_base_url: str = None
     openai_api_key: Optional[str] = None
     anthropic_api_key: Optional[str] = None
     openrouter_api_key: Optional[str] = None
@@ -215,15 +215,26 @@ class GatewayConfig:
     custom_models: Dict[str, ModelConfig] = field(default_factory=dict)
     
     def __post_init__(self):
-        # Load from environment
-        self.ollama_base_url = os.getenv("OLLAMA_BASE_URL", self.ollama_base_url)
-        self.openai_api_key = os.getenv("OPENAI_API_KEY", self.openai_api_key)
-        self.anthropic_api_key = os.getenv("ANTHROPIC_API_KEY", self.anthropic_api_key)
-        self.openrouter_api_key = os.getenv("OPENROUTER_API_KEY", self.openrouter_api_key)
+        # Load from global config first, then environment
+        try:
+            from config import get_config
+            app_config = get_config()
+            self.ollama_base_url = self.ollama_base_url or app_config.ollama_base_url
+            self.default_model = self.default_model or app_config.default_model
+            self.timeout = app_config.ollama_timeout
+            self.max_parameters_billions = app_config.max_model_params
+            self.openai_api_key = app_config.openai_api_key
+            self.anthropic_api_key = app_config.anthropic_api_key
+            self.openrouter_api_key = app_config.openrouter_api_key
+        except ImportError:
+            pass
         
-        default_model = os.getenv("DEFAULT_MODEL", self.default_model)
-        if default_model:
-            self.default_model = default_model
+        # Fallback to environment variables
+        self.ollama_base_url = self.ollama_base_url or os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+        self.default_model = self.default_model or os.getenv("DEFAULT_MODEL", "llama3.2")
+        self.openai_api_key = self.openai_api_key or os.getenv("OPENAI_API_KEY")
+        self.anthropic_api_key = self.anthropic_api_key or os.getenv("ANTHROPIC_API_KEY")
+        self.openrouter_api_key = self.openrouter_api_key or os.getenv("OPENROUTER_API_KEY")
     
     def get_available_models(self, max_params: float = None) -> List[ModelConfig]:
         """Get all available models under parameter limit."""
