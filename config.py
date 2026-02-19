@@ -9,14 +9,29 @@ from pathlib import Path
 from typing import Optional
 from dataclasses import dataclass, field
 
+try:
+    from getv import EnvStore
+    _HAS_GETV = True
+except ImportError:
+    _HAS_GETV = False
+
 
 def load_dotenv(env_path: Path = None):
-    """Load environment variables from .env file."""
+    """Load environment variables from .env file.
+
+    Delegates to getv.EnvStore when available.
+    """
     if env_path is None:
-        # Look for .env in project root
         env_path = Path(__file__).parent / ".env"
     
     if not env_path.exists():
+        return
+    
+    if _HAS_GETV:
+        store = EnvStore(env_path, auto_create=False)
+        for key, value in store.items():
+            if key not in os.environ:
+                os.environ[key] = value
         return
     
     with open(env_path) as f:
@@ -28,7 +43,6 @@ def load_dotenv(env_path: Path = None):
                 key, value = line.split("=", 1)
                 key = key.strip()
                 value = value.strip().strip('"').strip("'")
-                # Only set if not already in environment
                 if key not in os.environ:
                     os.environ[key] = value
 
@@ -99,6 +113,13 @@ class AppConfig:
     # Docker container settings
     container_port: int = field(default_factory=lambda: get_env_int("CONTAINER_PORT", 8000))
     container_prefix: str = field(default_factory=lambda: get_env("CONTAINER_PREFIX", "intent"))
+    
+    # Validation & Auto-fix
+    validate_after_execute: bool = field(default_factory=lambda: get_env_bool("VALIDATE_AFTER_EXECUTE", True))
+    auto_fix_enabled: bool = field(default_factory=lambda: get_env_bool("AUTO_FIX_ENABLED", True))
+    max_fix_iterations: int = field(default_factory=lambda: get_env_int("MAX_FIX_ITERATIONS", 3))
+    startup_wait: int = field(default_factory=lambda: get_env_int("STARTUP_WAIT", 2))
+    validation_timeout: int = field(default_factory=lambda: get_env_int("VALIDATION_TIMEOUT", 10))
 
 
 # Global config instance
