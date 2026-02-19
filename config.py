@@ -20,7 +20,21 @@ def load_dotenv(env_path: Path = None):
     """Load environment variables from .env file.
 
     Delegates to getv.EnvStore when available.
+    Also loads getv app defaults (``getv use amen llm PROFILE``).
     """
+    # Load getv app defaults first (if configured)
+    if _HAS_GETV:
+        try:
+            from getv import AppDefaults
+            from getv.integrations.pydantic_env import load_profile_into_env
+            defaults = AppDefaults("amen")
+            for category in ("llm", "devices"):
+                profile = defaults.get(category)
+                if profile:
+                    load_profile_into_env(category, profile)
+        except Exception:
+            pass
+
     if env_path is None:
         env_path = Path(__file__).parent / ".env"
     
