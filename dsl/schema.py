@@ -11,7 +11,6 @@ from typing import Any, Literal
 import yaml
 from pydantic import BaseModel, Field, field_validator
 
-from parser.dsl_parser import DSLParser, ParseError, ValidationError, parse_dsl
 
 
 class IntentSection(BaseModel):
@@ -212,6 +211,8 @@ def validate_yaml_document(yaml_content: str) -> tuple[IntentDSLDocument | None,
         errors.append("Provide IMPLEMENTATION.actions or STACK.services (min 2 services)")
 
     try:
+        from parser.dsl_parser import ParseError, ValidationError, parse_dsl
+
         parse_dsl(yaml_content)
     except ParseError as e:
         errors.append(f"DSL parse: {e}")

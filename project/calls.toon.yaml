@@ -1,6 +1,6 @@
 # code2llm call graph | /home/tom/github/wronai/iterun
 # generated in 0.08s
-# nodes: 177 | edges: 179 | modules: 46
+# nodes: 176 | edges: 179 | modules: 46
 # CC̄=4.4
 
 HUBS[20]:
@@ -11,13 +11,13 @@ HUBS[20]:
   cli.shell.CLI.cmd_execute
     CC=39  in:0  out:39  total:39
   generator.pipeline.run_pipeline
-    CC=33  in:0  out:37  total:37
+    CC=33  in:1  out:37  total:38
   generator.contract_verify.verify_contract
     CC=16  in:1  out:32  total:33
-  registry.discover_artifacts.discover_artifacts
-    CC=12  in:1  out:28  total:29
   executor.validation.validate_endpoints
     CC=13  in:2  out:27  total:29
+  registry.discover_artifacts.discover_artifacts
+    CC=12  in:1  out:28  total:29
   examples._scripts.verify_expectations.verify
     CC=23  in:1  out:27  total:28
   generator.expectations.check_expectations
@@ -38,12 +38,12 @@ HUBS[20]:
     CC=11  in:0  out:21  total:21
   cli.shell.CLI.cmd_ai_suggest
     CC=11  in:0  out:21  total:21
-  executor.runner.Executor._validate_and_fix
-    CC=9  in:0  out:18  total:18
   cli.shell.CLI.cmd_ai_chat
     CC=12  in:0  out:18  total:18
-  cli.main.build_parser
-    CC=1  in:1  out:17  total:18
+  executor.runner.Executor._validate_and_fix
+    CC=9  in:0  out:18  total:18
+  examples._scripts.intent_to_openapi.intent_to_openapi
+    CC=8  in:1  out:17  total:18
 
 MODULES:
   ai_gateway.feedback_loop  [2 funcs]
@@ -56,12 +56,12 @@ MODULES:
   ai_gateway.model_catalog  [1 funcs]
     __post_init__  CC=15  out:8
   cli.dispatch  [9 funcs]
-    _dispatch_execute  CC=17  out:14
+    _dispatch_execute  CC=17  out:15
     _dispatch_generate  CC=8  out:6
     _dispatch_generate_pipeline  CC=16  out:14
     _dispatch_generate_yaml_only  CC=6  out:15
     _dispatch_parse  CC=10  out:14
-    _dispatch_plan  CC=12  out:12
+    _dispatch_plan  CC=12  out:13
     _dispatch_registry  CC=10  out:12
     _dispatch_validate  CC=6  out:10
     dispatch_command  CC=14  out:13
@@ -186,14 +186,13 @@ MODULES:
     stop_pactown_for_intent  CC=5  out:6
   integrations.runtime_stop  [1 funcs]
     stop_runtime_for_intent  CC=3  out:4
-  interfaces.service  [10 funcs]
+  interfaces.service  [9 funcs]
     execute_ir  CC=3  out:4
     parse  CC=1  out:1
     plan_ir  CC=1  out:1
     plan_yaml  CC=3  out:6
     registry_list  CC=1  out:1
     registry_refresh  CC=1  out:1
-    run_pipeline  CC=3  out:1
     schema  CC=1  out:1
     validate_yaml  CC=4  out:3
     _write_plan_output  CC=7  out:14
@@ -274,6 +273,17 @@ EDGES:
   generator.testql_scenario.build_testql_scenario → generator.testql_scenario._startup_wait_ms
   generator.testql_scenario.build_testql_scenario → generator.testql_scenario._probe_path
   generator.testql_scenario.write_testql_scenario → generator.testql_scenario.build_testql_scenario
+  generator.pipeline._write_plan_artifacts → generator.intract_manifest.write_intract_manifest
+  generator.pipeline._write_plan_artifacts → generator.testql_scenario.write_testql_scenario
+  generator.pipeline._write_plan_artifacts → planner.stack_artifacts.write_stack_artifacts
+  generator.pipeline._write_plan_artifacts → integrations.markpact_pack.pack_workspace
+  generator.pipeline._build_repair_prompt → generator.pipeline._expectations_summary
+  generator.pipeline._container_logs → executor.runner.Executor.get_container_logs
+  generator.pipeline._finalize → generator.pipeline._container_logs
+  generator.pipeline._finalize → generator.session.write_session_artifacts
+  generator.pipeline._finalize → integrations.bridges.pipeline.refresh_registry_from_pipeline
+  generator.pipeline.run_pipeline → generator.pipeline._finalize
+  generator.pipeline.run_pipeline → planner.simulator.plan_intent
   generator.intract_manifest.parse_api_actions → generator.intract_manifest._parse_action_strings
   generator.intract_manifest.build_intract_manifest → generator.intract_manifest._safe_id
   generator.intract_manifest.build_intract_manifest → generator.intract_manifest.parse_api_actions
@@ -301,14 +311,3 @@ EDGES:
   examples._scripts.intent_to_intract.main → generator.intract_manifest.write_intract_manifest
   examples._scripts.intent_to_openapi.intent_to_openapi → examples._scripts.intent_to_openapi._slug
   examples._scripts.intent_to_openapi.main → examples._scripts.intent_to_openapi.intent_to_openapi
-  planner.stack_planner._gateway_proxy_code → planner.stack_planner._resolve_upstream
-  planner.stack_planner._build_compose → registry.labels.build_service_labels
-  planner.stack_planner.plan_stack → planner.stack_planner._build_compose
-  planner.simulator.Planner._generate_fastapi_code → planner.simulator._endpoint_to_func_name
-  planner.simulator.Planner._generate_flask_code → planner.simulator._endpoint_to_func_name
-  planner.simulator.plan_intent → planner.stack_planner.plan_stack
-  registry.catalog.RegistryCatalog.discover → registry.discover.discover_workspace
-  interfaces.service._write_plan_output → planner.stack_artifacts.write_stack_artifacts
-  interfaces.service.IterunService.schema → dsl.schema.get_json_schema
-  interfaces.service.IterunService.validate_yaml → dsl.schema.validate_yaml_document
-  interfaces.service.IterunService.parse → parser.dsl_parser.parse_dsl

@@ -1,22 +1,21 @@
 # System Architecture Analysis
-<!-- generated in 0.00s -->
 
 ## Overview
 
 - **Project**: /home/tom/github/wronai/iterun
 - **Primary Language**: python
-- **Languages**: python: 74, shell: 27, txt: 20, yaml: 17, toml: 1
+- **Languages**: python: 79, md: 29, shell: 27, txt: 20, yaml: 18
 - **Analysis Mode**: static
-- **Total Functions**: 354
-- **Total Classes**: 76
-- **Modules**: 140
-- **Entry Points**: 238
+- **Total Functions**: 421
+- **Total Classes**: 77
+- **Modules**: 175
+- **Entry Points**: 253
 
 ## Architecture by Module
 
 ### cli.shell
-- **Functions**: 23
-- **Classes**: 2
+- **Functions**: 24
+- **Classes**: 1
 - **File**: `shell.py`
 
 ### web.routes.intents
@@ -28,30 +27,39 @@
 - **Classes**: 10
 - **File**: `models.py`
 
+### parser.dsl_parser
+- **Functions**: 18
+- **Classes**: 3
+- **File**: `dsl_parser.py`
+
 ### planner.simulator
 - **Functions**: 17
 - **Classes**: 2
 - **File**: `simulator.py`
+
+### ai_gateway.feedback_loop
+- **Functions**: 17
+- **Classes**: 3
+- **File**: `feedback_loop.py`
 
 ### sdk.client
 - **Functions**: 16
 - **Classes**: 1
 - **File**: `client.py`
 
-### parser.dsl_parser
-- **Functions**: 14
-- **Classes**: 3
-- **File**: `dsl_parser.py`
+### cli.dispatch
+- **Functions**: 15
+- **File**: `dispatch.py`
 
 ### interfaces.service
 - **Functions**: 14
 - **Classes**: 1
 - **File**: `service.py`
 
-### ai_gateway.feedback_loop
-- **Functions**: 14
-- **Classes**: 3
-- **File**: `feedback_loop.py`
+### generator.contract_verify
+- **Functions**: 13
+- **Classes**: 1
+- **File**: `contract_verify.py`
 
 ### examples._verify
 - **Functions**: 13
@@ -62,67 +70,47 @@
 - **Classes**: 1
 - **File**: `gateway.py`
 
+### config
+- **Functions**: 12
+- **Classes**: 1
+- **File**: `config.py`
+
+### generator.pipeline
+- **Functions**: 12
+- **File**: `pipeline.py`
+
+### executor.runner
+- **Functions**: 12
+- **Classes**: 1
+- **File**: `runner.py`
+
 ### examples._common
 - **Functions**: 11
 - **File**: `_common.sh`
 
-### generator.contract_verify
+### integrations.pactown_runtime
+- **Functions**: 11
+- **File**: `pactown_runtime.py`
+
+### ai_gateway.model_catalog
 - **Functions**: 10
-- **Classes**: 1
-- **File**: `contract_verify.py`
+- **Classes**: 3
+- **File**: `model_catalog.py`
 
 ### web.routes.ai
 - **Functions**: 9
 - **File**: `ai.py`
 
-### cli.dispatch
-- **Functions**: 9
-- **File**: `dispatch.py`
-
-### executor.runner
-- **Functions**: 9
-- **Classes**: 1
-- **File**: `runner.py`
-
-### config
+### generator.expectations
 - **Functions**: 8
-- **Classes**: 1
-- **File**: `config.py`
-
-### generator.intent_generator
-- **Functions**: 7
-- **Classes**: 3
-- **File**: `intent_generator.py`
-
-### generator.intract_manifest
-- **Functions**: 7
-- **File**: `intract_manifest.py`
-
-### registry.catalog
-- **Functions**: 7
-- **Classes**: 1
-- **File**: `catalog.py`
-
-### generator.pipeline
-- **Functions**: 7
-- **Classes**: 1
-- **File**: `pipeline.py`
+- **File**: `expectations.py`
 
 ## Key Entry Points
 
 Main execution flows into the system:
 
-### cli.shell.CLI.cmd_execute
-- **Calls**: self.print_header, executor.runner.execute_intent, print, self.print_error, print, self.print_success, self.print_error, config.get_config
-
-### generator.pipeline.run_pipeline
-- **Calls**: PipelineResult, IntentGenerator, range, generator.pipeline._finalize, Path, workspace.mkdir, generator.generate, planner.simulator.plan_intent
-
 ### parser.dsl_parser.DSLParser._parse_stack
 - **Calls**: services_raw.items, Stack, isinstance, self.errors.append, Stack, data.get, isinstance, self.errors.append
-
-### cli.shell.CLI.interactive_mode
-- **Calls**: self.print_header, print, print, print, None.strip, line.split, None.lower, print
 
 ### ir.models.IntentIR.from_dict
 - **Calls**: cls, data.get, data.get, data.get, data.get, Intent.from_dict, Environment.from_dict, Implementation.from_dict
@@ -130,22 +118,18 @@ Main execution flows into the system:
 ### cli.shell.CLI.cmd_plan
 - **Calls**: self.print_header, planner.simulator.plan_intent, print, print, enumerate, print, print, result.estimated_resources.items
 
-### executor.runner.Executor.execute
-> Execute an approved intent with optional validation and auto-fix.
-- **Calls**: ExecutionResult, datetime.now, result.add_log, result.add_log, None.total_seconds, integrations.pactown_runtime.execute_pactown, self._write_artifacts, result.add_log
-
 ### generator.intent_generator.IntentGenerator.generate
 - **Calls**: GenerateResult, range, GenerateAttempt, generator.intent_generator._build_user_prompt, self.gateway.complete, response.get, response.get, generator.intent_generator.extract_yaml_from_llm
-
-### parser.dsl_parser.DSLParser._parse_action
-> Parse single action string.
-- **Calls**: isinstance, self.ACTION_PATTERN.match, match.group, match.group, Action, None.strip, self.errors.append, ActionType
 
 ### cli.shell.CLI.cmd_show
 - **Calls**: self.print_error, print, ir.to_json, self.print_header, print, self.print_header, print, print
 
 ### cli.shell.CLI.cmd_ai_suggest
 - **Calls**: self.print_header, self.print_info, self.print_error, self.print_error, ai_gateway.feedback_loop.create_feedback_loop, loop.analyze, self.print_success, loop.suggest_next_steps
+
+### parser.dsl_parser.DSLParser._parse_action
+> Parse single action string.
+- **Calls**: isinstance, self.ACTION_PATTERN.match, match.group, match.group, Action, None.strip, self.errors.append, ActionType
 
 ### cli.shell.CLI.cmd_iterun
 - **Calls**: self.print_header, print, print, print, len, print, print, print
@@ -171,8 +155,9 @@ Main execution flows into the system:
 ### integrations.adapters.backstage.BackstageExporter.export
 - **Calls**: Path, catalog_dir.mkdir, system_path.write_text, str, yaml.dump, manifest.spec.get, svc.get, comp_path.write_text
 
-### integrations.adapters.docker.DockerAdapter.enrich
-- **Calls**: integrations.adapters.docker._running_iterun_containers, manifest.spec.get, svc.get, c.get, None.update, c.get, c.get, c.get
+### executor.runner.Executor.execute
+> Execute an approved intent with optional validation and auto-fix.
+- **Calls**: ExecutionResult, datetime.now, result.add_log, result.add_log, None.total_seconds, self._check_iterun_boundary, None.total_seconds, integrations.pactown_runtime.execute_pactown
 
 ### ir.models.StackService.from_dict
 - **Calls**: cls, data.get, data.get, data.get, data.get, int, data.get, list
@@ -180,14 +165,6 @@ Main execution flows into the system:
 ### executor.runner.Executor._write_artifacts
 > Write generated code and config files.
 - **Calls**: None.is_file, result.add_log, str, app_file.write_text, str, result.add_log, dockerfile.write_text, str
-
-### parser.dsl_parser.DSLParser.parse
-> Parse DSL string and return IR.
-- **Calls**: IntentIR, self._validate, yaml.safe_load, ParseError, self._parse_intent, self.errors.append, self._parse_environment, self._parse_implementation
-
-### parser.dsl_parser.DSLParser._parse_environment
-> Parse ENVIRONMENT section.
-- **Calls**: data.get, Environment, isinstance, self.errors.append, Environment, RuntimeType, self.warnings.append, data.get
 
 ### ai_gateway.gateway.AIGateway.suggest_improvements
 > Use LLM to suggest improvements for an intent.
@@ -202,13 +179,20 @@ Returns:
 ### cli.shell.CLI.cmd_ai_health
 - **Calls**: self.print_header, ai_gateway.gateway.get_gateway, gateway.health_check, print, print, print, print, health.get
 
+### parser.dsl_parser.DSLParser.parse
+> Parse DSL string and return IR.
+- **Calls**: IntentIR, self._validate, yaml.safe_load, ParseError, self._parse_intent, self.errors.append, self._parse_environment, self._parse_implementation
+
+### parser.dsl_parser.DSLParser._parse_environment
+> Parse ENVIRONMENT section.
+- **Calls**: data.get, Environment, isinstance, self.errors.append, Environment, RuntimeType, self.warnings.append, data.get
+
 ### ai_gateway.gateway.AIGateway.generate_code_snippet
 > Generate code snippet based on description.
 - **Calls**: self.complete, code.split, code.strip, len, code.startswith, None.strip, code.startswith, code.startswith
 
-### ai_gateway.feedback_loop.FeedbackLoop.suggest_next_steps
-> Get list of suggested next steps for the intent.
-- **Calls**: any, suggestions.append, any, suggestions.append, len, suggestions.append, suggestions.append, suggestions.append
+### cli.shell.CLI.interactive_mode
+- **Calls**: self.print_header, print, print, print, cli.shell_interactive.handle_interactive_line, None.strip, print, print
 
 ### cli.shell.CLI.cmd_ai_apply
 - **Calls**: self.print_header, ai_gateway.feedback_loop.create_feedback_loop, loop.iterate, self.print_error, self.print_error, self.print_info, self.print_info, self.print_success
@@ -219,41 +203,33 @@ Returns:
 ### examples._scripts.intent_to_intract.main
 - **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, generator.intract_manifest.write_intract_manifest, print, args.prompt.read_text
 
+### examples._scripts.intent_to_openapi.main
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.parse_args, examples._scripts.intent_to_openapi.intent_to_openapi, args.output.parent.mkdir, args.output.write_text, print
+
+### web.routes.ai.ai_suggest
+- **Calls**: router.post, web.routes.ai._intents_store, ai_gateway.feedback_loop.create_feedback_loop, loop.analyze, HTTPException, HTTPException, HTTPException, loop.suggest_next_steps
+
+### web.routes.intents.plan_yaml_api
+- **Calls**: router.post, None.plan_yaml, result.get, ir_dict.get, parser.dsl_parser.parse_dsl, HTTPException, web.routes.intents._get_service, web.routes.intents._intents_store
+
+### web.routes.intents.validate_intent
+- **Calls**: router.post, web.routes.intents._intents_store, config.get_config, set, ExecutionResult, executor.validation.validate_endpoints, HTTPException, seen_paths.add
+
 ## Process Flows
 
 Key execution flows identified:
 
-### Flow 1: cmd_execute
-```
-cmd_execute [cli.shell.CLI]
-  └─ →> execute_intent
-```
-
-### Flow 2: run_pipeline
-```
-run_pipeline [generator.pipeline]
-  └─> _finalize
-      └─> _container_logs
-          └─ →> get_container_logs
-      └─ →> write_session_artifacts
-```
-
-### Flow 3: _parse_stack
+### Flow 1: _parse_stack
 ```
 _parse_stack [parser.dsl_parser.DSLParser]
 ```
 
-### Flow 4: interactive_mode
-```
-interactive_mode [cli.shell.CLI]
-```
-
-### Flow 5: from_dict
+### Flow 2: from_dict
 ```
 from_dict [ir.models.IntentIR]
 ```
 
-### Flow 6: cmd_plan
+### Flow 3: cmd_plan
 ```
 cmd_plan [cli.shell.CLI]
   └─ →> plan_intent
@@ -261,38 +237,73 @@ cmd_plan [cli.shell.CLI]
           └─> _build_compose
 ```
 
-### Flow 7: execute
-```
-execute [executor.runner.Executor]
-```
-
-### Flow 8: generate
+### Flow 4: generate
 ```
 generate [generator.intent_generator.IntentGenerator]
   └─ →> _build_user_prompt
 ```
 
-### Flow 9: _parse_action
+### Flow 5: cmd_show
+```
+cmd_show [cli.shell.CLI]
+```
+
+### Flow 6: cmd_ai_suggest
+```
+cmd_ai_suggest [cli.shell.CLI]
+  └─ →> create_feedback_loop
+```
+
+### Flow 7: _parse_action
 ```
 _parse_action [parser.dsl_parser.DSLParser]
 ```
 
-### Flow 10: cmd_show
+### Flow 8: cmd_iterun
 ```
-cmd_show [cli.shell.CLI]
+cmd_iterun [cli.shell.CLI]
+```
+
+### Flow 9: _parse_suggestions
+```
+_parse_suggestions [ai_gateway.feedback_loop.FeedbackLoop]
+```
+
+### Flow 10: cmd_iterate
+```
+cmd_iterate [cli.shell.CLI]
 ```
 
 ## Key Classes
 
 ### cli.shell.CLI
 > Interactive CLI for iterun system.
-- **Methods**: 22
+- **Methods**: 24
 - **Key Methods**: cli.shell.CLI.__init__, cli.shell.CLI.print_header, cli.shell.CLI.print_success, cli.shell.CLI.print_error, cli.shell.CLI.print_warning, cli.shell.CLI.print_info, cli.shell.CLI.cmd_new, cli.shell.CLI.cmd_load, cli.shell.CLI.cmd_parse, cli.shell.CLI.cmd_plan
 
 ### sdk.client.IterunClient
 > Local SDK (in-process) or remote via REST base_url.
 - **Methods**: 16
 - **Key Methods**: sdk.client.IterunClient.__init__, sdk.client.IterunClient.health, sdk.client.IterunClient.interfaces, sdk.client.IterunClient.schema, sdk.client.IterunClient.validate, sdk.client.IterunClient.generate, sdk.client.IterunClient.run_pipeline, sdk.client.IterunClient.generate_and_run, sdk.client.IterunClient.plan_yaml, sdk.client.IterunClient.registry_get
+
+### parser.dsl_parser.DSLParser
+> Parser for ITERUN DSL format.
+
+Example DSL:
+```yaml
+INTENT:
+  name: my-api
+  goal: Create REST API
+
+
+- **Methods**: 14
+- **Key Methods**: parser.dsl_parser.DSLParser.__init__, parser.dsl_parser.DSLParser.parse_file, parser.dsl_parser.DSLParser.parse, parser.dsl_parser.DSLParser._parse_intent, parser.dsl_parser.DSLParser._parse_environment, parser.dsl_parser.DSLParser._parse_implementation, parser.dsl_parser.DSLParser._parse_action, parser.dsl_parser.DSLParser._parse_stack, parser.dsl_parser.DSLParser._parse_execution, parser.dsl_parser.DSLParser._validate_stack_services
+
+### ai_gateway.feedback_loop.FeedbackLoop
+> LLM-powered feedback loop for iterative intent refinement.
+Uses AI Gateway to suggest and apply impr
+- **Methods**: 13
+- **Key Methods**: ai_gateway.feedback_loop.FeedbackLoop.__init__, ai_gateway.feedback_loop.FeedbackLoop.analyze, ai_gateway.feedback_loop.FeedbackLoop.apply_suggestions, ai_gateway.feedback_loop.FeedbackLoop.iterate, ai_gateway.feedback_loop.FeedbackLoop._endpoint_paths, ai_gateway.feedback_loop.FeedbackLoop._suggest_health_endpoints, ai_gateway.feedback_loop.FeedbackLoop._suggest_workflow_steps, ai_gateway.feedback_loop.FeedbackLoop.suggest_next_steps, ai_gateway.feedback_loop.FeedbackLoop._build_analysis_prompt, ai_gateway.feedback_loop.FeedbackLoop._parse_suggestions
 
 ### interfaces.service.IterunService
 > Single entry point for programmatic access to ITERUN.
@@ -305,18 +316,10 @@ Generates code, Dockerfiles, and estimates without actual exec
 - **Methods**: 12
 - **Key Methods**: planner.simulator.Planner.__init__, planner.simulator.Planner.dry_run, planner.simulator.Planner._generate_python_code, planner.simulator.Planner._generate_fastapi_code, planner.simulator.Planner._generate_flask_code, planner.simulator.Planner._generate_basic_python_code, planner.simulator.Planner._generate_node_code, planner.simulator.Planner._generate_express_code, planner.simulator.Planner._generate_basic_node_code, planner.simulator.Planner._generate_dockerfile
 
-### parser.dsl_parser.DSLParser
-> Parser for ITERUN DSL format.
-
-Example DSL:
-```yaml
-INTENT:
-  name: my-api
-  goal: Create REST API
-
-
-- **Methods**: 10
-- **Key Methods**: parser.dsl_parser.DSLParser.__init__, parser.dsl_parser.DSLParser.parse_file, parser.dsl_parser.DSLParser.parse, parser.dsl_parser.DSLParser._parse_intent, parser.dsl_parser.DSLParser._parse_environment, parser.dsl_parser.DSLParser._parse_implementation, parser.dsl_parser.DSLParser._parse_action, parser.dsl_parser.DSLParser._parse_stack, parser.dsl_parser.DSLParser._parse_execution, parser.dsl_parser.DSLParser._validate
+### executor.runner.Executor
+> Executes approved intents with validation and auto-fix.
+- **Methods**: 11
+- **Key Methods**: executor.runner.Executor.__init__, executor.runner.Executor._check_iterun_boundary, executor.runner.Executor._run_runtime, executor.runner.Executor._finalize_success, executor.runner.Executor.execute, executor.runner.Executor._validate_and_fix, executor.runner.Executor._restart_container, executor.runner.Executor._write_artifacts, executor.runner.Executor._execute_local, executor.runner.Executor.get_container_logs
 
 ### ai_gateway.gateway.AIGateway
 > AI Gateway using LiteLLM for unified model access.
@@ -324,16 +327,10 @@ Default: Ollama with models up to 12B parameters.
 - **Methods**: 10
 - **Key Methods**: ai_gateway.gateway.AIGateway.__init__, ai_gateway.gateway.AIGateway._setup_litellm, ai_gateway.gateway.AIGateway.complete, ai_gateway.gateway.AIGateway.acomplete, ai_gateway.gateway.AIGateway._mock_response, ai_gateway.gateway.AIGateway.suggest_improvements, ai_gateway.gateway.AIGateway.generate_code_snippet, ai_gateway.gateway.AIGateway.explain_error, ai_gateway.gateway.AIGateway.list_models, ai_gateway.gateway.AIGateway.health_check
 
-### ai_gateway.feedback_loop.FeedbackLoop
-> LLM-powered feedback loop for iterative intent refinement.
-Uses AI Gateway to suggest and apply impr
-- **Methods**: 10
-- **Key Methods**: ai_gateway.feedback_loop.FeedbackLoop.__init__, ai_gateway.feedback_loop.FeedbackLoop.analyze, ai_gateway.feedback_loop.FeedbackLoop.apply_suggestions, ai_gateway.feedback_loop.FeedbackLoop.iterate, ai_gateway.feedback_loop.FeedbackLoop.suggest_next_steps, ai_gateway.feedback_loop.FeedbackLoop._build_analysis_prompt, ai_gateway.feedback_loop.FeedbackLoop._parse_suggestions, ai_gateway.feedback_loop.FeedbackLoop._extract_action, ai_gateway.feedback_loop.FeedbackLoop._parse_action, ai_gateway.feedback_loop.FeedbackLoop._process_user_feedback
-
-### executor.runner.Executor
-> Executes approved intents with validation and auto-fix.
-- **Methods**: 8
-- **Key Methods**: executor.runner.Executor.__init__, executor.runner.Executor.execute, executor.runner.Executor._validate_and_fix, executor.runner.Executor._restart_container, executor.runner.Executor._write_artifacts, executor.runner.Executor._execute_local, executor.runner.Executor.get_container_logs, executor.runner.Executor.cleanup
+### ai_gateway.model_catalog.GatewayConfig
+> AI Gateway configuration.
+- **Methods**: 9
+- **Key Methods**: ai_gateway.model_catalog.GatewayConfig._load_from_app_config, ai_gateway.model_catalog.GatewayConfig._load_from_env, ai_gateway.model_catalog.GatewayConfig._resolve_default_provider, ai_gateway.model_catalog.GatewayConfig.__post_init__, ai_gateway.model_catalog.GatewayConfig.resolve_model, ai_gateway.model_catalog.GatewayConfig.litellm_model_id, ai_gateway.model_catalog.GatewayConfig.get_available_models, ai_gateway.model_catalog.GatewayConfig.get_model, ai_gateway.model_catalog.GatewayConfig.to_dict
 
 ### registry.catalog.RegistryCatalog
 > Workspace-scoped service and artifact registry.
@@ -345,11 +342,6 @@ Uses AI Gateway to suggest and apply impr
 This is the canonical representation used by all
 - **Methods**: 6
 - **Key Methods**: ir.models.IntentIR.to_dict, ir.models.IntentIR.to_json, ir.models.IntentIR.from_dict, ir.models.IntentIR.from_json, ir.models.IntentIR.add_iteration, ir.models.IntentIR.approve_iterun
-
-### ai_gateway.model_catalog.GatewayConfig
-> AI Gateway configuration.
-- **Methods**: 6
-- **Key Methods**: ai_gateway.model_catalog.GatewayConfig.__post_init__, ai_gateway.model_catalog.GatewayConfig.resolve_model, ai_gateway.model_catalog.GatewayConfig.litellm_model_id, ai_gateway.model_catalog.GatewayConfig.get_available_models, ai_gateway.model_catalog.GatewayConfig.get_model, ai_gateway.model_catalog.GatewayConfig.to_dict
 
 ### planner.simulator.DryRunResult
 > Result of a dry-run simulation.
@@ -365,6 +357,12 @@ This is the canonical representation used by all
 > Result of intent execution.
 - **Methods**: 3
 - **Key Methods**: executor.models.ExecutionResult.__init__, executor.models.ExecutionResult.add_log, executor.models.ExecutionResult.to_dict
+
+### integrations.adapters.docker.DockerAdapter
+> Merge docker ps / compose state into registry manifest.
+- **Methods**: 3
+- **Key Methods**: integrations.adapters.docker.DockerAdapter.collect, integrations.adapters.docker.DockerAdapter.enrich, integrations.adapters.docker.DockerAdapter._merge_container_state
+- **Inherits**: FilesystemAdapter
 
 ### generator.intent_generator.IntentGenerator
 > Generate intent YAML via LiteLLM with validate-and-retry.
@@ -391,14 +389,12 @@ This is the canonical representation used by all
 - **Methods**: 2
 - **Key Methods**: ir.models.StackService.to_dict, ir.models.StackService.from_dict
 
-### ir.models.Stack
-> Multi-service application (docker compose).
-- **Methods**: 2
-- **Key Methods**: ir.models.Stack.to_dict, ir.models.Stack.from_dict
-
 ## Data Transformation Functions
 
 Key functions that process and transform data:
+
+### config._parse_dotenv_lines
+- **Output to**: open, line.strip, line.split, pairs.append, line.startswith
 
 ### generator.intract_manifest._parse_action_strings
 - **Output to**: re.match, isinstance, action.strip, parsed.append, None.upper
@@ -406,8 +402,38 @@ Key functions that process and transform data:
 ### generator.intract_manifest.parse_api_actions
 - **Output to**: generator.intract_manifest._parse_action_strings, None.items, intent_data.get, parsed.extend, None.get
 
-### examples._scripts.verify_expectations._parse_actions
-- **Output to**: None.get, re.match, isinstance, action.strip, parsed.append
+### web.routes.intents.validate_yaml
+- **Output to**: router.post, None.validate_yaml, web.routes.intents._get_service
+
+### web.routes.intents.parse_intent
+- **Output to**: router.post, parser.dsl_parser.parse_dsl, web.routes.intents._intents_store, ir.to_dict, HTTPException
+
+### web.routes.intents.validate_intent
+- **Output to**: router.post, web.routes.intents._intents_store, config.get_config, set, ExecutionResult
+
+### ai_gateway.feedback_loop.FeedbackLoop._parse_suggestions
+> Parse suggestions from LLM response.
+- **Output to**: json.loads, data.get, content.strip, suggestions.append, content.split
+
+### ai_gateway.feedback_loop.FeedbackLoop._parse_action
+> Parse action string into Action object.
+- **Output to**: DSLParser, parser._parse_action
+
+### ai_gateway.feedback_loop.FeedbackLoop._process_user_feedback
+> Process natural language user feedback.
+- **Output to**: self.gateway.complete, self._parse_suggestions
+
+### cli.dispatch._dispatch_parse
+- **Output to**: None.exists, cli.cmd_load, sys.stdin.read, cli.cmd_parse, Path
+
+### cli.dispatch._dispatch_validate
+- **Output to**: None.read_text, dsl.schema.validate_yaml_document, cli.print_error, sys.exit, print
+
+### cli.shell.CLI.cmd_parse
+- **Output to**: self.print_header, parser.dsl_parser.parse_dsl, self.print_success, self.print_error
+
+### cli.main.build_parser
+- **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
 
 ### parser.dsl_parser.DSLParser.parse_file
 > Parse DSL file and return IR.
@@ -440,54 +466,17 @@ Key functions that process and transform data:
 > Parse EXECUTION section.
 - **Output to**: data.get, isinstance, self.errors.append, ExecutionMode, self.warnings.append
 
-### parser.dsl_parser.DSLParser._validate
-> Validate the parsed IR.
-- **Output to**: self.errors.append, self.errors.append, self.errors.append, self.errors.append, self.errors.append
+### parser.dsl_parser.DSLParser._validate_stack_services
+- **Output to**: self.errors.append, self.errors.append, self.errors.append
 
-### parser.dsl_parser.parse_dsl
-> Convenience function to parse DSL content.
-- **Output to**: DSLParser, parser.parse
+### parser.dsl_parser.DSLParser._validate_actions_required
+- **Output to**: self.errors.append
 
-### parser.dsl_parser.parse_dsl_file
-> Convenience function to parse DSL file.
-- **Output to**: DSLParser, parser.parse_file
+### parser.dsl_parser.DSLParser._validate_dangerous_actions
+- **Output to**: self.warnings.append, None.lower, str
 
-### interfaces.service.IterunService.validate_yaml
-- **Output to**: dsl.schema.validate_yaml_document, bool, doc.model_dump
-
-### interfaces.service.IterunService.parse
-- **Output to**: parser.dsl_parser.parse_dsl
-
-### dsl.schema.validate_yaml_document
-> Validate YAML against Pydantic schema and DSL parser.
-- **Output to**: yaml.safe_load, isinstance, IntentDSLDocument.model_validate, errors.append, parser.dsl_parser.parse_dsl
-
-### sdk.client.IterunClient.validate
-- **Output to**: dsl.schema.validate_yaml_document, self._post_json, bool, doc.model_dump
-
-### sdk.client.IterunClient.parse
-- **Output to**: parser.dsl_parser.parse_dsl, self._post_json, parser.dsl_parser.parse_dsl, data.get, ValueError
-
-### web.routes.intents.validate_yaml
-- **Output to**: router.post, None.validate_yaml, web.routes.intents._get_service
-
-### web.routes.intents.parse_intent
-- **Output to**: router.post, parser.dsl_parser.parse_dsl, web.routes.intents._intents_store, ir.to_dict, HTTPException
-
-### web.routes.intents.validate_intent
-- **Output to**: router.post, web.routes.intents._intents_store, config.get_config, set, ExecutionResult
-
-### ai_gateway.feedback_loop.FeedbackLoop._parse_suggestions
-> Parse suggestions from LLM response.
-- **Output to**: json.loads, data.get, content.strip, suggestions.append, content.split
-
-### ai_gateway.feedback_loop.FeedbackLoop._parse_action
-> Parse action string into Action object.
-- **Output to**: DSLParser, parser._parse_action
-
-### ai_gateway.feedback_loop.FeedbackLoop._process_user_feedback
-> Process natural language user feedback.
-- **Output to**: self.gateway.complete, self._parse_suggestions
+### parser.dsl_parser.DSLParser._validate_framework_compat
+- **Output to**: self.errors.append, self.errors.append
 
 ## Behavioral Patterns
 
@@ -500,46 +489,46 @@ Key functions that process and transform data:
 
 Functions exposed as public API (no underscore prefix):
 
-- `integrations.pactown_runtime.execute_pactown` - 50 calls
-- `cli.shell.CLI.cmd_execute` - 39 calls
-- `registry.discover.discover_workspace` - 38 calls
-- `generator.pipeline.run_pipeline` - 37 calls
-- `generator.contract_verify.verify_contract` - 32 calls
-- `cli.shell.CLI.interactive_mode` - 31 calls
 - `registry.discover_artifacts.discover_artifacts` - 28 calls
-- `examples._scripts.verify_expectations.verify` - 27 calls
 - `ir.models.IntentIR.from_dict` - 27 calls
 - `executor.validation.validate_endpoints` - 27 calls
-- `generator.expectations.check_expectations` - 26 calls
 - `cli.shell.CLI.cmd_plan` - 24 calls
 - `registry.discover_services.build_stack_services` - 24 calls
 - `executor.docker_ops.execute_docker` - 24 calls
 - `planner.stack_artifacts.write_stack_artifacts` - 22 calls
-- `executor.runner.Executor.execute` - 22 calls
 - `generator.intent_generator.IntentGenerator.generate` - 21 calls
-- `planner.stack_planner.plan_stack` - 21 calls
 - `cli.shell.CLI.cmd_show` - 21 calls
 - `cli.shell.CLI.cmd_ai_suggest` - 21 calls
+- `generator.contract_verify.verify_contract` - 20 calls
 - `cli.shell.CLI.cmd_iterun` - 20 calls
 - `cli.shell.CLI.cmd_iterate` - 19 calls
 - `planner.simulator.Planner.dry_run` - 18 calls
 - `cli.shell.CLI.cmd_ai_chat` - 18 calls
 - `examples._scripts.intent_to_openapi.intent_to_openapi` - 17 calls
 - `cli.main.build_parser` - 17 calls
+- `integrations.pactown_runtime.execute_pactown` - 17 calls
 - `generator.session.write_session_artifacts` - 16 calls
 - `integrations.adapters.backstage.BackstageExporter.export` - 16 calls
-- `integrations.adapters.docker.DockerAdapter.enrich` - 16 calls
-- `config.load_dotenv` - 15 calls
+- `planner.stack_planner.plan_stack` - 15 calls
+- `executor.runner.Executor.execute` - 15 calls
 - `ir.models.StackService.from_dict` - 14 calls
 - `registry.discover_services.build_single_service` - 14 calls
+- `registry.discover_context.load_workspace_context` - 14 calls
 - `examples._scripts.annotate_intract.annotate_express` - 13 calls
-- `integrations.bridges.pipeline.refresh_registry` - 13 calls
 - `cli.dispatch.dispatch_command` - 13 calls
-- `parser.dsl_parser.DSLParser.parse` - 12 calls
-- `integrations.markpact_pack.pack_workspace` - 12 calls
+- `registry.discover.discover_workspace` - 13 calls
+- `integrations.bridges.pipeline.refresh_registry` - 13 calls
 - `ai_gateway.gateway.AIGateway.suggest_improvements` - 12 calls
 - `cli.plan_artifacts.write_plan_artifacts` - 12 calls
 - `cli.shell.CLI.cmd_ai_health` - 12 calls
+- `parser.dsl_parser.DSLParser.parse` - 12 calls
+- `generator.intent_generator.extract_yaml_from_llm` - 11 calls
+- `generator.intract_manifest.parse_api_actions` - 11 calls
+- `generator.intract_manifest.build_intract_manifest` - 11 calls
+- `examples._scripts.annotate_intract.annotate_python` - 11 calls
+- `registry.catalog.discover_glob` - 11 calls
+- `executor.docker_ops.execute_compose_stack` - 11 calls
+- `generator.testql_scenario.build_testql_scenario` - 10 calls
 
 ## System Interactions
 
@@ -547,36 +536,36 @@ How components interact:
 
 ```mermaid
 graph TD
-    cmd_execute --> print_header
-    cmd_execute --> execute_intent
-    cmd_execute --> print
-    cmd_execute --> print_error
-    run_pipeline --> PipelineResult
-    run_pipeline --> IntentGenerator
-    run_pipeline --> range
-    run_pipeline --> _finalize
-    run_pipeline --> Path
     _parse_stack --> items
     _parse_stack --> Stack
     _parse_stack --> isinstance
     _parse_stack --> append
-    interactive_mode --> print_header
-    interactive_mode --> print
-    interactive_mode --> strip
     from_dict --> cls
     from_dict --> get
     cmd_plan --> print_header
     cmd_plan --> plan_intent
     cmd_plan --> print
     cmd_plan --> enumerate
-    execute --> ExecutionResult
-    execute --> now
-    execute --> add_log
-    execute --> total_seconds
     generate --> GenerateResult
     generate --> range
     generate --> GenerateAttempt
     generate --> _build_user_prompt
+    generate --> complete
+    cmd_show --> print_error
+    cmd_show --> print
+    cmd_show --> to_json
+    cmd_show --> print_header
+    cmd_ai_suggest --> print_header
+    cmd_ai_suggest --> print_info
+    cmd_ai_suggest --> print_error
+    cmd_ai_suggest --> create_feedback_loop
+    _parse_action --> isinstance
+    _parse_action --> match
+    _parse_action --> group
+    _parse_action --> Action
+    cmd_iterun --> print_header
+    cmd_iterun --> print
+    cmd_iterun --> len
 ```
 
 ## Reverse Engineering Guidelines

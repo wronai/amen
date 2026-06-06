@@ -21,33 +21,44 @@ class DockerAdapter(FilesystemAdapter):
         running = _running_iterun_containers()
         if not running:
             return manifest
-
-        services = manifest.spec.get("services") or []
-        any_running = False
-        for svc in services:
-            name = svc.get("name", "")
-            intent = manifest.metadata.name
-            matches = [
-                c
-                for c in running
-                if c.get("Labels", {}).get("dev.iterun.service") == name
-                or c.get("Labels", {}).get("dev.iterun.intent") == intent
-                or name in (c.get("Names") or [""])[0]
-            ]
-            if matches:
-                any_running = True
-                c = matches[0]
-                svc["container_id"] = c.get("ID") or c.get("Id")
-                svc["image"] = c.get("Image")
-                labels = c.get("Labels") or {}
-                svc.setdefault("labels", {}).update(
-                    {k: v for k, v in labels.items() if k.startswith("dev.iterun.")}
-                )
-        manifest.spec["services"] = services
-
+        any_running = self._merge_container_state(manifest, running)
         if any_running and manifest.status.phase == LifecyclePhase.PLANNED:
             manifest.status.phase = LifecyclePhase.RUNNING
         return manifest
+
+    def _merge_container_state(
+        self, manifest: RegistryManifest, running: list[dict]
+    ) -> bool:
+        services = manifest.spec.get("services") or []
+        any_running = False
+        intent = manifest.metadata.name
+        for svc in services:
+            matches = _match_service_containers(svc.get("name", ""), intent, running)
+            if not matches:
+                continue
+            any_running = True
+            _apply_container_to_service(svc, matches[0])
+        manifest.spec["services"] = services
+        return any_running
+
+
+def _match_service_containers(name: str, intent: str, running: list[dict]) -> list[dict]:
+    return [
+        c
+        for c in running
+        if c.get("Labels", {}).get("dev.iterun.service") == name
+        or c.get("Labels", {}).get("dev.iterun.intent") == intent
+        or name in (c.get("Names") or [""])[0]
+    ]
+
+
+def _apply_container_to_service(svc: dict, container: dict) -> None:
+    svc["container_id"] = container.get("ID") or container.get("Id")
+    svc["image"] = container.get("Image")
+    labels = container.get("Labels") or {}
+    svc.setdefault("labels", {}).update(
+        {k: v for k, v in labels.items() if k.startswith("dev.iterun.")}
+    )
 
 
 def _running_iterun_containers() -> list[dict]:

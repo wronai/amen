@@ -282,40 +282,47 @@ class DSLParser:
             self.warnings.append(f"Unknown execution mode '{mode_str}', defaulting to dry-run")
             return ExecutionMode.DRY_RUN
     
-    def _validate(self, ir: IntentIR):
-        """Validate the parsed IR."""
-        if ir.stack and ir.stack.services:
-            svc_names = {s.name for s in ir.stack.services}
-            for svc in ir.stack.services:
-                for dep in svc.depends_on:
-                    if dep not in svc_names:
-                        self.errors.append(
-                            f"STACK.services.{svc.name}: unknown depends_on {dep!r}"
-                        )
-                if svc.framework == "fastapi" and svc.language not in (None, "python"):
-                    self.errors.append(f"STACK.services.{svc.name}: FastAPI requires python")
-                if svc.framework == "express" and svc.language not in (None, "node"):
-                    self.errors.append(f"STACK.services.{svc.name}: Express requires node")
-            if not ir.implementation.actions:
-                return
+    def _validate_stack_services(self, ir: IntentIR) -> bool:
+        if not ir.stack or not ir.stack.services:
+            return False
+        svc_names = {s.name for s in ir.stack.services}
+        for svc in ir.stack.services:
+            for dep in svc.depends_on:
+                if dep not in svc_names:
+                    self.errors.append(
+                        f"STACK.services.{svc.name}: unknown depends_on {dep!r}"
+                    )
+            if svc.framework == "fastapi" and svc.language not in (None, "python"):
+                self.errors.append(f"STACK.services.{svc.name}: FastAPI requires python")
+            if svc.framework == "express" and svc.language not in (None, "node"):
+                self.errors.append(f"STACK.services.{svc.name}: Express requires node")
+        return not ir.implementation.actions
 
+    def _validate_actions_required(self, ir: IntentIR) -> None:
         if not ir.stack and not ir.implementation.actions:
             self.errors.append("IMPLEMENTATION.actions or STACK.services is required")
 
-        # Check for dangerous actions
+    def _validate_dangerous_actions(self, ir: IntentIR) -> None:
         for action in ir.implementation.actions:
-            if action.type == ActionType.SHELL_EXEC:
-                if "root" in str(action.params).lower():
-                    self.warnings.append(
-                        f"Action '{action.target}' may run as root - review carefully"
-                    )
-        
-        # Check framework compatibility
-        if ir.implementation.framework == "fastapi" and ir.implementation.language != "python":
+            if action.type == ActionType.SHELL_EXEC and "root" in str(action.params).lower():
+                self.warnings.append(
+                    f"Action '{action.target}' may run as root - review carefully"
+                )
+
+    def _validate_framework_compat(self, ir: IntentIR) -> None:
+        impl = ir.implementation
+        if impl.framework == "fastapi" and impl.language != "python":
             self.errors.append("FastAPI requires Python language")
-        
-        if ir.implementation.framework == "express" and ir.implementation.language != "node":
+        if impl.framework == "express" and impl.language != "node":
             self.errors.append("Express requires Node.js language")
+
+    def _validate(self, ir: IntentIR):
+        """Validate the parsed IR."""
+        if self._validate_stack_services(ir):
+            return
+        self._validate_actions_required(ir)
+        self._validate_dangerous_actions(ir)
+        self._validate_framework_compat(ir)
 
 
 def parse_dsl(content: str) -> IntentIR:

@@ -49,38 +49,25 @@ flowchart TD
     cli__shell -->|3| config
     executor__runner -->|3| executor__validation
     generator__intent_generator -->|2| dsl__schema
-    interfaces__service -->|2| dsl__schema
-    interfaces__service -->|2| parser__dsl_parser
-    interfaces__service -->|2| planner__simulator
-    sdk__client -->|2| dsl__schema
-    sdk__client -->|2| parser__dsl_parser
     generator__pipeline -->|2| executor__runner
     web__routes -->|2| ai_gateway__feedback_loop
     web__routes -->|2| parser__dsl_parser
     web__routes -->|2| executor__runner
     web__routes -->|2| config
-    cli__dispatch -->|2| dsl__schema
-    cli__dispatch -->|2| cli__plan_artifacts
     cli__shell -->|2| executor__runner
     cli__shell -->|2| ai_gateway__feedback_loop
     registry__discover -->|2| registry__discover_services
+    interfaces__service -->|2| dsl__schema
+    interfaces__service -->|2| parser__dsl_parser
+    interfaces__service -->|2| planner__simulator
+    sdk__client -->|2| dsl__schema
+    sdk__client -->|2| parser__dsl_parser
+    cli__dispatch -->|2| dsl__schema
+    cli__dispatch -->|2| cli__plan_artifacts
     generator__expectations -->|1| generator__intract_manifest
     generator__intent_generator -->|1| ai_gateway__gateway
     generator__intent_generator -->|1| parser__dsl_parser
     generator__testql_scenario -->|1| generator__intract_manifest
-    generator__contract_verify -->|1| generator__testql_scenario
-    generator__contract_verify -->|1| generator__expectations
-    examples___scripts -->|1| generator__testql_scenario
-    examples___scripts -->|1| generator__intract_manifest
-    planner__stack_planner -->|1| registry__labels
-    planner__simulator -->|1| planner__stack_planner
-    registry__catalog -->|1| registry__discover
-    interfaces__service -->|1| planner__stack_artifacts
-    interfaces__service -->|1| executor__runner
-    interfaces__service -->|1| integrations__bridges
-    interfaces__service -->|1| registry__catalog
-    integrations__adapters -->|1| registry__discover
-    dsl__schema -->|1| parser__dsl_parser
     generator__pipeline -->|1| generator__intract_manifest
     generator__pipeline -->|1| generator__testql_scenario
     generator__pipeline -->|1| planner__stack_artifacts
@@ -90,20 +77,26 @@ flowchart TD
     generator__pipeline -->|1| planner__simulator
     generator__pipeline -->|1| generator__contract_verify
     generator__pipeline -->|1| integrations__runtime_stop
+    generator__contract_verify -->|1| generator__testql_scenario
+    generator__contract_verify -->|1| generator__expectations
+    examples___scripts -->|1| generator__testql_scenario
+    examples___scripts -->|1| generator__intract_manifest
+    planner__stack_planner -->|1| registry__labels
+    planner__simulator -->|1| planner__stack_planner
     web__routes -->|1| planner__simulator
     web__routes -->|1| executor__validation
     ai_gateway__model_catalog -->|1| config
     ai_gateway__feedback_loop -->|1| ai_gateway__gateway
     cli__plan_artifacts -->|1| planner__stack_artifacts
-    cli__dispatch -->|1| interfaces__service
-    cli__dispatch -->|1| generator__intract_manifest
-    cli__dispatch -->|1| generator__testql_scenario
-    cli__dispatch -->|1| integrations__bridges
-    cli__dispatch -->|1| registry__catalog
     cli__shell -->|1| planner__simulator
     cli__main -->|1| cli__dispatch
     cli__main -->|1| config
+    registry__catalog -->|1| registry__discover
     registry__discover -->|1| registry__discover_artifacts
+    interfaces__service -->|1| planner__stack_artifacts
+    interfaces__service -->|1| executor__runner
+    interfaces__service -->|1| integrations__bridges
+    interfaces__service -->|1| registry__catalog
     executor__runner -->|1| config
     executor__runner -->|1| integrations__pactown_runtime
     executor__docker_ops -->|1| config
@@ -114,3 +107,10 @@ flowchart TD
     integrations__runtime_stop -->|1| executor__docker_ops
     integrations__runtime_stop -->|1| integrations__pactown_runtime
     integrations__runtime_stop -->|1| config
+    integrations__adapters -->|1| registry__discover
+    dsl__schema -->|1| parser__dsl_parser
+    cli__dispatch -->|1| generator__pipeline
+    cli__dispatch -->|1| generator__intract_manifest
+    cli__dispatch -->|1| generator__testql_scenario
+    cli__dispatch -->|1| integrations__bridges
+    cli__dispatch -->|1| registry__catalog

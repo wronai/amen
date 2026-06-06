@@ -42,6 +42,56 @@ class Executor:
         self.workspace = Path(workspace) if workspace else Path(tempfile.mkdtemp(prefix="intent-"))
         self.workspace.mkdir(parents=True, exist_ok=True)
 
+    def _check_iterun_boundary(
+        self, ir: IntentIR, result: ExecutionResult, skip_check: bool
+    ) -> bool:
+        if skip_check:
+            if not ir.iterun_approved:
+                ir.approve_iterun()
+                result.add_log("Auto-approved intent (SKIP_ITERUN_CONFIRMATION=true)")
+            return True
+        if not ir.iterun_approved:
+            result.error = "Intent not approved. Call approve_iterun() first."
+            result.add_log("ERROR: Execution blocked - ITERUN boundary not passed")
+            return False
+        if ir.execution_mode != ExecutionMode.TRANSACTIONAL:
+            result.error = "Intent is in dry-run mode. Change to transactional mode."
+            result.add_log("ERROR: Execution blocked - still in dry-run mode")
+            return False
+        return True
+
+    def _run_runtime(self, ir: IntentIR, result: ExecutionResult) -> None:
+        self._write_artifacts(ir, result)
+        runtime = ir.environment.runtime
+        if runtime == RuntimeType.DOCKER:
+            if ir.stack and (self.workspace / "docker-compose.yaml").is_file():
+                execute_compose_stack(
+                    ir,
+                    self.workspace,
+                    result,
+                    container_prefix=self.config.container_prefix,
+                )
+            else:
+                execute_docker(
+                    ir,
+                    self.workspace,
+                    result,
+                    container_prefix=self.config.container_prefix,
+                    container_port=self.config.container_port,
+                )
+        elif runtime == RuntimeType.LOCAL:
+            self._execute_local(ir, result)
+        else:
+            result.add_log(f"Runtime {runtime.value} not yet supported")
+            result.error = f"Unsupported runtime: {runtime.value}"
+
+    def _finalize_success(self, result: ExecutionResult) -> None:
+        if result.validation and not result.validation.success:
+            result.add_log("Execution deployed but endpoint validation failed")
+        else:
+            result.success = True
+            result.add_log("Execution completed successfully")
+
     def execute(
         self,
         ir: IntentIR,
@@ -52,26 +102,14 @@ class Executor:
         """Execute an approved intent with optional validation and auto-fix."""
         result = ExecutionResult()
         start_time = datetime.now()
-
         skip_check = (
             skip_iterun_check
             if skip_iterun_check is not None
             else self.config.skip_iterun_confirmation
         )
-
-        if not skip_check:
-            if not ir.iterun_approved:
-                result.error = "Intent not approved. Call approve_iterun() first."
-                result.add_log("ERROR: Execution blocked - ITERUN boundary not passed")
-                return result
-
-            if ir.execution_mode != ExecutionMode.TRANSACTIONAL:
-                result.error = "Intent is in dry-run mode. Change to transactional mode."
-                result.add_log("ERROR: Execution blocked - still in dry-run mode")
-                return result
-        elif not ir.iterun_approved:
-            ir.approve_iterun()
-            result.add_log("Auto-approved intent (SKIP_ITERUN_CONFIRMATION=true)")
+        if not self._check_iterun_boundary(ir, result, skip_check):
+            result.execution_time = (datetime.now() - start_time).total_seconds()
+            return result
 
         result.add_log(f"Starting execution for: {ir.intent.name}")
         result.add_log(f"Workspace: {self.workspace}")
@@ -87,40 +125,11 @@ class Executor:
             )
 
         try:
-            self._write_artifacts(ir, result)
-
-            if ir.environment.runtime == RuntimeType.DOCKER:
-                if ir.stack and (self.workspace / "docker-compose.yaml").is_file():
-                    execute_compose_stack(
-                        ir,
-                        self.workspace,
-                        result,
-                        container_prefix=self.config.container_prefix,
-                    )
-                else:
-                    execute_docker(
-                        ir,
-                        self.workspace,
-                        result,
-                        container_prefix=self.config.container_prefix,
-                        container_port=self.config.container_port,
-                    )
-            elif ir.environment.runtime == RuntimeType.LOCAL:
-                self._execute_local(ir, result)
-            else:
-                result.add_log(f"Runtime {ir.environment.runtime.value} not yet supported")
-                result.error = f"Unsupported runtime: {ir.environment.runtime.value}"
-
+            self._run_runtime(ir, result)
             if not result.error and validate and result.endpoints:
                 self._validate_and_fix(ir, result, auto_fix)
-
             if not result.error:
-                if result.validation and not result.validation.success:
-                    result.add_log("Execution deployed but endpoint validation failed")
-                else:
-                    result.success = True
-                    result.add_log("Execution completed successfully")
-
+                self._finalize_success(result)
         except Exception as e:
             result.error = str(e)
             result.add_log(f"ERROR: {e}")

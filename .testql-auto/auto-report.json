@@ -1,8 +1,8 @@
 {
   "version": "1.2.52",
   "source": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated",
-  "url": "http://localhost:8037",
-  "api_url": "http://localhost:8037",
+  "url": "http://localhost:8045",
+  "api_url": "http://localhost:8045",
   "status": "passed",
   "topology": {
     "nodes": 9,

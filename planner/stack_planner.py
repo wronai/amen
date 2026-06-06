@@ -165,6 +165,40 @@ def _build_compose(parent: IntentIR, artifacts: dict[str, dict[str, Any]]) -> st
     return yaml.dump(doc, default_flow_style=False, sort_keys=False)
 
 
+def _plan_prebuilt_service(result: DryRunResult, svc: StackService) -> dict[str, str]:
+    result.add_log(f"    ✓ pre-built image: {svc.image}")
+    return {"image": svc.image}
+
+
+def _plan_generated_service(
+    result: DryRunResult,
+    ir: IntentIR,
+    svc: StackService,
+    svc_map: dict[str, StackService],
+    planner: Planner,
+) -> dict[str, str]:
+    child_result = planner.dry_run(_service_ir(ir, svc))
+    use_proxy = svc.host_port and svc.framework == "fastapi" and len(svc_map) > 1
+    code = _gateway_proxy_code(svc, svc_map) if use_proxy else child_result.generated_code
+    dockerfile = child_result.dockerfile
+    if use_proxy and dockerfile and "httpx" not in dockerfile:
+        dockerfile = dockerfile.replace(
+            "RUN pip install --no-cache-dir ",
+            "RUN pip install --no-cache-dir httpx ",
+        )
+    if svc.language == "node" and dockerfile:
+        dockerfile = dockerfile.replace(
+            "RUN npm install",
+            "RUN npm init -y && npm install express",
+        )
+    result.add_log(f"    ✓ generated {svc.language} artifacts")
+    return {
+        "code": code,
+        "dockerfile": dockerfile,
+        "language": svc.language or "python",
+    }
+
+
 def plan_stack(ir: IntentIR) -> DryRunResult:
     """Generate per-service Dockerfiles and docker-compose.yaml."""
     result = DryRunResult()
@@ -182,38 +216,12 @@ def plan_stack(ir: IntentIR) -> DryRunResult:
 
     for svc in ir.stack.services:
         result.add_log(f"  → service: {svc.name}")
-
         if svc.image:
-            result.add_log(f"    ✓ pre-built image: {svc.image}")
-            service_artifacts[svc.name] = {"image": svc.image}
-            continue
-
-        child = _service_ir(ir, svc)
-        child_result = planner.dry_run(child)
-
-        code = child_result.generated_code
-        use_proxy = svc.host_port and svc.framework == "fastapi" and len(svc_map) > 1
-        if use_proxy:
-            code = _gateway_proxy_code(svc, svc_map)
-
-        dockerfile = child_result.dockerfile
-        if use_proxy and dockerfile and "httpx" not in dockerfile:
-            dockerfile = dockerfile.replace(
-                "RUN pip install --no-cache-dir ",
-                "RUN pip install --no-cache-dir httpx ",
+            service_artifacts[svc.name] = _plan_prebuilt_service(result, svc)
+        else:
+            service_artifacts[svc.name] = _plan_generated_service(
+                result, ir, svc, svc_map, planner
             )
-        if svc.language == "node" and dockerfile:
-            dockerfile = dockerfile.replace(
-                "RUN npm install",
-                "RUN npm init -y && npm install express",
-            )
-
-        service_artifacts[svc.name] = {
-            "code": code,
-            "dockerfile": dockerfile,
-            "language": svc.language or "python",
-        }
-        result.add_log(f"    ✓ generated {svc.language} artifacts")
 
     result.compose_yaml = _build_compose(ir, service_artifacts)
     result.service_artifacts = service_artifacts

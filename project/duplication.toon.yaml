@@ -1,24 +1,24 @@
-# redup/duplication | 6 groups | 77f 9271L | 2026-06-06
+# redup/duplication | 5 groups | 92f 9387L | 2026-06-06
 
 SUMMARY:
-  files_scanned: 77
-  total_lines:   9271
-  dup_groups:    6
-  dup_fragments: 104
-  saved_lines:   310
-  scan_ms:       2632
+  files_scanned: 92
+  total_lines:   9387
+  dup_groups:    5
+  dup_fragments: 99
+  saved_lines:   302
+  scan_ms:       2926
 
 HOTSPOTS[7] (files with most duplication):
-  examples/14-resilience-inventory/generated/app.py  dup=51L  groups=1  frags=17  (0.6%)
-  examples/15-resilience-nested-paths/generated/app.py  dup=39L  groups=1  frags=13  (0.4%)
+  examples/14-resilience-inventory/generated/app.py  dup=51L  groups=1  frags=17  (0.5%)
+  examples/15-resilience-nested-paths/generated/app.py  dup=36L  groups=1  frags=12  (0.4%)
   examples/01-user-api/generated/app.py  dup=21L  groups=1  frags=7  (0.2%)
   examples/08-llm-generate/generated/app.py  dup=21L  groups=1  frags=7  (0.2%)
   examples/10-e2e-user-crud-verify/generated/app.py  dup=21L  groups=1  frags=7  (0.2%)
-  examples/13-resilience-vague/generated/app.py  dup=21L  groups=1  frags=7  (0.2%)
   examples/16-resilience-framework-trap/generated/app.py  dup=21L  groups=1  frags=7  (0.2%)
+  generated/app.py  dup=21L  groups=1  frags=7  (0.2%)
 
-DUPLICATES[6] (ranked by impact):
-  [032a6ddde45774c9] !! STRU  ping  L=3 N=91 saved=270 sim=1.00
+DUPLICATES[5] (ranked by impact):
+  [032a6ddde45774c9] !! STRU  ping  L=3 N=88 saved=261 sim=1.00
       examples/01-user-api/generated/app.py:9-11  (ping)
       examples/01-user-api/generated/app.py:14-16  (health)
       examples/01-user-api/generated/app.py:19-21  (users)
@@ -60,8 +60,6 @@ DUPLICATES[6] (ranked by impact):
       examples/13-resilience-vague/generated/app.py:22-24  (users)
       examples/13-resilience-vague/generated/app.py:28-30  (users_post)
       examples/13-resilience-vague/generated/app.py:34-36  (users_by_id)
-      examples/13-resilience-vague/generated/app.py:40-42  (users_by_id_put)
-      examples/13-resilience-vague/generated/app.py:46-48  (users_by_id_delete)
       examples/14-resilience-inventory/generated/app.py:10-12  (ping)
       examples/14-resilience-inventory/generated/app.py:16-18  (health)
       examples/14-resilience-inventory/generated/app.py:22-24  (products)
@@ -84,14 +82,13 @@ DUPLICATES[6] (ranked by impact):
       examples/15-resilience-nested-paths/generated/app.py:22-24  (orders)
       examples/15-resilience-nested-paths/generated/app.py:28-30  (orders_post)
       examples/15-resilience-nested-paths/generated/app.py:34-36  (orders_by_order_id)
-      examples/15-resilience-nested-paths/generated/app.py:40-42  (orders_by_order_id_status)
-      examples/15-resilience-nested-paths/generated/app.py:46-48  (orders_by_order_id_delete)
+      examples/15-resilience-nested-paths/generated/app.py:40-42  (orders_by_order_id_put)
+      examples/15-resilience-nested-paths/generated/app.py:46-48  (orders_by_order_id_status)
       examples/15-resilience-nested-paths/generated/app.py:52-54  (customers)
       examples/15-resilience-nested-paths/generated/app.py:58-60  (customers_post)
       examples/15-resilience-nested-paths/generated/app.py:64-66  (customers_by_customer_id)
       examples/15-resilience-nested-paths/generated/app.py:70-72  (customers_by_customer_id_put)
-      examples/15-resilience-nested-paths/generated/app.py:76-78  (customers_by_customer_id_delete)
-      examples/15-resilience-nested-paths/generated/app.py:82-84  (customers_by_customer_id_orders)
+      examples/15-resilience-nested-paths/generated/app.py:76-78  (customers_by_customer_id_orders)
       examples/16-resilience-framework-trap/generated/app.py:10-12  (live)
       examples/16-resilience-framework-trap/generated/app.py:16-18  (ready)
       examples/16-resilience-framework-trap/generated/app.py:22-24  (api_v1_items)
@@ -115,6 +112,9 @@ DUPLICATES[6] (ranked by impact):
       examples/17-stack-shop-gateway/generated/services/api-gateway/app.py:28-35  (products)
       examples/18-stack-blog/generated/services/blog-api/app.py:18-25  (posts)
       examples/19-stack-api-cache/generated/services/api-service/app.py:18-25  (cache_status)
+  [33fc900014c45f4a]   EXAC  _get_service  L=7 N=2 saved=7 sim=1.00
+      web/routes/intents.py:35-41  (_get_service)
+      web/routes/registry.py:14-20  (_get_service)
   [ad19acd787fb5e4b]   EXAC  _slug  L=3 N=3 saved=6 sim=1.00
       examples/_scripts/annotate_intract.py:13-15  (_slug)
       examples/_scripts/intent_to_openapi.py:13-15  (_slug)
@@ -122,42 +122,35 @@ DUPLICATES[6] (ranked by impact):
   [d1ab1a804f1b435b]   STRU  parse_dsl  L=4 N=2 saved=4 sim=1.00
       parser/dsl_parser.py:321-324  (parse_dsl)
       parser/dsl_parser.py:327-330  (parse_dsl_file)
-  [f041dec9367328ca]   EXAC  add_log  L=3 N=2 saved=3 sim=1.00
-      executor/runner.py:116-118  (add_log)
-      planner/simulator.py:53-55  (add_log)
-  [02262db14f1137ad]   STRU  list_interfaces  L=3 N=2 saved=3 sim=1.00
-      web/app.py:111-113  (list_interfaces)
-      web/app.py:166-168  (get_schema)
 
-REFACTOR[6] (ranked by priority):
+REFACTOR[5] (ranked by priority):
   [1] ○ extract_function   → utils/ping.py
-      WHY: 91 occurrences of 3-line block across 16 files — saves 270 lines
+      WHY: 88 occurrences of 3-line block across 16 files — saves 261 lines
       FILES: examples/01-user-api/generated/app.py, examples/02-ping-smoke/generated/app.py, examples/05-ir-show/generated/app.py, examples/06-iterate-workflow/generated/app.py, examples/07-execution-smoke/generated/app.py +11 more
   [2] ○ extract_function   → examples/utils/users.py
       WHY: 4 occurrences of 8-line block across 3 files — saves 24 lines
       FILES: examples/17-stack-shop-gateway/generated/services/api-gateway/app.py, examples/18-stack-blog/generated/services/blog-api/app.py, examples/19-stack-api-cache/generated/services/api-service/app.py
-  [3] ○ extract_function   → utils/_slug.py
+  [3] ○ extract_function   → web/routes/utils/_get_service.py
+      WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
+      FILES: web/routes/intents.py, web/routes/registry.py
+  [4] ○ extract_function   → utils/_slug.py
       WHY: 3 occurrences of 3-line block across 3 files — saves 6 lines
       FILES: examples/_scripts/annotate_intract.py, examples/_scripts/intent_to_openapi.py, generator/intract_manifest.py
-  [4] ○ extract_function   → parser/utils/parse_dsl.py
+  [5] ○ extract_function   → parser/utils/parse_dsl.py
       WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
       FILES: parser/dsl_parser.py
-  [5] ○ extract_function   → utils/add_log.py
-      WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
-      FILES: executor/runner.py, planner/simulator.py
-  [6] ○ extract_function   → web/utils/list_interfaces.py
-      WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
-      FILES: web/app.py
 
-QUICK_WINS[3] (low risk, high savings — do first):
-  [1] extract_function   saved=270L  → utils/ping.py
+QUICK_WINS[4] (low risk, high savings — do first):
+  [1] extract_function   saved=261L  → utils/ping.py
       FILES: app.py, app.py, app.py +13
   [2] extract_function   saved=24L  → examples/utils/users.py
       FILES: app.py, app.py, app.py
-  [3] extract_function   saved=6L  → utils/_slug.py
+  [3] extract_function   saved=7L  → web/routes/utils/_get_service.py
+      FILES: intents.py, registry.py
+  [4] extract_function   saved=6L  → utils/_slug.py
       FILES: annotate_intract.py, intent_to_openapi.py, intract_manifest.py
 
-DEPENDENCY_RISK[3] (duplicates spanning multiple packages):
+DEPENDENCY_RISK[2] (duplicates spanning multiple packages):
   ping  packages=2  files=16
       examples/01-user-api/generated/app.py
       examples/02-ping-smoke/generated/app.py
@@ -168,18 +161,14 @@ DEPENDENCY_RISK[3] (duplicates spanning multiple packages):
       examples/_scripts/annotate_intract.py
       examples/_scripts/intent_to_openapi.py
       generator/intract_manifest.py
-  add_log  packages=2  files=2
-      executor/runner.py
-      planner/simulator.py
 
-EFFORT_ESTIMATE (total ≈ 19.6h):
-  hard   ping                                saved=270L  ~1080min
+EFFORT_ESTIMATE (total ≈ 19.0h):
+  hard   ping                                saved=261L  ~1044min
   medium users                               saved=24L  ~48min
+  easy   _get_service                        saved=7L  ~14min
   easy   _slug                               saved=6L  ~24min
   easy   parse_dsl                           saved=4L  ~8min
-  easy   add_log                             saved=3L  ~12min
-  easy   list_interfaces                     saved=3L  ~6min
 
 METRICS-TARGET:
-  dup_groups:  6 → 0
-  saved_lines: 310 lines recoverable
+  dup_groups:  5 → 0
+  saved_lines: 302 lines recoverable

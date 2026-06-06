@@ -30,13 +30,8 @@ def _http_probe(base_url: str, method: str, path: str) -> tuple[bool, str, int]:
         return False, str(exc), 0
 
 
-def check_expectations(
-    intent_data: dict[str, Any],
-    expectations: dict[str, Any],
-    base_url: str | None = None,
-) -> list[str]:
+def _check_metadata(intent_data: dict[str, Any], expectations: dict[str, Any]) -> list[str]:
     errors: list[str] = []
-
     expected_name = expectations.get("name")
     actual_name = (intent_data.get("INTENT") or {}).get("name")
     if expected_name and actual_name != expected_name:
@@ -46,39 +41,57 @@ def check_expectations(
     actual_fw = (intent_data.get("IMPLEMENTATION") or {}).get("framework")
     if expected_fw and actual_fw != expected_fw:
         errors.append(f"expectations framework: want {expected_fw!r}, got {actual_fw!r}")
+    return errors
 
+
+def _check_declared_endpoints(intent_data: dict[str, Any], expectations: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
     parsed = {(m, p) for m, p in parse_api_actions(intent_data)}
     for endpoint in expectations.get("endpoints", []) or []:
         key = (endpoint["method"].upper(), endpoint["path"])
         if key not in parsed:
             errors.append(f"expectations missing in iterun.yaml: {key[0]} {key[1]}")
+    return errors
 
+
+def _check_endpoint_response(endpoint: dict[str, Any], data: dict[str, Any], path: str) -> list[str]:
+    errors: list[str] = []
+    method = endpoint["method"].upper()
+    for field in endpoint.get("json_fields", []) or []:
+        if field not in data:
+            errors.append(f"expectations JSON field missing: {field} on {path}")
+    for needle in endpoint.get("body_contains", []) or []:
+        if needle not in json.dumps(data):
+            errors.append(f"expectations response missing {needle!r} on {path}")
+    return errors
+
+
+def _check_live_endpoint(base_url: str, endpoint: dict[str, Any]) -> list[str]:
+    method = endpoint["method"].upper()
+    path = _probe_path(endpoint["path"])
+    expected_status = int(endpoint.get("status", 200))
+    ok, detail, status = _http_probe(base_url, method, path)
+    if not ok or status != expected_status:
+        return [
+            f"expectations HTTP {method} {path}: want {expected_status}, got {status} ({detail})"
+        ]
+    try:
+        data = json.loads(detail)
+    except json.JSONDecodeError:
+        return [f"expectations JSON parse failed on {path}"]
+    return _check_endpoint_response(endpoint, data, path)
+
+
+def check_expectations(
+    intent_data: dict[str, Any],
+    expectations: dict[str, Any],
+    base_url: str | None = None,
+) -> list[str]:
+    errors = _check_metadata(intent_data, expectations)
+    errors.extend(_check_declared_endpoints(intent_data, expectations))
     if base_url:
         for endpoint in expectations.get("endpoints", []) or []:
-            method = endpoint["method"].upper()
-            path = _probe_path(endpoint["path"])
-            expected_status = int(endpoint.get("status", 200))
-            ok, detail, status = _http_probe(base_url, method, path)
-            if not ok or status != expected_status:
-                errors.append(
-                    f"expectations HTTP {method} {path}: want {expected_status}, got {status} ({detail})"
-                )
-                continue
-            try:
-                data = json.loads(detail)
-            except json.JSONDecodeError:
-                errors.append(f"expectations JSON parse failed on {path}")
-                continue
-
-            for field in endpoint.get("json_fields", []) or []:
-                if field not in data:
-                    errors.append(f"expectations JSON field missing: {field} on {path}")
-
-            for needle in endpoint.get("body_contains", []) or []:
-                blob = json.dumps(data)
-                if needle not in blob:
-                    errors.append(f"expectations response missing {needle!r} on {path}")
-
+            errors.extend(_check_live_endpoint(base_url, endpoint))
     return errors
 
 

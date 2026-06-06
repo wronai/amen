@@ -5,7 +5,6 @@ End-to-end pipeline: prompt → LLM YAML → intract/testql contracts → plan �
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -15,39 +14,12 @@ from executor.runner import execute_intent
 from integrations.runtime_stop import stop_runtime_for_intent
 from generator.contract_verify import verify_contract
 from generator.intract_manifest import write_intract_manifest
-from generator.intent_generator import GenerateResult, IntentGenerator
+from generator.intent_generator import IntentGenerator
+from generator.results import PipelineResult
 from generator.session import write_session_artifacts
 from generator.testql_scenario import write_testql_scenario
 from ir.models import IntentIR
 from planner.simulator import plan_intent
-
-
-@dataclass
-class PipelineResult:
-    success: bool
-    prompt: str
-    generate: GenerateResult | None = None
-    plan: dict[str, Any] | None = None
-    execution: dict[str, Any] | None = None
-    verification: dict[str, Any] | None = None
-    verify_iterations: int = 0
-    yaml_path: str | None = None
-    workspace: str | None = None
-    error: str | None = None
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "success": self.success,
-            "prompt": self.prompt,
-            "generate": self.generate.to_dict() if self.generate else None,
-            "plan": self.plan,
-            "execution": self.execution,
-            "verification": self.verification,
-            "verify_iterations": self.verify_iterations,
-            "yaml_path": self.yaml_path,
-            "workspace": self.workspace,
-            "error": self.error,
-        }
 
 
 def _write_plan_artifacts(
@@ -137,13 +109,206 @@ def _finalize(
         logs = _container_logs(workspace, container_id)
         write_session_artifacts(workspace, out, container_logs=logs)
         out.workspace = str(workspace)
-        try:
-            from integrations.bridges.pipeline import refresh_registry_from_pipeline
-
-            refresh_registry_from_pipeline(workspace, out)
-        except Exception:
-            pass
     return out
+
+
+def _write_verify_round_log(workspace: Path, rounds: list[dict[str, Any]]) -> None:
+    (workspace / "verify.rounds.json").write_text(
+        json.dumps(rounds, indent=2), encoding="utf-8"
+    )
+
+
+def _generate_and_plan(
+    out: PipelineResult,
+    *,
+    prompt: str,
+    workspace: Path | None,
+    package_name: str,
+    generator: IntentGenerator,
+    contract_feedback: list[str],
+) -> tuple[IntentIR, Path | None] | None:
+    effective_prompt = (
+        _build_repair_prompt(prompt, contract_feedback, workspace)
+        if contract_feedback
+        else prompt
+    )
+    gen_result = generator.generate(effective_prompt)
+    out.generate = gen_result
+    if not gen_result.success or not gen_result.yaml_content or not gen_result.ir:
+        out.error = gen_result.error or "Generation failed"
+        return None
+
+    ir = gen_result.ir
+    yaml_path: Path | None = None
+    if workspace:
+        yaml_path = workspace / package_name
+        yaml_path.write_text(gen_result.yaml_content, encoding="utf-8")
+        out.yaml_path = str(yaml_path)
+
+    plan_result = plan_intent(ir)
+    out.plan = plan_result.to_dict()
+    if workspace and yaml_path:
+        _write_plan_artifacts(workspace, ir, plan_result, prompt=prompt, yaml_path=yaml_path)
+    return ir, yaml_path
+
+
+def _finish_without_verify(
+    out: PipelineResult,
+    exec_result,
+    workspace: Path | None,
+    container_id: str | None,
+) -> PipelineResult:
+    validation = exec_result.validation
+    if validation and not validation.success:
+        out.success = False
+        out.error = "; ".join(validation.errors[:5]) or "Endpoint validation failed"
+    else:
+        out.success = exec_result.success
+        if not exec_result.success:
+            out.error = exec_result.error
+    return _finalize(out, workspace, container_id=container_id)
+
+
+def _handle_verify_round(
+    out: PipelineResult,
+    *,
+    prompt: str,
+    workspace: Path | None,
+    yaml_path: Path | None,
+    exec_result,
+    verify_round: int,
+    verify_rounds: int,
+    verify_rounds_log: list[dict[str, Any]],
+    contract_feedback: list[str],
+    container_id: str | None,
+) -> PipelineResult | None:
+    if not workspace or not yaml_path:
+        out.error = "verify requires output_dir"
+        return _finalize(out, workspace, container_id=container_id)
+
+    vr = verify_contract(
+        workspace,
+        yaml_path,
+        prompt=prompt,
+        execution_endpoints=exec_result.endpoints,
+    )
+    out.verification = vr.to_dict()
+    verify_rounds_log.append({
+        "round": verify_round,
+        "phase": "verify",
+        "success": vr.success,
+        "errors": vr.errors,
+        "service_url": vr.service_url,
+        "testql_passed": vr.testql_passed,
+    })
+    _write_verify_round_log(workspace, verify_rounds_log)
+
+    if vr.success:
+        out.success = True
+        return _finalize(out, workspace, container_id=container_id)
+
+    contract_feedback.extend(vr.errors)
+    if verify_round >= verify_rounds:
+        out.error = "; ".join(vr.errors[:5]) or "Contract verification failed"
+        return _finalize(out, workspace, container_id=container_id)
+    return None
+
+
+def _handle_execute_error(
+    out: PipelineResult,
+    *,
+    workspace: Path | None,
+    exec_result,
+    verify_round: int,
+    verify_rounds: int,
+    verify_rounds_log: list[dict[str, Any]],
+    contract_feedback: list[str],
+    container_id: str | None,
+) -> PipelineResult | None:
+    contract_feedback.append(f"Execute error: {exec_result.error}")
+    verify_rounds_log.append({
+        "round": verify_round,
+        "phase": "execute",
+        "success": False,
+        "errors": [exec_result.error],
+    })
+    if workspace:
+        _write_verify_round_log(workspace, verify_rounds_log)
+    if verify_round >= verify_rounds:
+        out.error = exec_result.error
+        return _finalize(out, workspace, container_id=container_id)
+    return None
+
+
+def _run_pipeline_round(
+    out: PipelineResult,
+    *,
+    prompt: str,
+    workspace: Path | None,
+    package_name: str,
+    generator: IntentGenerator,
+    contract_feedback: list[str],
+    verify_rounds_log: list[dict[str, Any]],
+    verify_round: int,
+    verify_rounds: int,
+    execute: bool,
+    verify: bool,
+) -> PipelineResult | None:
+    planned = _generate_and_plan(
+        out,
+        prompt=prompt,
+        workspace=workspace,
+        package_name=package_name,
+        generator=generator,
+        contract_feedback=contract_feedback,
+    )
+    if planned is None:
+        return _finalize(out, workspace)
+
+    ir, yaml_path = planned
+    if not execute:
+        out.success = True
+        return _finalize(out, workspace)
+
+    if verify_round > 1:
+        stop_runtime_for_intent(ir.intent.name, workspace)
+
+    ir.approve_iterun()
+    exec_result = execute_intent(
+        ir,
+        str(workspace) if workspace else None,
+        skip_iterun_check=True,
+    )
+    out.execution = exec_result.to_dict()
+    container_id = exec_result.container_id
+
+    if exec_result.error:
+        return _handle_execute_error(
+            out,
+            workspace=workspace,
+            exec_result=exec_result,
+            verify_round=verify_round,
+            verify_rounds=verify_rounds,
+            verify_rounds_log=verify_rounds_log,
+            contract_feedback=contract_feedback,
+            container_id=container_id,
+        )
+
+    if not verify:
+        return _finish_without_verify(out, exec_result, workspace, container_id)
+
+    return _handle_verify_round(
+        out,
+        prompt=prompt,
+        workspace=workspace,
+        yaml_path=yaml_path,
+        exec_result=exec_result,
+        verify_round=verify_round,
+        verify_rounds=verify_rounds,
+        verify_rounds_log=verify_rounds_log,
+        contract_feedback=contract_feedback,
+        container_id=container_id,
+    )
 
 
 def run_pipeline(
@@ -171,108 +336,23 @@ def run_pipeline(
 
     for verify_round in range(1, verify_rounds + 1):
         out.verify_iterations = verify_round
-        effective_prompt = (
-            _build_repair_prompt(prompt, contract_feedback, workspace)
-            if contract_feedback
-            else prompt
-        )
-
-        gen_result = generator.generate(effective_prompt)
-        out.generate = gen_result
-
-        if not gen_result.success or not gen_result.yaml_content or not gen_result.ir:
-            out.error = gen_result.error or "Generation failed"
-            return _finalize(out, workspace)
-
-        ir = gen_result.ir
-        yaml_path: Path | None = None
-        if workspace:
-            yaml_path = workspace / package_name
-            yaml_path.write_text(gen_result.yaml_content, encoding="utf-8")
-            out.yaml_path = str(yaml_path)
-
-        plan_result = plan_intent(ir)
-        out.plan = plan_result.to_dict()
-
-        if workspace and yaml_path:
-            _write_plan_artifacts(workspace, ir, plan_result, prompt=prompt, yaml_path=yaml_path)
-
-        if not execute:
-            out.success = True
-            return _finalize(out, workspace)
-
-        if verify_round > 1:
-            stop_runtime_for_intent(ir.intent.name, workspace)
-
-        ir.approve_iterun()
-        exec_result = execute_intent(
-            ir,
-            str(workspace) if workspace else None,
-            skip_iterun_check=True,
-        )
-        out.execution = exec_result.to_dict()
-        last_container_id = exec_result.container_id
-
-        if exec_result.error:
-            contract_feedback.append(f"Execute error: {exec_result.error}")
-            verify_rounds_log.append({
-                "round": verify_round,
-                "phase": "execute",
-                "success": False,
-                "errors": [exec_result.error],
-            })
-            if workspace:
-                (workspace / "verify.rounds.json").write_text(
-                    json.dumps(verify_rounds_log, indent=2), encoding="utf-8"
-                )
-            if verify_round >= verify_rounds:
-                out.error = exec_result.error
-                return _finalize(out, workspace, container_id=last_container_id)
-            continue
-
-        if not verify:
-            validation = exec_result.validation
-            if validation and not validation.success:
-                out.success = False
-                out.error = "; ".join(validation.errors[:5]) or "Endpoint validation failed"
-            else:
-                out.success = exec_result.success
-                if not exec_result.success:
-                    out.error = exec_result.error
-            return _finalize(out, workspace, container_id=last_container_id)
-
-        if not workspace or not yaml_path:
-            out.error = "verify requires output_dir"
-            return _finalize(out, workspace, container_id=last_container_id)
-
-        vr = verify_contract(
-            workspace,
-            yaml_path,
+        done = _run_pipeline_round(
+            out,
             prompt=prompt,
-            execution_endpoints=exec_result.endpoints,
+            workspace=workspace,
+            package_name=package_name,
+            generator=generator,
+            contract_feedback=contract_feedback,
+            verify_rounds_log=verify_rounds_log,
+            verify_round=verify_round,
+            verify_rounds=verify_rounds,
+            execute=execute,
+            verify=verify,
         )
-        out.verification = vr.to_dict()
-        verify_rounds_log.append({
-            "round": verify_round,
-            "phase": "verify",
-            "success": vr.success,
-            "errors": vr.errors,
-            "service_url": vr.service_url,
-            "testql_passed": vr.testql_passed,
-        })
-        if workspace:
-            (workspace / "verify.rounds.json").write_text(
-                json.dumps(verify_rounds_log, indent=2), encoding="utf-8"
-            )
-
-        if vr.success:
-            out.success = True
-            return _finalize(out, workspace, container_id=last_container_id)
-
-        contract_feedback.extend(vr.errors)
-        if verify_round >= verify_rounds:
-            out.error = "; ".join(vr.errors[:5]) or "Contract verification failed"
-            return _finalize(out, workspace, container_id=last_container_id)
+        if done is not None:
+            if done.execution:
+                last_container_id = (done.execution or {}).get("container_id")
+            return done
 
     out.error = out.error or "Pipeline ended without success"
     return _finalize(out, workspace, container_id=last_container_id)

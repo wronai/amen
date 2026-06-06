@@ -48,8 +48,9 @@ _example_compose_port() {
     local service="$1"
     local project
     project="intent-$(_example_stack_project)"
-    docker compose -f "$GENERATED/docker-compose.yaml" -p "$project" port "$service" 8000 2>/dev/null \
-        | sed -n 's/.*:\([0-9]*\)$/\1/p' | head -1
+    # Services without published :8000 (e.g. redis sidecar) must not fail under set -o pipefail
+    { docker compose -f "$GENERATED/docker-compose.yaml" -p "$project" port "$service" 8000 2>/dev/null \
+        | sed -n 's/.*:\([0-9]*\)$/\1/p' | head -1; } || true
 }
 
 _example_stack_urls_file() {

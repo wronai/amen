@@ -30,19 +30,6 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-f32bc97a
-    name: Fix relative-imports issues
-    description: Resolve 4 relative-imports issues in ai_gateway/__init__.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - ai_gateway/__init__.py
-    rule_id: relative-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
   - id: ticket-117eb918
     name: Fix unused-imports issues
     description: Resolve 8 unused-imports issues in ai_gateway/feedback_loop.py
@@ -95,45 +82,6 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-4f3f1948
-    name: Fix relative-imports issues
-    description: Resolve 2 relative-imports issues in executor/__init__.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - executor/__init__.py
-    rule_id: relative-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-1b2bc89b
-    name: Fix smart-return-type issues
-    description: Resolve 22 smart-return-type issues in cli/main.py
-    task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - cli/main.py
-    rule_id: smart-return-type
-    count: 22
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-450308a3
-    name: Fix string-concat issues
-    description: Resolve 1 string-concat issues in cli/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - cli/main.py
-    rule_id: string-concat
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
   - id: ticket-e2cd2bf7
     name: Fix unused-imports issues
     description: Resolve 14 unused-imports issues in cli/main.py
@@ -144,19 +92,6 @@ sprints:
     - cli/main.py
     rule_id: unused-imports
     count: 14
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-ce00975e
-    name: Fix magic-numbers issues
-    description: Resolve 8 magic-numbers issues in cli/main.py
-    task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - cli/main.py
-    rule_id: magic-numbers
-    count: 8
     model_hints:
       planning: balanced
       implementation: balanced
@@ -186,32 +121,6 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-a0e5e8a8
-    name: Fix smart-return-type issues
-    description: Resolve 3 smart-return-type issues in executor/runner.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - executor/runner.py
-    rule_id: smart-return-type
-    count: 3
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-98d5cffd
-    name: Fix string-concat issues
-    description: Resolve 2 string-concat issues in executor/runner.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - executor/runner.py
-    rule_id: string-concat
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
   - id: ticket-1e40a3b5
     name: Fix magic-numbers issues
     description: Resolve 11 magic-numbers issues in executor/runner.py
@@ -222,19 +131,6 @@ sprints:
     - executor/runner.py
     rule_id: magic-numbers
     count: 11
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-d7af8c15
-    name: Fix llm-generated-code issues
-    description: Resolve 1 llm-generated-code issues in executor/runner.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - executor/runner.py
-    rule_id: llm-generated-code
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
@@ -368,19 +264,6 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-751d0e08
-    name: Fix magic-numbers issues
-    description: Resolve 10 magic-numbers issues in ai_gateway/gateway.py
-    task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - ai_gateway/gateway.py
-    rule_id: magic-numbers
-    count: 10
-    model_hints:
-      planning: balanced
-      implementation: balanced
   - id: ticket-dbeae813
     name: Fix llm-generated-code issues
     description: Resolve 2 llm-generated-code issues in ai_gateway/gateway.py
@@ -404,19 +287,6 @@ sprints:
     - web/app.py
     rule_id: unused-imports
     count: 42
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-9a11f507
-    name: Fix magic-numbers issues
-    description: Resolve 23 magic-numbers issues in web/app.py
-    task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - web/app.py
-    rule_id: magic-numbers
-    count: 23
     model_hints:
       planning: balanced
       implementation: balanced
@@ -1314,6 +1184,136 @@ sprints:
     - planner/stack_planner.py
     rule_id: string-concat
     count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6d2431df
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in ai_gateway/model_catalog.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - ai_gateway/model_catalog.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7bc68b39
+    name: Fix magic-numbers issues
+    description: Resolve 10 magic-numbers issues in ai_gateway/model_catalog.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - ai_gateway/model_catalog.py
+    rule_id: magic-numbers
+    count: 10
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-153639af
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in cli/dispatch.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - cli/dispatch.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-0d5a22a5
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in cli/plan_artifacts.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - cli/plan_artifacts.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6f2fa210
+    name: Fix smart-return-type issues
+    description: Resolve 9 smart-return-type issues in cli/shell.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - cli/shell.py
+    rule_id: smart-return-type
+    count: 9
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-9220df93
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in cli/shell.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - cli/shell.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-d63b5f0b
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in cli/shell.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - cli/shell.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-31eff1cb
+    name: Fix magic-numbers issues
+    description: Resolve 8 magic-numbers issues in cli/shell.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - cli/shell.py
+    rule_id: magic-numbers
+    count: 8
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e7236ef7
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in executor/models.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - executor/models.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-46fac2ee
+    name: Fix string-concat issues
+    description: Resolve 2 string-concat issues in executor/docker_ops.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - executor/docker_ops.py
+    rule_id: string-concat
+    count: 2
     model_hints:
       planning: balanced
       implementation: balanced

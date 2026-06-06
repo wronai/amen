@@ -1,33 +1,13 @@
-# code2llm | 140f 12402L | python:74,shell:27,txt:20,yaml:17,toml:1 | 2026-06-06
-# generated in 0.02s
-# CC̅=4.4 | critical:19/354 | dups:0 | cycles:1
+# code2llm | 175f 17049L | python:79,md:29,shell:27,txt:20,yaml:18,toml:1 | 2026-06-06
+# generated in 0.03s
+# CC̅=3.8 | critical:0/421 | dups:0 | cycles:1
 
-HEALTH[19]:
-  🟡 CC    load_dotenv CC=15 (limit:15)
-  🟡 CC    check_expectations CC=23 (limit:15)
-  🟡 CC    verify_contract CC=16 (limit:15)
-  🟡 CC    verify CC=23 (limit:15)
-  🟡 CC    plan_stack CC=18 (limit:15)
-  🟡 CC    _validate CC=21 (limit:15)
-  🟡 CC    pack_workspace CC=18 (limit:15)
-  🟡 CC    enrich CC=16 (limit:15)
-  🟡 CC    run_pipeline CC=33 (limit:15)
-  🟡 CC    __post_init__ CC=15 (limit:15)
-  🟡 CC    suggest_next_steps CC=17 (limit:15)
-  🟡 CC    _dispatch_execute CC=17 (limit:15)
-  🟡 CC    _dispatch_generate_pipeline CC=16 (limit:15)
-  🟡 CC    cmd_execute CC=39 (limit:15)
-  🟡 CC    interactive_mode CC=30 (limit:15)
-  🟡 CC    discover_workspace CC=25 (limit:15)
-  🟡 CC    execute CC=18 (limit:15)
-  🟡 CC    _collect_endpoints CC=18 (limit:15)
-  🟡 CC    execute_pactown CC=21 (limit:15)
+HEALTH[0]: ok
 
-REFACTOR[2]:
-  1. split 19 high-CC methods  (CC>15)
-  2. break 1 circular dependencies
+REFACTOR[1]:
+  1. break 1 circular dependencies
 
-PIPELINES[184]:
+PIPELINES[198]:
   [1] Src [get_env]: get_env
       PURITY: 100% pure
   [2] Src [get_env_bool]: get_env_bool
@@ -44,174 +24,166 @@ PIPELINES[184]:
       PURITY: 100% pure
   [8] Src [generate]: generate → _build_user_prompt
       PURITY: 100% pure
-  [9] Src [main]: main → verify → _load_yaml
+  [9] Src [to_dict]: to_dict
       PURITY: 100% pure
-  [10] Src [main]: main → annotate_python → _actions
+  [10] Src [main]: main → verify → _load_yaml
       PURITY: 100% pure
-  [11] Src [main]: main → write_testql_scenario → build_testql_scenario → parse_api_actions → ...(1 more)
+  [11] Src [main]: main → annotate_python → _actions
       PURITY: 100% pure
-  [12] Src [main]: main → write_intract_manifest → intent_to_intract_dict → build_intract_manifest → ...(1 more)
+  [12] Src [main]: main → write_testql_scenario → build_testql_scenario → parse_api_actions → ...(1 more)
       PURITY: 100% pure
-  [13] Src [main]: main → intent_to_openapi → _slug
+  [13] Src [main]: main → write_intract_manifest → intent_to_intract_dict → build_intract_manifest → ...(1 more)
       PURITY: 100% pure
-  [14] Src [add_log]: add_log
+  [14] Src [main]: main → intent_to_openapi → _slug
       PURITY: 100% pure
-  [15] Src [to_dict]: to_dict
+  [15] Src [add_log]: add_log
       PURITY: 100% pure
-  [16] Src [dry_run]: dry_run
+  [16] Src [to_dict]: to_dict
       PURITY: 100% pure
-  [17] Src [_generate_python_code]: _generate_python_code
+  [17] Src [dry_run]: dry_run
       PURITY: 100% pure
-  [18] Src [_generate_fastapi_code]: _generate_fastapi_code → _endpoint_to_func_name
+  [18] Src [_generate_python_code]: _generate_python_code
       PURITY: 100% pure
-  [19] Src [_generate_flask_code]: _generate_flask_code → _endpoint_to_func_name
+  [19] Src [_generate_fastapi_code]: _generate_fastapi_code → _endpoint_to_func_name
       PURITY: 100% pure
-  [20] Src [_generate_node_code]: _generate_node_code
+  [20] Src [_generate_flask_code]: _generate_flask_code → _endpoint_to_func_name
       PURITY: 100% pure
-  [21] Src [_generate_express_code]: _generate_express_code
+  [21] Src [_generate_node_code]: _generate_node_code
       PURITY: 100% pure
-  [22] Src [_generate_dockerfile]: _generate_dockerfile
+  [22] Src [_generate_express_code]: _generate_express_code
       PURITY: 100% pure
-  [23] Src [_simulate_action]: _simulate_action
+  [23] Src [_generate_dockerfile]: _generate_dockerfile
       PURITY: 100% pure
-  [24] Src [_estimate_resources]: _estimate_resources
+  [24] Src [_simulate_action]: _simulate_action
       PURITY: 100% pure
-  [25] Src [from_dict]: from_dict
+  [25] Src [_estimate_resources]: _estimate_resources
       PURITY: 100% pure
-  [26] Src [from_dict]: from_dict
+  [26] Src [home]: home
       PURITY: 100% pure
-  [27] Src [to_dict]: to_dict
+  [27] Src [health]: health
       PURITY: 100% pure
-  [28] Src [from_dict]: from_dict
+  [28] Src [list_interfaces]: list_interfaces → _get_service
       PURITY: 100% pure
-  [29] Src [to_dict]: to_dict
+  [29] Src [get_registry]: get_registry → _get_service
       PURITY: 100% pure
-  [30] Src [from_dict]: from_dict
+  [30] Src [refresh_registry_api]: refresh_registry_api → _get_service
       PURITY: 100% pure
-  [31] Src [to_dict]: to_dict
+  [31] Src [list_registries]: list_registries → _get_service
       PURITY: 100% pure
-  [32] Src [from_dict]: from_dict
+  [32] Src [health]: health
       PURITY: 100% pure
-  [33] Src [from_dict]: from_dict
+  [33] Src [ai_status]: ai_status → get_gateway
       PURITY: 100% pure
-  [34] Src [to_dict]: to_dict
+  [34] Src [list_models]: list_models → get_gateway
       PURITY: 100% pure
-  [35] Src [to_json]: to_json
+  [35] Src [ai_complete]: ai_complete → get_gateway
       PURITY: 100% pure
-  [36] Src [from_dict]: from_dict
+  [36] Src [ai_chat]: ai_chat → get_gateway
       PURITY: 100% pure
-  [37] Src [from_json]: from_json
+  [37] Src [ai_suggest]: ai_suggest → _intents_store
       PURITY: 100% pure
-  [38] Src [add_iteration]: add_iteration
+  [38] Src [ai_apply_suggestions]: ai_apply_suggestions → _intents_store
       PURITY: 100% pure
-  [39] Src [approve_iterun]: approve_iterun
+  [39] Src [generate_code]: generate_code → get_gateway
       PURITY: 100% pure
-  [40] Src [__getattr__]: __getattr__
+  [40] Src [get_schema]: get_schema → _get_service
       PURITY: 100% pure
-  [41] Src [__init__]: __init__
+  [41] Src [validate_yaml]: validate_yaml → _get_service
       PURITY: 100% pure
-  [42] Src [discover]: discover → discover_workspace → load_session
+  [42] Src [generate_intent_api]: generate_intent_api → _get_service
       PURITY: 100% pure
-  [43] Src [load]: load
+  [43] Src [generate_and_run_api]: generate_and_run_api → run_pipeline_api → _get_service
       PURITY: 100% pure
-  [44] Src [refresh]: refresh
+  [44] Src [plan_yaml_api]: plan_yaml_api → parse_dsl
       PURITY: 100% pure
-  [45] Src [write]: write
+  [45] Src [parse_intent]: parse_intent → parse_dsl
       PURITY: 100% pure
-  [46] Src [summary]: summary
+  [46] Src [list_intents]: list_intents → _intents_store
       PURITY: 100% pure
-  [47] Src [to_dict]: to_dict
+  [47] Src [get_intent]: get_intent → _intents_store
       PURITY: 100% pure
-  [48] Src [__init__]: __init__
+  [48] Src [delete_intent]: delete_intent → _intents_store
       PURITY: 100% pure
-  [49] Src [__init__]: __init__
+  [49] Src [plan]: plan → _intents_store
       PURITY: 100% pure
-  [50] Src [parse_file]: parse_file
+  [50] Src [iterate]: iterate → _intents_store
       PURITY: 100% pure
 
 LAYERS:
-  cli/                            CC̄=8.0    ←in:0  →out:24  !! split
-  │ !! shell                      586L  2C   23m  CC=39     ←0
-  │ !! dispatch                   266L  0C    9m  CC=17     ←1
+  cli/                            CC̄=5.6    ←in:0  →out:25  !! split
+  │ shell                      479L  1C   24m  CC=12     ←0
+  │ dispatch                   294L  0C   15m  CC=14     ←1
   │ main                        98L  0C    2m  CC=2      ←0
+  │ shell_output                97L  0C    7m  CC=8      ←1
+  │ shell_interactive           92L  0C    4m  CC=12     ←1
   │ plan_artifacts              42L  0C    1m  CC=7      ←1
   │ __init__                    20L  0C    1m  CC=3      ←0
+  │ colors                      16L  1C    1m  CC=1      ←0
   │ __main__                     4L  0C    0m  CC=0.0    ←0
   │
-  integrations/                   CC̄=7.1    ←in:3  →out:3
-  │ !! pactown_runtime            196L  0C    4m  CC=21     ←2
-  │ !! markpact_pack              104L  0C    2m  CC=18     ←2
-  │ !! docker                      79L  1C    3m  CC=16     ←0
-  │ backstage                   74L  1C    1m  CC=5      ←0
-  │ pactown_config              70L  0C    3m  CC=12     ←1
-  │ pipeline                    49L  0C    2m  CC=5      ←3
-  │ base                        29L  2C    3m  CC=1      ←0
-  │ opentelemetry               28L  1C    1m  CC=5      ←0
-  │ runtime_stop                22L  0C    1m  CC=3      ←1
-  │ __init__                    18L  0C    0m  CC=0.0    ←0
-  │ filesystem                  16L  1C    1m  CC=1      ←0
-  │ __init__                    14L  0C    0m  CC=0.0    ←0
-  │ __init__                     3L  0C    0m  CC=0.0    ←0
-  │
-  generator/                      CC̄=5.7    ←in:4  →out:11  !! split
-  │ !! pipeline                   278L  1C    7m  CC=33     ←0
-  │ intent_generator           238L  3C    7m  CC=11     ←0
-  │ !! contract_verify            228L  1C   10m  CC=16     ←1
-  │ intract_manifest           119L  0C    7m  CC=9      ←6
-  │ !! expectations                96L  0C    4m  CC=23     ←1
-  │ testql_scenario             79L  0C    4m  CC=7      ←4
-  │ session                     52L  0C    1m  CC=5      ←1
-  │ __init__                    23L  0C    0m  CC=0.0    ←0
-  │
-  registry/                       CC̄=5.6    ←in:5  →out:0
-  │ models                     103L  8C    1m  CC=1      ←0
-  │ discover_artifacts          97L  0C    2m  CC=12     ←1
-  │ discover_services           96L  0C    2m  CC=13     ←1
-  │ !! discover                    79L  0C    1m  CC=25     ←2
-  │ catalog                     71L  1C    7m  CC=7      ←2
-  │ discover_io                 65L  0C    4m  CC=8      ←1
-  │ labels                      53L  0C    2m  CC=4      ←3
-  │ __init__                    13L  0C    0m  CC=0.0    ←0
-  │
-  executor/                       CC̄=5.6    ←in:10  →out:4
-  │ !! runner                     306L  1C    9m  CC=18     ←4
+  executor/                       CC̄=5.2    ←in:10  →out:4
+  │ runner                     315L  1C   12m  CC=9      ←5
   │ docker_ops                 283L  0C    6m  CC=13     ←2
   │ validation                 184L  0C    4m  CC=13     ←3
   │ models                      75L  3C    6m  CC=3      ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
   │
-  planner/                        CC̄=5.3    ←in:8  →out:1
+  planner/                        CC̄=5.0    ←in:8  →out:1
   │ simulator                  384L  2C   17m  CC=9      ←4
-  │ !! stack_planner              226L  0C    5m  CC=18     ←1
+  │ stack_planner              234L  0C    7m  CC=12     ←1
   │ stack_artifacts             66L  0C    1m  CC=9      ←3
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │
-  parser/                         CC̄=5.2    ←in:11  →out:0
-  │ !! dsl_parser                 330L  3C   14m  CC=21     ←6
+  integrations/                   CC̄=4.9    ←in:3  →out:3
+  │ pactown_runtime            228L  0C   11m  CC=10     ←2
+  │ markpact_pack              115L  0C    4m  CC=12     ←2
+  │ docker                      90L  1C    6m  CC=11     ←0
+  │ backstage                   74L  1C    1m  CC=5      ←0
+  │ pactown_config              70L  0C    3m  CC=12     ←1
+  │ pipeline                    47L  0C    2m  CC=5      ←2
+  │ base                        29L  2C    3m  CC=1      ←0
+  │ opentelemetry               28L  1C    1m  CC=5      ←0
+  │ runtime_stop                22L  0C    1m  CC=3      ←1
+  │ __init__                    18L  0C    0m  CC=0.0    ←0
+  │ filesystem                  17L  1C    1m  CC=1      ←0
+  │ __init__                    14L  0C    0m  CC=0.0    ←0
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │
-  ai_gateway/                     CC̄=4.6    ←in:14  →out:1
-  │ !! feedback_loop              385L  3C   14m  CC=17     ←2
+  registry/                       CC̄=4.7    ←in:5  →out:0
+  │ models                     103L  8C    1m  CC=1      ←0
+  │ discover_artifacts          97L  0C    2m  CC=12     ←1
+  │ discover_services           96L  0C    2m  CC=13     ←1
+  │ discover_context            77L  1C    4m  CC=6      ←1
+  │ catalog                     71L  1C    7m  CC=7      ←2
+  │ discover_io                 65L  0C    4m  CC=8      ←1
+  │ discover                    61L  0C    2m  CC=6      ←2
+  │ labels                      53L  0C    2m  CC=4      ←3
+  │ __init__                    13L  0C    0m  CC=0.0    ←0
+  │
+  generator/                      CC̄=4.6    ←in:6  →out:10  !! split
+  │ pipeline                   358L  0C   12m  CC=11     ←1
+  │ intent_generator           238L  3C    7m  CC=11     ←0
+  │ contract_verify            235L  1C   13m  CC=10     ←1
+  │ intract_manifest           119L  0C    7m  CC=9      ←6
+  │ expectations               109L  0C    8m  CC=7      ←2
+  │ testql_scenario             79L  0C    4m  CC=7      ←4
+  │ session                     51L  0C    1m  CC=5      ←1
+  │ results                     37L  1C    1m  CC=2      ←0
+  │ __init__                    24L  0C    0m  CC=0.0    ←0
+  │
+  parser/                         CC̄=4.3    ←in:11  →out:0
+  │ dsl_parser                 337L  3C   18m  CC=14     ←6
+  │ __init__                     3L  0C    0m  CC=0.0    ←0
+  │
+  ai_gateway/                     CC̄=4.0    ←in:14  →out:1
+  │ feedback_loop              386L  3C   17m  CC=10     ←2
   │ gateway                    352L  1C   13m  CC=10     ←4
-  │ !! model_catalog              283L  3C    7m  CC=15     ←0
+  │ model_catalog              290L  3C   10m  CC=7      ←0
   │ __init__                    30L  0C    0m  CC=0.0    ←0
   │
   dsl/                            CC̄=3.2    ←in:8  →out:1
-  │ schema                     250L  7C    6m  CC=10     ←4
+  │ schema                     251L  7C    6m  CC=10     ←4
   │ __init__                    17L  0C    0m  CC=0.0    ←0
-  │
-  ./                              CC̄=3.1    ←in:0  →out:0
-  │ !! planfile.yaml             1319L  0C    0m  CC=0.0    ←0
-  │ !! goal.yaml                  512L  0C    0m  CC=0.0    ←0
-  │ Makefile                   222L  0C    0m  CC=0.0    ←0
-  │ !! config                     171L  1C    8m  CC=15     ←7
-  │ run.sh                     160L  0C    0m  CC=0.0    ←0
-  │ pyproject.toml             109L  0C    0m  CC=0.0    ←0
-  │ prefact.yaml                82L  0C    0m  CC=0.0    ←0
-  │ project.sh                  59L  0C    0m  CC=0.0    ←0
-  │ pyqual.yaml                 55L  0C    0m  CC=0.0    ←0
-  │ requirements.txt            20L  0C    0m  CC=0.0    ←0
-  │ tree.sh                      1L  0C    0m  CC=0.0    ←0
   │
   web/                            CC̄=2.4    ←in:0  →out:0
   │ intents                    280L  0C   19m  CC=6      ←0
@@ -222,25 +194,67 @@ LAYERS:
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
   │
-  interfaces/                     CC̄=2.3    ←in:1  →out:10  !! split
-  │ service                    252L  1C   14m  CC=7      ←1
+  interfaces/                     CC̄=2.4    ←in:0  →out:11  !! split
+  │ service                    260L  1C   14m  CC=7      ←0
   │ models                      52L  7C    0m  CC=0.0    ←0
   │ __init__                     5L  0C    0m  CC=0.0    ←0
+  │
+  ./                              CC̄=2.3    ←in:0  →out:0
+  │ !! planfile.yaml             1319L  0C    0m  CC=0.0    ←0
+  │ !! README.md                  518L  0C    0m  CC=0.0    ←0
+  │ !! goal.yaml                  512L  0C    0m  CC=0.0    ←0
+  │ CHANGELOG.md               498L  0C    0m  CC=0.0    ←0
+  │ Makefile                   222L  0C    0m  CC=0.0    ←0
+  │ TODO.md                    214L  0C    0m  CC=0.0    ←0
+  │ config                     182L  1C   12m  CC=5      ←8
+  │ run.sh                     160L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             109L  0C    0m  CC=0.0    ←0
+  │ prefact.yaml                82L  0C    0m  CC=0.0    ←0
+  │ project.sh                  59L  0C    0m  CC=0.0    ←0
+  │ pyqual.yaml                 55L  0C    0m  CC=0.0    ←0
+  │ requirements.txt            20L  0C    0m  CC=0.0    ←0
+  │ tree.sh                      1L  0C    0m  CC=0.0    ←0
   │
   sdk/                            CC̄=2.2    ←in:0  →out:4
   │ client                     225L  1C   16m  CC=5      ←0
   │ __init__                     5L  0C    0m  CC=0.0    ←0
   │
-  examples/                       CC̄=1.7    ←in:0  →out:0
+  ir/                             CC̄=1.7    ←in:0  →out:0
+  │ models                     298L  10C   18m  CC=5      ←0
+  │ __init__                     9L  0C    0m  CC=0.0    ←0
+  │
+  examples/                       CC̄=1.2    ←in:0  →out:0
+  │ README.md                  223L  0C    0m  CC=0.0    ←0
+  │ OPERATIONS.md              219L  0C    0m  CC=0.0    ←0
   │ _verify.sh                 165L  0C   13m  CC=0.0    ←0
-  │ _common.sh                 152L  0C   11m  CC=0.0    ←0
-  │ !! verify_expectations        127L  0C    5m  CC=23     ←0
+  │ _common.sh                 153L  0C   11m  CC=0.0    ←0
+  │ README.md                  131L  0C    0m  CC=0.0    ←0
+  │ README.md                  127L  0C    0m  CC=0.0    ←0
+  │ README.md                  106L  0C    0m  CC=0.0    ←0
+  │ README.md                  106L  0C    0m  CC=0.0    ←0
+  │ README.md                  105L  0C    0m  CC=0.0    ←0
   │ annotate_intract            97L  0C    6m  CC=7      ←0
+  │ README.md                   95L  0C    0m  CC=0.0    ←0
+  │ README.md                   94L  0C    0m  CC=0.0    ←0
+  │ README.md                   92L  0C    0m  CC=0.0    ←0
+  │ README.md                   89L  0C    0m  CC=0.0    ←0
+  │ README.md                   88L  0C    0m  CC=0.0    ←0
+  │ README.md                   88L  0C    0m  CC=0.0    ←0
+  │ README.md                   88L  0C    0m  CC=0.0    ←0
+  │ README.md                   88L  0C    0m  CC=0.0    ←0
+  │ README.md                   82L  0C    0m  CC=0.0    ←0
+  │ README.md                   81L  0C    0m  CC=0.0    ←0
   │ intent_to_openapi           76L  0C    3m  CC=8      ←0
+  │ README.md                   76L  0C    0m  CC=0.0    ←0
+  │ README.md                   76L  0C    0m  CC=0.0    ←0
+  │ README.md                   74L  0C    0m  CC=0.0    ←0
+  │ README.md                   74L  0C    0m  CC=0.0    ←0
+  │ verify_expectations         66L  0C    4m  CC=8      ←0
   │ _bootstrap_deps.sh          63L  0C    4m  CC=0.0    ←0
   │ run-resilience.sh           41L  0C    0m  CC=0.0    ←0
   │ run.sh                      41L  0C    0m  CC=0.0    ←0
   │ iterun.yaml                 39L  0C    0m  CC=0.0    ←0
+  │ iterun.yaml                 37L  0C    0m  CC=0.0    ←0
   │ expectations.yaml           31L  0C    0m  CC=0.0    ←0
   │ run-stacks.sh               30L  0C    0m  CC=0.0    ←0
   │ intent_to_intract           29L  0C    1m  CC=3      ←0
@@ -291,9 +305,12 @@ LAYERS:
   │ prompt.txt                   1L  0C    0m  CC=0.0    ←0
   │ prompt.txt                   1L  0C    0m  CC=0.0    ←0
   │
-  ir/                             CC̄=1.7    ←in:0  →out:0
-  │ models                     298L  10C   18m  CC=5      ←0
-  │ __init__                     9L  0C    0m  CC=0.0    ←0
+  docs/                           CC̄=0.0    ←in:0  →out:0
+  │ INTENT_DSL_SPEC.md         264L  0C    0m  CC=0.0    ←0
+  │ API.md                     190L  0C    0m  CC=0.0    ←0
+  │ README.md                  154L  0C    0m  CC=0.0    ←0
+  │ REGISTRY.md                129L  0C    0m  CC=0.0    ←0
+  │ RUNTIME.md                  74L  0C    0m  CC=0.0    ←0
   │
   testql-scenarios/               CC̄=0.0    ←in:0  →out:0
   │ generated-from-pytests.testql.toon.yaml    42L  0C    0m  CC=0.0    ←0
@@ -310,34 +327,35 @@ LAYERS:
      mcp/__init__.py                           0L
 
 COUPLING:
-                                         cli            ai_gateway             generator            web.routes              executor            interfaces                parser                config                   dsl               planner          integrations              registry                   sdk  integrations.bridges     examples._scripts
-                   cli                    ──                     6                     2                                           2                     1                     3                     4                     2                     2                                           1                                           1                        !! fan-out
-            ai_gateway                    ←6                    ──                    ←1                    ←7                                                                                       1                                                                                                                                                            hub
-             generator                    ←2                     1                    ──                                           2                                           1                                           2                     2                     2                                                                 1                    ←2  !! fan-out
-            web.routes                                           7                                          ──                     3                                           2                     2                                           1                                                                                                                !! fan-out
-              executor                    ←2                                          ←2                    ←3                    ──                    ←1                                           2                                                                 1                     1                                                                    hub
-            interfaces                    ←1                                                                                       1                    ──                     2                                           2                     3                                           1                                           1                        !! fan-out
-                parser                    ←3                                          ←1                    ←2                                          ←2                    ──                                          ←1                                                                                      ←2                                              hub
-                config                    ←4                    ←1                                          ←2                    ←2                                                                ──                                                                ←1                                                                                          hub
-                   dsl                    ←2                                          ←2                                                                ←2                     1                                          ──                                                                                      ←2                                              hub
-               planner                    ←2                                          ←2                    ←1                                          ←3                                                                                      ──                                           1                                                                    hub
-          integrations                                                                ←2                                           2                                                                 1                                                                ──                                                                                        
+                                         cli             generator            ai_gateway            web.routes              executor            interfaces                parser                config                   dsl               planner          integrations              registry  integrations.bridges                   sdk     examples._scripts
+                   cli                    ──                     3                     6                                           2                                           3                     4                     2                     2                                           1                     2                                              !! fan-out
+             generator                    ←3                    ──                     1                                           2                                           1                                           2                     2                     2                                                                                      ←3  hub
+            ai_gateway                    ←6                    ←1                    ──                    ←7                                                                                       1                                                                                                                                                            hub
+            web.routes                                                                 7                    ──                     3                                           2                     2                                           1                                                                                                                !! fan-out
+              executor                    ←2                    ←2                                          ←3                    ──                    ←1                                           2                                                                 1                     1                                                                    hub
+            interfaces                                                                                                             1                    ──                     2                                           2                     3                                           1                     2                                              !! fan-out
+                parser                    ←3                    ←1                                          ←2                                          ←2                    ──                                          ←1                                                                                                            ←2                        hub
+                config                    ←4                                          ←1                    ←2                    ←2                                                                ──                                                                ←1                                                                                          hub
+                   dsl                    ←2                    ←2                                                                                      ←2                     1                                          ──                                                                                                            ←2                        hub
+               planner                    ←2                    ←2                                          ←1                                          ←3                                                                                      ──                                           1                                                                    hub
+          integrations                                          ←2                                                                 2                                                                 1                                                                ──                                                                                        
               registry                    ←1                                                                                      ←1                    ←1                                                                                      ←1                                          ──                                                                    hub
-                   sdk                                                                                                                                                         2                                           2                                                                                      ──                                            
-  integrations.bridges                    ←1                                          ←1                                                                ←1                                                                                                                                                                              ──                      
-     examples._scripts                                                                 2                                                                                                                                                                                                                                                                      ──
+  integrations.bridges                    ←2                                                                                                            ←2                                                                                                                                                        ──                                            
+                   sdk                                                                                                                                                         2                                           2                                                                                                            ──                      
+     examples._scripts                                           3                                                                                                                                                                                                                                                                                            ──
   CYCLES: 1
-  HUB: config/ (fan-in=10)
-  HUB: dsl/ (fan-in=8)
-  HUB: parser/ (fan-in=11)
-  HUB: executor/ (fan-in=10)
   HUB: planner/ (fan-in=8)
-  HUB: ai_gateway/ (fan-in=14)
+  HUB: config/ (fan-in=10)
+  HUB: parser/ (fan-in=11)
+  HUB: dsl/ (fan-in=8)
   HUB: registry/ (fan-in=5)
-  SMELL: generator/ fan-out=11 → split needed
-  SMELL: interfaces/ fan-out=10 → split needed
+  HUB: generator/ (fan-in=6)
+  HUB: ai_gateway/ (fan-in=14)
+  HUB: executor/ (fan-in=10)
+  SMELL: cli/ fan-out=25 → split needed
+  SMELL: interfaces/ fan-out=11 → split needed
+  SMELL: generator/ fan-out=10 → split needed
   SMELL: web.routes/ fan-out=15 → split needed
-  SMELL: cli/ fan-out=24 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

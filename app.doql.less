@@ -2,7 +2,7 @@
 
 app {
   name: iterun;
-  version: 0.1.9;
+  version: 0.1.10;
 }
 
 dependencies {
@@ -71,6 +71,15 @@ entity[name="InterfacesInfo"] {
   mcp_server: string!;
   sdk: string!;
   surfaces: list[dict[str, Any]]!;
+}
+
+entity[name="DSLInput"] {
+  content: string!;
+}
+
+entity[name="IterationInput"] {
+  changes: dict[str, Any]!;
+  source: string!;
 }
 
 interface[type="api"] {

@@ -176,7 +176,7 @@ class IterunService:
         max_verify_iterations: int = 3,
         model: str | None = None,
     ) -> PipelineResult:
-        return run_pipeline(
+        result = run_pipeline(
             prompt,
             output_dir=output_dir,
             execute=execute,
@@ -185,6 +185,14 @@ class IterunService:
             max_verify_iterations=max_verify_iterations,
             model=model or self.model,
         )
+        if result.workspace:
+            try:
+                from integrations.bridges.pipeline import refresh_registry_from_pipeline
+
+                refresh_registry_from_pipeline(result.workspace, result)
+            except Exception:
+                pass
+        return result
 
     def plan_ir(self, ir: IntentIR) -> DryRunResult:
         return plan_intent(ir)

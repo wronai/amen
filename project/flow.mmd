@@ -5,21 +5,21 @@ flowchart TD
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
 
     subgraph CLI
+        cli__plan_artifacts__write_plan_artifacts["write_plan_artifacts"]
         cli____getattr__["__getattr__"]
-        sdk__client__IterunClient__health["health"]
-        sdk__client__IterunClient__interfaces["interfaces"]
-        sdk__client__IterunClient__schema["schema"]
-        sdk__client__IterunClient__validate["validate"]
-        sdk__client__IterunClient__generate["generate"]
-        sdk__client__IterunClient__run_pipeline["run_pipeline"]
-        sdk__client__IterunClient__generate_and_run["generate_and_run"]
-        sdk__client__IterunClient__plan_yaml["plan_yaml"]
-        sdk__client__IterunClient__registry_get["registry_get"]
-        sdk__client__IterunClient__registry_refresh["registry_refresh"]
-        sdk__client__IterunClient__registry_list["registry_list"]
-        sdk__client__IterunClient__parse["parse"]
-        sdk__client__IterunClient___post_json["_post_json"]
-        sdk__client__IterunClient___remote_generate["_remote_generate"]
+        cli__shell__Colors__disable["disable"]
+        cli__shell__CLI__print_header["print_header"]
+        cli__shell__CLI__print_success["print_success"]
+        cli__shell__CLI__print_error["print_error"]
+        cli__shell__CLI__print_warning["print_warning"]
+        cli__shell__CLI__print_info["print_info"]
+        cli__shell__CLI__cmd_new["cmd_new"]
+        cli__shell__CLI__cmd_load["cmd_load"]
+        cli__shell__CLI__cmd_parse["cmd_parse"]
+        cli__shell__CLI__cmd_plan["cmd_plan"]
+        cli__shell__CLI__cmd_iterate["cmd_iterate"]
+        cli__shell__CLI__cmd_iterun["cmd_iterun"]
+        cli__shell__CLI__cmd_execute["cmd_execute"]
         ...["+35 more"]
     end
 
@@ -34,12 +34,12 @@ flowchart TD
         generator__intent_generator__GenerateAttempt__to_dict["to_dict"]
         generator__intent_generator__GenerateResult__to_dict["to_dict"]
         generator__intent_generator__IntentGenerator__generate["generate"]
+        generator__pipeline__PipelineResult__to_dict["to_dict"]
+        generator__pipeline__run_pipeline{{run_pipeline CC=33}}
         generator__intract_manifest___parse_action_strings["_parse_action_strings"]
         generator__intract_manifest__parse_api_actions("parse_api_actions CC=9")
         generator__intract_manifest__build_intract_manifest["build_intract_manifest"]
-        generator__intract_manifest__intent_to_intract_dict["intent_to_intract_dict"]
-        generator__intract_manifest__write_intract_manifest["write_intract_manifest"]
-        ...["+146 more"]
+        ...["+147 more"]
     end
 
     subgraph Exporters
@@ -48,4 +48,4 @@ flowchart TD
         integrations__adapters__opentelemetry__OpenTelemetryExporter__export["export"]
     end
 
-    class config__get_env,config__get_env_bool,config__get_env_int,config__get_env_float,config__configure,generator__intent_generator__GenerateAttempt__to_dict,generator__intent_generator__GenerateResult__to_dict,generator__intent_generator__IntentGenerator__generate,generator__contract_verify__VerifyResult__to_dict,planner__simulator__DryRunResult__add_log entry
+    class config__get_env,config__get_env_bool,config__get_env_int,config__get_env_float,config__configure,generator__intent_generator__GenerateAttempt__to_dict,generator__intent_generator__GenerateResult__to_dict,generator__intent_generator__IntentGenerator__generate,generator__pipeline__PipelineResult__to_dict,generator__contract_verify__VerifyResult__to_dict entry

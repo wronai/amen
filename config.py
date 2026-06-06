@@ -16,49 +16,60 @@ except ImportError:
     _HAS_GETV = False
 
 
+def _load_getv_profiles() -> None:
+    if not _HAS_GETV:
+        return
+    try:
+        from getv import AppDefaults
+        from getv.integrations.pydantic_env import load_profile_into_env
+
+        defaults = AppDefaults("iterun")
+        for category in ("llm", "devices"):
+            profile = defaults.get(category)
+            if profile:
+                load_profile_into_env(category, profile)
+    except Exception:
+        pass
+
+
+def _apply_env_pairs(pairs: list[tuple[str, str]]) -> None:
+    for key, value in pairs:
+        if key not in os.environ:
+            os.environ[key] = value
+
+
+def _load_envstore(env_path: Path) -> None:
+    store = EnvStore(env_path, auto_create=False)
+    _apply_env_pairs(list(store.items()))
+
+
+def _parse_dotenv_lines(env_path: Path) -> list[tuple[str, str]]:
+    pairs: list[tuple[str, str]] = []
+    with open(env_path) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            pairs.append((key.strip(), value.strip().strip('"').strip("'")))
+    return pairs
+
+
 def load_dotenv(env_path: Path = None):
     """Load environment variables from .env file.
 
     Delegates to getv.EnvStore when available.
     Also loads getv app defaults (``getv use iterun llm PROFILE``).
     """
-    # Load getv app defaults first (if configured)
-    if _HAS_GETV:
-        try:
-            from getv import AppDefaults
-            from getv.integrations.pydantic_env import load_profile_into_env
-            defaults = AppDefaults("iterun")
-            for category in ("llm", "devices"):
-                profile = defaults.get(category)
-                if profile:
-                    load_profile_into_env(category, profile)
-        except Exception:
-            pass
-
+    _load_getv_profiles()
     if env_path is None:
         env_path = Path(__file__).parent / ".env"
-    
     if not env_path.exists():
         return
-    
     if _HAS_GETV:
-        store = EnvStore(env_path, auto_create=False)
-        for key, value in store.items():
-            if key not in os.environ:
-                os.environ[key] = value
+        _load_envstore(env_path)
         return
-    
-    with open(env_path) as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-            if "=" in line:
-                key, value = line.split("=", 1)
-                key = key.strip()
-                value = value.strip().strip('"').strip("'")
-                if key not in os.environ:
-                    os.environ[key] = value
+    _apply_env_pairs(_parse_dotenv_lines(env_path))
 
 
 # Load .env on module import

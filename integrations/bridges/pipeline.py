@@ -3,15 +3,12 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from integrations.adapters.backstage import BackstageExporter
 from integrations.adapters.docker import DockerAdapter
 from integrations.adapters.opentelemetry import OpenTelemetryExporter
 from registry.catalog import RegistryCatalog
-
-if TYPE_CHECKING:
-    from generator.pipeline import PipelineResult
 
 
 def refresh_registry(
@@ -42,8 +39,9 @@ def refresh_registry(
 
 def refresh_registry_from_pipeline(
     workspace: str | Path,
-    result: PipelineResult | None = None,
+    result: Any | None = None,
 ) -> dict[str, Any]:
     """Called after pipeline finalize — uses docker state when executed."""
-    include_docker = bool(result and result.execution)
+    execution = getattr(result, "execution", None) if result is not None else None
+    include_docker = bool(execution)
     return refresh_registry(workspace, include_docker=include_docker)

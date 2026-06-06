@@ -7,7 +7,8 @@ from generator.intent_generator import (
     extract_yaml_from_llm,
 )
 from generator.contract_verify import VerifyResult, verify_contract
-from generator.pipeline import PipelineResult, run_pipeline
+from generator.results import PipelineResult
+from generator.pipeline import run_pipeline
 from generator.testql_scenario import write_testql_scenario
 
 __all__ = [

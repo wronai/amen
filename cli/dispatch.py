@@ -59,7 +59,7 @@ def _dispatch_plan(args: Namespace, cli) -> None:
         sys.exit(1)
     ir = cli.cmd_load(args.file)
     if not ir:
-        return
+        sys.exit(1)
     result = cli.cmd_plan(ir)
     written = None
     if args.output_dir:
@@ -77,30 +77,38 @@ def _dispatch_plan(args: Namespace, cli) -> None:
         print(json.dumps(payload, indent=2))
 
 
+def _workspace_has_artifacts(ws: Path | None) -> bool:
+    return bool(ws and ((ws / "docker-compose.yaml").is_file() or (ws / "Dockerfile").is_file()))
+
+
+def _maybe_plan_before_execute(args: Namespace, cli, ir) -> None:
+    ws = Path(args.workspace) if args.workspace else None
+    if args.quiet and _workspace_has_artifacts(ws):
+        return
+    plan_result = cli.cmd_plan(ir)
+    if args.output_dir and plan_result:
+        write_plan_artifacts(ir, plan_result, args.output_dir)
+
+
+def _print_execute_result(args: Namespace, cli, ir, result) -> None:
+    if args.quiet and result and result.success and not args.json:
+        workspace = args.workspace or "."
+        print(f"OK {ir.intent.name} executed -> {workspace}")
+    if args.json and result:
+        print(json.dumps(result.to_dict(), indent=2))
+
+
 def _dispatch_execute(args: Namespace, cli) -> None:
     if not args.file:
         cli.print_error("Usage: intent-cli execute <file.yaml>")
         sys.exit(1)
     ir = cli.cmd_load(args.file)
     if not ir:
-        return
-    ws = Path(args.workspace) if args.workspace else None
-    skip_plan = (
-        args.quiet
-        and ws
-        and ((ws / "docker-compose.yaml").is_file() or (ws / "Dockerfile").is_file())
-    )
-    if not skip_plan:
-        plan_result = cli.cmd_plan(ir)
-        if args.output_dir and plan_result:
-            write_plan_artifacts(ir, plan_result, args.output_dir)
+        sys.exit(1)
+    _maybe_plan_before_execute(args, cli, ir)
     cli.cmd_iterun(ir, force=True)
     result = cli.cmd_execute(ir, args.workspace)
-    if args.quiet and result and result.success and not args.json:
-        workspace = args.workspace or "."
-        print(f"OK {ir.intent.name} executed -> {workspace}")
-    if args.json and result:
-        print(json.dumps(result.to_dict(), indent=2))
+    _print_execute_result(args, cli, ir, result)
 
 
 def _dispatch_parse(args: Namespace, cli) -> None:
@@ -166,6 +174,46 @@ def _dispatch_generate(args: Namespace, cli) -> None:
         _dispatch_generate_yaml_only(args, cli, prompt, output_dir)
 
 
+def _print_generate_success(args, cli, result, output_dir: str) -> None:
+    if args.json:
+        print(json.dumps(result.to_dict(), indent=2))
+        return
+    if args.quiet:
+        msg = f"OK {result.yaml_path or output_dir}"
+        if result.verification and result.verification.get("service_url"):
+            msg += f" verified={result.verification['service_url']}"
+        print(msg)
+        return
+    cli.print_success(f"Generated: {result.yaml_path}")
+    if result.execution:
+        cli.print_info("Service executed (see execution logs in JSON with --json)")
+    if result.verification:
+        url = result.verification.get("service_url", "")
+        cli.print_success(f"Contract verified at {url} (round {result.verify_iterations})")
+
+
+def _print_generate_failure(args, cli, result) -> None:
+    cli.print_error(result.error or "Generation failed")
+    if result.execution and not args.verify:
+        cli.print_info(
+            "Tip: add --verify to regenerate iterun.yaml with LLM when contracts fail"
+        )
+    if result.generate and result.generate.attempts:
+        for err in result.generate.attempts[-1].errors[:5]:
+            cli.print_error(err)
+
+
+def _refresh_pipeline_registry(result) -> None:
+    if not result.workspace:
+        return
+    try:
+        from integrations.bridges.pipeline import refresh_registry_from_pipeline
+
+        refresh_registry_from_pipeline(result.workspace, result)
+    except Exception:
+        pass
+
+
 def _dispatch_generate_pipeline(args, cli, prompt: str, output_dir: str, run_pipeline) -> None:
     result = run_pipeline(
         prompt,
@@ -176,31 +224,11 @@ def _dispatch_generate_pipeline(args, cli, prompt: str, output_dir: str, run_pip
         max_verify_iterations=args.max_verify_iterations,
         model=args.model,
     )
-    if args.json:
-        print(json.dumps(result.to_dict(), indent=2))
-    elif args.quiet and result.success:
-        msg = f"OK {result.yaml_path or output_dir}"
-        if result.verification and result.verification.get("service_url"):
-            msg += f" verified={result.verification['service_url']}"
-        print(msg)
-    elif result.success:
-        cli.print_success(f"Generated: {result.yaml_path}")
-        if result.execution:
-            cli.print_info("Service executed (see execution logs in JSON with --json)")
-        if result.verification:
-            url = result.verification.get("service_url", "")
-            n = result.verify_iterations
-            cli.print_success(f"Contract verified at {url} (round {n})")
+    _refresh_pipeline_registry(result)
+    if result.success:
+        _print_generate_success(args, cli, result, output_dir)
     else:
-        cli.print_error(result.error or "Generation failed")
-        if result.execution and not args.verify:
-            cli.print_info(
-                "Tip: add --verify to regenerate iterun.yaml with LLM when contracts fail"
-            )
-        if result.generate and result.generate.attempts:
-            last = result.generate.attempts[-1]
-            for err in last.errors[:5]:
-                cli.print_error(err)
+        _print_generate_failure(args, cli, result)
         sys.exit(1)
 
 

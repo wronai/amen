@@ -37,6 +37,39 @@ def _run_command_for_ir(ir: IntentIR) -> str | None:
     return None
 
 
+def _service_run_command(svc) -> str | None:
+    if svc.framework == "fastapi":
+        return "uvicorn app:app --host 0.0.0.0 --port ${MARKPACT_PORT:-8000}"
+    if svc.framework == "express" or svc.language == "node":
+        return "node app.js"
+    return None
+
+
+def _pack_service_readmes(
+    ws: Path,
+    ir: IntentIR,
+    title: str,
+    pack_directory,
+) -> dict[str, str]:
+    written: dict[str, str] = {}
+    for svc in ir.stack.services:
+        svc_dir = ws / "services" / svc.name
+        if not svc_dir.is_dir():
+            continue
+        svc_pack = pack_directory(
+            svc_dir,
+            output=svc_dir / "README.md",
+            title=svc.name,
+            description=f"Service {svc.name} from {title}",
+            run_command=_service_run_command(svc),
+            exclude=PACK_EXCLUDE.copy(),
+            verbose=False,
+        )
+        if svc_pack.success:
+            written[f"services/{svc.name}/README.md"] = str(svc_pack.output_path)
+    return written
+
+
 def pack_workspace(
     workspace: str | Path,
     ir: IntentIR | None = None,
@@ -57,14 +90,12 @@ def pack_workspace(
 
     title = ir.intent.name if ir else ws.name
     desc = ir.intent.goal if ir and ir.intent.goal else f"ITERUN generated stack: {title}"
-    run_cmd = _run_command_for_ir(ir) if ir else None
-
     result = pack_directory(
         ws,
         output=ws / output_name,
         title=title,
         description=desc,
-        run_command=run_cmd,
+        run_command=_run_command_for_ir(ir) if ir else None,
         exclude=PACK_EXCLUDE.copy(),
         verbose=False,
     )
@@ -72,28 +103,8 @@ def pack_workspace(
     written: dict[str, str] = {}
     if result.success:
         written[output_name] = str(result.output_path)
-
     if pack_services and ir and ir.stack and ir.stack.services:
-        for svc in ir.stack.services:
-            svc_dir = ws / "services" / svc.name
-            if not svc_dir.is_dir():
-                continue
-            svc_run = None
-            if svc.framework == "fastapi":
-                svc_run = "uvicorn app:app --host 0.0.0.0 --port ${MARKPACT_PORT:-8000}"
-            elif svc.framework == "express" or svc.language == "node":
-                svc_run = "node app.js"
-            svc_pack = pack_directory(
-                svc_dir,
-                output=svc_dir / "README.md",
-                title=svc.name,
-                description=f"Service {svc.name} from {title}",
-                run_command=svc_run,
-                exclude=PACK_EXCLUDE.copy(),
-                verbose=False,
-            )
-            if svc_pack.success:
-                written[f"services/{svc.name}/README.md"] = str(svc_pack.output_path)
+        written.update(_pack_service_readmes(ws, ir, title, pack_directory))
 
     return {
         "success": result.success,

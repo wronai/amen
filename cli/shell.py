@@ -5,10 +5,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Optional
 
+from cli.colors import Colors
+from cli.shell_interactive import build_prompt, handle_interactive_line
+from cli.shell_output import print_execution_failure, print_execution_logs, print_execution_success
 from ir.models import IntentIR
 from parser.dsl_parser import DSLParser, parse_dsl, parse_dsl_file, ParseError, ValidationError
 from planner.simulator import Planner, plan_intent
-from executor.docker_ops import get_container_logs
 from executor.runner import execute_intent
 
 try:
@@ -20,23 +22,6 @@ except ImportError:
     AI_AVAILABLE = False
 
 CONSTANT_60 = 60
-
-
-class Colors:
-    """ANSI color codes for terminal output."""
-
-    RESET = "\033[0m"
-    BOLD = "\033[1m"
-    RED = "\033[91m"
-    GREEN = "\033[92m"
-    YELLOW = "\033[93m"
-    BLUE = "\033[94m"
-    CYAN = "\033[96m"
-
-    @classmethod
-    def disable(cls) -> None:
-        cls.RESET = cls.BOLD = cls.RED = cls.GREEN = ""
-        cls.YELLOW = cls.BLUE = cls.CYAN = ""
 
 
 class CLI:
@@ -232,89 +217,43 @@ EXECUTION:
         self.print_warning("Execution cancelled.")
         return False
 
+    def _skip_iterun_confirmation(self) -> bool:
+        try:
+            from config import get_config
+
+            return get_config().skip_iterun_confirmation
+        except ImportError:
+            return False
+
+    def _ensure_execute_approved(self, ir: IntentIR) -> bool:
+        if ir.iterun_approved:
+            return True
+        if self._skip_iterun_confirmation():
+            ir.approve_iterun()
+            self.print_info("Auto-approved intent (SKIP_ITERUN_CONFIRMATION=true)")
+            return True
+        self.print_error("Intent not approved. Run 'iterun' first.")
+        return False
+
     def cmd_execute(self, ir: IntentIR = None, workspace: str = None, validate: bool = True, auto_fix: bool = True):
         ir = ir or self.current_ir
         if not ir:
             self.print_error("No intent loaded.")
             return None
-        try:
-            from config import get_config
-
-            skip_iterun = get_config().skip_iterun_confirmation
-        except ImportError:
-            skip_iterun = False
-        if not ir.iterun_approved:
-            if skip_iterun:
-                ir.approve_iterun()
-                self.print_info("Auto-approved intent (SKIP_ITERUN_CONFIRMATION=true)")
-            else:
-                self.print_error("Intent not approved. Run 'iterun' first.")
-                return None
+        skip_iterun = self._skip_iterun_confirmation()
+        if not self._ensure_execute_approved(ir):
+            return None
         self.print_header(f"Executing: {ir.intent.name}")
         result = execute_intent(
             ir, workspace, skip_iterun_check=skip_iterun, validate=validate, auto_fix=auto_fix
         )
         if self.quiet:
             return result
-        print(f"\n{Colors.BOLD}Execution Logs:{Colors.RESET}")
-        for log in result.logs:
-            if "✓" in log or "success" in log.lower():
-                status = Colors.GREEN
-            elif "✗" in log or "error" in log.lower() or "ERROR" in log:
-                status = Colors.RED
-            elif "⚠" in log or "warning" in log.lower():
-                status = Colors.YELLOW
-            else:
-                status = Colors.RESET
-            print(f"  {status}{log}{Colors.RESET}")
+        print_execution_logs(result)
         if result.success:
-            self.print_success(f"Execution completed in {result.execution_time:.2f}s")
-            if result.container_id:
-                print(f"\n{Colors.BOLD}Container ID:{Colors.RESET} {result.container_id}")
-            if result.endpoints:
-                print(f"\n{Colors.BOLD}Available Endpoints:{Colors.RESET}")
-                for endpoint in result.endpoints:
-                    print(f"  → {endpoint}")
-            if result.artifacts:
-                print(f"\n{Colors.BOLD}Generated Artifacts:{Colors.RESET}")
-                for name, path in result.artifacts.items():
-                    print(f"  {name}: {path}")
-            if result.validation:
-                print(f"\n{Colors.BOLD}Validation:{Colors.RESET}")
-                if result.validation.success:
-                    print(f"  {Colors.GREEN}✓ All endpoints validated{Colors.RESET}")
-                else:
-                    print(f"  {Colors.YELLOW}⚠ Some issues detected{Colors.RESET}")
-                    for check in result.validation.checks:
-                        if check["ok"]:
-                            print(f"    {Colors.GREEN}✓{Colors.RESET} {check['endpoint']}")
-                        else:
-                            print(f"    {Colors.RED}✗{Colors.RESET} {check['endpoint']} - {check.get('error', 'Failed')}")
-            if result.auto_fix_applied:
-                print(f"\n{Colors.CYAN}Auto-fix applied ({result.fix_iterations} iteration(s)){Colors.RESET}")
+            print_execution_success(self, result)
         else:
-            self.print_error(f"Execution failed: {result.error}")
-            if result.validation and result.validation.errors:
-                print(f"\n{Colors.BOLD}Validation Errors:{Colors.RESET}")
-                for error in result.validation.errors:
-                    print(f"  {Colors.RED}✗{Colors.RESET} {error}")
-            if result.validation and result.validation.suggestions:
-                print(f"\n{Colors.BOLD}Suggestions:{Colors.RESET}")
-                for suggestion in result.validation.suggestions:
-                    print(f"  • {suggestion}")
-            if result.container_id:
-                try:
-                    from config import get_config
-
-                    ws = Path(workspace) if workspace else Path(get_config().workspace_dir or ".")
-                    logs = get_container_logs(ws, result.container_id, tail=20)
-                    if logs:
-                        print(f"\n{Colors.BOLD}Container Logs:{Colors.RESET}")
-                        for line in logs.split("\n")[-10:]:
-                            if line.strip():
-                                print(f"  {line}")
-                except Exception:
-                    pass
+            print_execution_failure(self, result, workspace)
         return result
 
     def cmd_show(self, ir: IntentIR = None, format: str = "summary") -> None:
@@ -361,57 +300,11 @@ EXECUTION:
         print()
         while True:
             try:
-                prompt = f"{Colors.BOLD}intent{Colors.RESET}"
-                if self.current_ir:
-                    prompt += f":{Colors.CYAN}{self.current_ir.intent.name}{Colors.RESET}"
-                prompt += "> "
-                line = input(prompt).strip()
-                if not line:
-                    continue
-                parts = line.split(maxsplit=1)
-                cmd = parts[0].lower()
-                args = parts[1] if len(parts) > 1 else ""
-                if cmd in ("exit", "quit", "q"):
-                    print("Goodbye!")
+                action = handle_interactive_line(
+                    self, input(build_prompt(self)).strip(), ai_available=AI_AVAILABLE
+                )
+                if action == "exit":
                     break
-                if cmd == "new":
-                    self.cmd_new(args or "my-intent")
-                elif cmd == "load":
-                    if args:
-                        self.cmd_load(args)
-                    else:
-                        self.print_error("Usage: load <filepath>")
-                elif cmd == "plan":
-                    self.cmd_plan()
-                elif cmd == "iterate":
-                    self.cmd_iterate()
-                elif cmd == "iterun":
-                    self.cmd_iterun()
-                elif cmd in ("exec", "execute", "run"):
-                    self.cmd_execute()
-                elif cmd == "show":
-                    self.cmd_show(format=args or "summary")
-                elif cmd == "save":
-                    if args:
-                        self.cmd_save(args)
-                    else:
-                        self.print_error("Usage: save <filepath>")
-                elif cmd == "help":
-                    self._show_help()
-                elif cmd == "suggest":
-                    self.cmd_ai_suggest(focus=args if args else None)
-                elif cmd == "apply":
-                    self.cmd_ai_apply()
-                elif cmd == "chat":
-                    self.cmd_ai_chat(message=args if args else None)
-                elif cmd == "models":
-                    max_p = float(args) if args else 12.0
-                    self.cmd_models(max_p)
-                elif cmd in ("ai-health", "aihealth", "health"):
-                    self.cmd_ai_health()
-                else:
-                    self.print_error(f"Unknown command: {cmd}")
-                    print("Type 'help' for available commands.")
             except KeyboardInterrupt:
                 print("\n")
                 continue

@@ -198,10 +198,10 @@ class GatewayConfig:
     # Custom models registry
     custom_models: Dict[str, ModelConfig] = field(default_factory=dict)
     
-    def __post_init__(self):
-        # Load from global config first, then environment
+    def _load_from_app_config(self) -> None:
         try:
             from config import get_config
+
             app_config = get_config()
             self.ollama_base_url = self.ollama_base_url or app_config.ollama_base_url
             self.default_model = self.default_model or app_config.default_model
@@ -213,20 +213,27 @@ class GatewayConfig:
             self.openrouter_api_key = app_config.openrouter_api_key
         except ImportError:
             pass
-        
-        # Fallback to environment variables
-        self.ollama_base_url = self.ollama_base_url or os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+
+    def _load_from_env(self) -> None:
+        self.ollama_base_url = self.ollama_base_url or os.getenv(
+            "OLLAMA_BASE_URL", "http://localhost:11434"
+        )
         self.default_model = self.default_model or os.getenv("DEFAULT_MODEL", "llama3.2")
         self.openai_api_key = self.openai_api_key or os.getenv("OPENAI_API_KEY")
         self.anthropic_api_key = self.anthropic_api_key or os.getenv("ANTHROPIC_API_KEY")
         self.openrouter_api_key = self.openrouter_api_key or os.getenv("OPENROUTER_API_KEY")
-        # Live env wins over cached AppConfig (important for tests and .env edits)
         self.llm_model = os.getenv("LLM_MODEL") or self.llm_model
 
+    def _resolve_default_provider(self) -> None:
         if self.llm_model and self.llm_model.startswith("openrouter/"):
             self.default_provider = ModelProvider.OPENROUTER
         elif self.openrouter_api_key and not self.llm_model:
             self.default_provider = ModelProvider.OPENROUTER
+
+    def __post_init__(self):
+        self._load_from_app_config()
+        self._load_from_env()
+        self._resolve_default_provider()
 
     def resolve_model(self, explicit: str | None = None) -> str:
         """Effective model: CLI arg > LLM_MODEL (.env) > DEFAULT_MODEL (Ollama)."""

@@ -210,33 +210,34 @@ Always respond in valid JSON format."""
         
         return analysis
     
-    def suggest_next_steps(self, ir: IntentIR) -> List[str]:
-        """Get list of suggested next steps for the intent."""
-        suggestions = []
-        
-        # Check for common missing elements
-        actions = [a.type for a in ir.implementation.actions]
-        endpoints = [a.target for a in ir.implementation.actions if a.type == ActionType.API_EXPOSE]
-        
+    def _endpoint_paths(self, ir: IntentIR) -> list[str]:
+        return [a.target for a in ir.implementation.actions if a.type == ActionType.API_EXPOSE]
+
+    def _suggest_health_endpoints(self, endpoints: list[str]) -> list[str]:
+        suggestions: list[str] = []
         if not any("/health" in (e or "") for e in endpoints):
             suggestions.append("Add health check endpoint: api.expose GET /health")
-        
         if not any("/ping" in (e or "") for e in endpoints):
             suggestions.append("Add ping endpoint: api.expose GET /ping")
-        
-        if ir.implementation.framework == "fastapi":
-            if not any("/docs" in (e or "") for e in endpoints):
-                suggestions.append("FastAPI includes /docs automatically for OpenAPI")
-        
+        return suggestions
+
+    def _suggest_workflow_steps(self, ir: IntentIR) -> list[str]:
+        suggestions: list[str] = []
         if len(ir.implementation.actions) < 3:
             suggestions.append("Consider adding more endpoints for a complete API")
-        
         if not ir.dry_run_logs:
             suggestions.append("Run dry-run to see generated code and validate intent")
-        
         if ir.iteration_count == 0:
             suggestions.append("Use 'iterate' command to refine the intent with LLM assistance")
-        
+        return suggestions
+
+    def suggest_next_steps(self, ir: IntentIR) -> List[str]:
+        """Get list of suggested next steps for the intent."""
+        endpoints = self._endpoint_paths(ir)
+        suggestions = self._suggest_health_endpoints(endpoints)
+        if ir.implementation.framework == "fastapi" and not any("/docs" in (e or "") for e in endpoints):
+            suggestions.append("FastAPI includes /docs automatically for OpenAPI")
+        suggestions.extend(self._suggest_workflow_steps(ir))
         return suggestions
     
     def _build_analysis_prompt(self, ir: IntentIR, focus: str = None) -> str:

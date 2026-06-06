@@ -5,10 +5,9 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
-if TYPE_CHECKING:
-    from generator.pipeline import PipelineResult
+from generator.results import PipelineResult
 
 
 def write_session_artifacts(

@@ -170,6 +170,39 @@ def write_contract_artifacts(
     return written
 
 
+def _run_testql_checks(result: VerifyResult, scenario: Path, base_url: str) -> None:
+    if not shutil.which("testql") or not scenario.is_file():
+        return
+    result.testql_ran = True
+    passed, output = run_testql(scenario, base_url)
+    result.testql_output = output
+    result.testql_passed = passed
+    if passed:
+        return
+    result.errors.append("TestQL contract verification failed")
+    for line in output.splitlines():
+        if "failed" in line.lower() or "✗" in line or "FAIL" in line:
+            result.errors.append(line.strip())
+
+
+def _run_http_probes(result: VerifyResult, data: dict[str, Any], base_url: str) -> None:
+    for method, path in parse_api_actions(data):
+        probe = _probe_path(path)
+        ok, detail, status = _http_probe(base_url, method, probe)
+        result.probes.append({"method": method, "path": probe, "status": status, "ok": ok})
+        if not ok:
+            result.errors.append(f"HTTP {method} {probe} failed: {detail} (status={status})")
+
+
+def _write_verify_result(ws: Path, result: VerifyResult) -> VerifyResult:
+    result.success = len(result.errors) == 0
+    (ws / "verify.result.json").write_text(
+        json.dumps(result.to_dict(), indent=2),
+        encoding="utf-8",
+    )
+    return result
+
+
 def verify_contract(
     workspace: Path | str,
     intent_path: Path | str,
@@ -184,45 +217,19 @@ def verify_contract(
 
     data = yaml.safe_load(intent.read_text(encoding="utf-8")) or {}
     intent_name = str((data.get("INTENT") or {}).get("name", "service"))
-
     write_contract_artifacts(ws, intent, prompt=prompt)
-    scenario = ws / "service.testql.toon.yaml"
 
     base_url = service_url or discover_service_url(intent_name, execution_endpoints)
     if not base_url:
         result.errors.append("Could not discover service URL (docker ps / execution endpoints)")
-        return result
+        return _write_verify_result(ws, result)
 
     result.service_url = base_url
     if not wait_for_service(base_url, intent_data=data):
         result.errors.append(f"Service not ready at {base_url}")
-        return result
+        return _write_verify_result(ws, result)
 
-    if shutil.which("testql") and scenario.is_file():
-        result.testql_ran = True
-        passed, output = run_testql(scenario, base_url)
-        result.testql_output = output
-        result.testql_passed = passed
-        if not passed:
-            result.errors.append("TestQL contract verification failed")
-            for line in output.splitlines():
-                if "failed" in line.lower() or "✗" in line or "FAIL" in line:
-                    result.errors.append(line.strip())
-
-    for method, path in parse_api_actions(data):
-        probe = _probe_path(path)
-        ok, detail, status = _http_probe(base_url, method, probe)
-        entry = {"method": method, "path": probe, "status": status, "ok": ok}
-        result.probes.append(entry)
-        if not ok:
-            result.errors.append(f"HTTP {method} {probe} failed: {detail} (status={status})")
-
-    for err in load_and_check_expectations(ws, intent, base_url):
-        result.errors.append(err)
-
-    result.success = len(result.errors) == 0
-    (ws / "verify.result.json").write_text(
-        json.dumps(result.to_dict(), indent=2),
-        encoding="utf-8",
-    )
-    return result
+    _run_testql_checks(result, ws / "service.testql.toon.yaml", base_url)
+    _run_http_probes(result, data, base_url)
+    result.errors.extend(load_and_check_expectations(ws, intent, base_url))
+    return _write_verify_result(ws, result)
