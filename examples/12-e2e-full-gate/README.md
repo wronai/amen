@@ -3,7 +3,7 @@
 ```text
 prompt.txt
   → iterun generate --execute
-  → generated/intent.yaml
+  → generated/iterun.yaml
   → generated/intract.yaml      # kontrakt (nie ręczny fixture!)
   → generated/openapi.yaml
   → Docker service
@@ -20,9 +20,9 @@ prompt.txt
 
 ## `generated/intract.yaml`
 
-Powstaje automatycznie z `intent.yaml` — lista `require: implement.*` odzwierciedla `api.expose` z promptu. Nie trzymaj ręcznego `intract.yaml` w katalogu przykładu.
+Powstaje automatycznie z `iterun.yaml` — lista `require: implement.*` odzwierciedla `api.expose` z promptu. Nie trzymaj ręcznego `intract.yaml` w katalogu przykładu.
 
 ```bash
-python ../_scripts/intent_to_intract.py generated/intent.yaml \
+python ../_scripts/intent_to_intract.py generated/iterun.yaml \
   -o generated/intract.yaml -p prompt.txt
 ```

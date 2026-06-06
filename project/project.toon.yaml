@@ -1,4 +1,4 @@
-# iterun | 235 func | 26f | 8624L | python | 2026-06-06
+# iterun | 235 func | 26f | 9001L | python | 2026-06-06
 # generated in 0.00s
 
 HEALTH:
@@ -16,10 +16,10 @@ ALERTS[20]:
   !!  cc_exceeded      verify = 23 (limit:15)
   !!  cc_exceeded      check_expectations = 20 (limit:15)
 
-MODULES[94] (top by size):
+MODULES[91] (top by size):
+  M[planfile.yaml] 1046L C:0 F:0 CC↑0 D:0 (yaml)
   M[cli/main.py] 928L C:2 F:25 CC↑72 D:0 (python)
   M[ai_gateway/gateway.py] 644L C:4 F:20 CC↑15 D:4 (python)
-  M[planfile.yaml] 643L C:0 F:0 CC↑0 D:0 (yaml)
   M[executor/runner.py] 614L C:4 F:20 CC↑13 D:3 (python)
   M[web/app.py] 523L C:9 F:25 CC↑6 D:0 (python)
   M[goal.yaml] 512L C:0 F:0 CC↑0 D:0 (yaml)
@@ -32,7 +32,7 @@ MODULES[94] (top by size):
   M[generator/pipeline.py] 220L C:1 F:5 CC↑30 D:3 (python)
   M[generator/contract_verify.py] 201L C:1 F:8 CC↑16 D:1 (python)
   M[config.py] 168L C:1 F:8 CC↑15 D:4 (python)
-  LANGS: python:36/shell:24/txt:17/yaml:15/other:1/toml:1
+  LANGS: python:36/shell:21/txt:17/yaml:15/other:1/toml:1
 
 HOTSPOTS[10]:
   ★ main fan=39  // Main entry point.
@@ -49,4 +49,4 @@ REFACTOR[15]:
   [5] H/H Split god module cli/main.py (928L, 2 classes)
 
 EVOLUTION:
-  2026-06-06 CC̄=4.2 crit=22 8624L // Automated analysis
+  2026-06-06 CC̄=4.2 crit=22 9001L // Automated analysis

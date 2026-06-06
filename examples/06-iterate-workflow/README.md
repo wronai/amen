@@ -15,7 +15,7 @@ python -m cli
 ```
 
 ```
-intent> load examples/06-iterate-workflow/generated/intent.yaml
+intent> load examples/06-iterate-workflow/generated/iterun.yaml
 intent> plan
 intent> iterate
 > action=api.expose GET /health
@@ -34,4 +34,4 @@ iterun generate "$(cat prompt.txt)" -o generated/ --execute --quiet
 
 ## `generated/`
 
-`intent.yaml`, `plan.result.json`, `app.py`, `Dockerfile`
+`iterun.yaml`, `plan.result.json`, `app.py`, `Dockerfile`

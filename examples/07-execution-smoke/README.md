@@ -20,4 +20,4 @@ iterun generate "$(cat prompt.txt)" -o generated/ --execute --quiet
 
 ## `generated/`
 
-`intent.yaml`, `plan.result.json`, `app.py`, `Dockerfile`
+`iterun.yaml`, `plan.result.json`, `app.py`, `Dockerfile`

@@ -106,6 +106,27 @@ jq . generated/verify.rounds.json    # historia rund naprawczych
 
 `expectations.yaml` jest **surowszy niż prompt** — wymusza `--verify` retry (domyślnie 5 rund).
 
+## Katalog przykładów
+
+| # | Katalog | Opis |
+|---|---------|------|
+| 01 | `01-user-api` | FastAPI CRUD z promptu |
+| 02 | `02-ping-smoke` | `/ping` + `/health` |
+| 03 | `03-flask-api` | Flask zamiast FastAPI |
+| 04 | `04-express-api` | Node/Express |
+| 05 | `05-ir-show` | `iterun parse` → IR JSON |
+| 06 | `06-iterate-workflow` | Shell: suggest → iterate |
+| 07 | `07-execution-smoke` | Execute w Docker |
+| 08 | `08-llm-generate` | SDK + MCP |
+| 09 | `09-e2e-ping-verify` | TestQL + Intract (ping) |
+| 10 | `10-e2e-user-crud-verify` | CRUD + expectations |
+| 11 | `11-e2e-express-verify` | Express E2E |
+| 12 | `12-e2e-full-gate` | Pełny gate (graph/scan) |
+| 13 | `13-resilience-vague` | Mglisty prompt |
+| 14 | `14-resilience-inventory` | Wiele encji |
+| 15 | `15-resilience-nested-paths` | Zagnieżdżone `{id}` |
+| 16 | `16-resilience-framework-trap` | Flask vs FastAPI |
+
 ## Szybki start
 
 ```bash

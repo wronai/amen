@@ -16,4 +16,4 @@ iterun generate "$(cat prompt.txt)" -o generated/ --run --quiet
 
 ## `generated/`
 
-`intent.yaml`, `plan.result.json`, `app.js`, `Dockerfile`
+`iterun.yaml`, `plan.result.json`, `app.js`, `Dockerfile`

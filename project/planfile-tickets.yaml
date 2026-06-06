@@ -1,4 +1,5 @@
 source: code2llm
+# generated in 0.03s
 schema: code2llm.planfile_tickets.v1
 project_root: /home/tom/github/wronai/iterun
 tickets:
@@ -121,28 +122,8 @@ tickets:
   - web/app.py
   dedupe_key: code2llm:god:web/app.py
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: actions'
-  description: 'code2llm reports `Shotgun Surgery: actions` in `generator/testql_scenario.py:18`.
-
-
-    Mutation of variable ''actions'' spans 7 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - generator/testql_scenario.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:generator/testql_scenario.py:18:Shotgun
-    Surgery: actions'
-- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: args'
-  description: 'code2llm reports `Shotgun Surgery: args` in `examples/_scripts/intent_to_testql.py:16`.
+  description: 'code2llm reports `Shotgun Surgery: args` in `examples/_scripts/verify_expectations.py:111`.
 
 
     Mutation of variable ''args'' spans 7 functions. Changing this logic requires
@@ -157,12 +138,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - examples/_scripts/intent_to_testql.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/_scripts/intent_to_testql.py:16:Shotgun
+  - examples/_scripts/verify_expectations.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/_scripts/verify_expectations.py:111:Shotgun
     Surgery: args'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: data'
-  description: 'code2llm reports `Shotgun Surgery: data` in `generator/expectations.py:33`.
+  description: 'code2llm reports `Shotgun Surgery: data` in `generator/intract_manifest.py:87`.
 
 
     Mutation of variable ''data'' spans 14 functions. Changing this logic requires
@@ -177,12 +158,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - generator/expectations.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:generator/expectations.py:33:Shotgun
+  - generator/intract_manifest.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:generator/intract_manifest.py:87:Shotgun
     Surgery: data'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: errors'
-  description: 'code2llm reports `Shotgun Surgery: errors` in `generator/expectations.py:33`.
+  description: 'code2llm reports `Shotgun Surgery: errors` in `examples/_scripts/verify_expectations.py:111`.
 
 
     Mutation of variable ''errors'' spans 8 functions. Changing this logic requires
@@ -197,8 +178,8 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - generator/expectations.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:generator/expectations.py:33:Shotgun
+  - examples/_scripts/verify_expectations.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/_scripts/verify_expectations.py:111:Shotgun
     Surgery: errors'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: lines'
@@ -242,7 +223,7 @@ tickets:
     Surgery: match'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: method'
-  description: 'code2llm reports `Shotgun Surgery: method` in `generator/expectations.py:33`.
+  description: 'code2llm reports `Shotgun Surgery: method` in `examples/_scripts/annotate_intract.py:43`.
 
 
     Mutation of variable ''method'' spans 8 functions. Changing this logic requires
@@ -257,12 +238,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - generator/expectations.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:generator/expectations.py:33:Shotgun
+  - examples/_scripts/annotate_intract.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/_scripts/annotate_intract.py:43:Shotgun
     Surgery: method'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: name'
-  description: 'code2llm reports `Shotgun Surgery: name` in `generator/testql_scenario.py:18`.
+  description: 'code2llm reports `Shotgun Surgery: name` in `generator/intract_manifest.py:37`.
 
 
     Mutation of variable ''name'' spans 6 functions. Changing this logic requires
@@ -277,12 +258,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - generator/testql_scenario.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:generator/testql_scenario.py:18:Shotgun
+  - generator/intract_manifest.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:generator/intract_manifest.py:37:Shotgun
     Surgery: name'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: out'
-  description: 'code2llm reports `Shotgun Surgery: out` in `generator/testql_scenario.py:58`.
+  description: 'code2llm reports `Shotgun Surgery: out` in `examples/_scripts/annotate_intract.py:43`.
 
 
     Mutation of variable ''out'' spans 8 functions. Changing this logic requires work
@@ -297,8 +278,8 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - generator/testql_scenario.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:generator/testql_scenario.py:58:Shotgun
+  - examples/_scripts/annotate_intract.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/_scripts/annotate_intract.py:43:Shotgun
     Surgery: out'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: parsed'
@@ -322,7 +303,7 @@ tickets:
     Surgery: parsed'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: parser'
-  description: 'code2llm reports `Shotgun Surgery: parser` in `examples/_scripts/intent_to_testql.py:16`.
+  description: 'code2llm reports `Shotgun Surgery: parser` in `examples/_scripts/verify_expectations.py:111`.
 
 
     Mutation of variable ''parser'' spans 10 functions. Changing this logic requires
@@ -337,12 +318,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - examples/_scripts/intent_to_testql.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/_scripts/intent_to_testql.py:16:Shotgun
+  - examples/_scripts/verify_expectations.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/_scripts/verify_expectations.py:111:Shotgun
     Surgery: parser'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: path'
-  description: 'code2llm reports `Shotgun Surgery: path` in `generator/expectations.py:33`.
+  description: 'code2llm reports `Shotgun Surgery: path` in `examples/_scripts/annotate_intract.py:43`.
 
 
     Mutation of variable ''path'' spans 8 functions. Changing this logic requires
@@ -357,8 +338,8 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - generator/expectations.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:generator/expectations.py:33:Shotgun
+  - examples/_scripts/annotate_intract.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/_scripts/annotate_intract.py:43:Shotgun
     Surgery: path'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: slug'
@@ -509,34 +490,12 @@ tickets:
   - generator/expectations.py
   dedupe_key: code2llm:cc:generator/expectations.py:generator.expectations.check_expectations
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: ir, result, self'
-  description: 'code2llm reports `Data Clump: ir, result, self` in `executor/runner.py:398`.
+  title: 'Address code smell: Data Clump: method, base_url, path'
+  description: 'code2llm reports `Data Clump: method, base_url, path` in `generator/expectations.py:21`.
 
 
-    Arguments (ir, result, self) are used together in multiple functions: executor.runner.Executor._restart_container,
-    executor.runner.Executor._write_artifacts, executor.runner.Executor._execute_docker,
-    executor.runner.Executor._execute_local.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - executor/runner.py
-  dedupe_key: 'code2llm:smell:data_clump:executor/runner.py:398:Data Clump: ir, result,
-    self'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: ir, result, self'
-  description: 'code2llm reports `Data Clump: ir, result, self` in `executor/runner.py:412`.
-
-
-    Arguments (ir, result, self) are used together in multiple functions: executor.runner.Executor._restart_container,
-    executor.runner.Executor._write_artifacts, executor.runner.Executor._execute_docker,
-    executor.runner.Executor._execute_local.
+    Arguments (method, base_url, path) are used together in multiple functions: generator.expectations._http_probe,
+    generator.contract_verify._http_probe.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -547,17 +506,16 @@ tickets:
   - code-smell
   - data-clump
   files:
-  - executor/runner.py
-  dedupe_key: 'code2llm:smell:data_clump:executor/runner.py:412:Data Clump: ir, result,
-    self'
+  - generator/expectations.py
+  dedupe_key: 'code2llm:smell:data_clump:generator/expectations.py:21:Data Clump:
+    method, base_url, path'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: ir, result, self'
-  description: 'code2llm reports `Data Clump: ir, result, self` in `executor/runner.py:470`.
+  title: 'Address code smell: Data Clump: method, base_url, path'
+  description: 'code2llm reports `Data Clump: method, base_url, path` in `generator/contract_verify.py:89`.
 
 
-    Arguments (ir, result, self) are used together in multiple functions: executor.runner.Executor._restart_container,
-    executor.runner.Executor._write_artifacts, executor.runner.Executor._execute_docker,
-    executor.runner.Executor._execute_local.
+    Arguments (method, base_url, path) are used together in multiple functions: generator.expectations._http_probe,
+    generator.contract_verify._http_probe.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -568,36 +526,15 @@ tickets:
   - code-smell
   - data-clump
   files:
-  - executor/runner.py
-  dedupe_key: 'code2llm:smell:data_clump:executor/runner.py:470:Data Clump: ir, result,
-    self'
+  - generator/contract_verify.py
+  dedupe_key: 'code2llm:smell:data_clump:generator/contract_verify.py:89:Data Clump:
+    method, base_url, path'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: ir, result, self'
-  description: 'code2llm reports `Data Clump: ir, result, self` in `executor/runner.py:559`.
+  title: 'Address code smell: Data Clump: self, focus, ir'
+  description: 'code2llm reports `Data Clump: self, focus, ir` in `ai_gateway/feedback_loop.py:89`.
 
 
-    Arguments (ir, result, self) are used together in multiple functions: executor.runner.Executor._restart_container,
-    executor.runner.Executor._write_artifacts, executor.runner.Executor._execute_docker,
-    executor.runner.Executor._execute_local.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - executor/runner.py
-  dedupe_key: 'code2llm:smell:data_clump:executor/runner.py:559:Data Clump: ir, result,
-    self'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: ir, self, focus'
-  description: 'code2llm reports `Data Clump: ir, self, focus` in `ai_gateway/feedback_loop.py:89`.
-
-
-    Arguments (ir, self, focus) are used together in multiple functions: ai_gateway.feedback_loop.FeedbackLoop.analyze,
+    Arguments (self, focus, ir) are used together in multiple functions: ai_gateway.feedback_loop.FeedbackLoop.analyze,
     ai_gateway.feedback_loop.FeedbackLoop._build_analysis_prompt, cli.main.CLI.cmd_ai_suggest.
 
 
@@ -611,13 +548,13 @@ tickets:
   files:
   - ai_gateway/feedback_loop.py
   dedupe_key: 'code2llm:smell:data_clump:ai_gateway/feedback_loop.py:89:Data Clump:
-    ir, self, focus'
+    self, focus, ir'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: ir, self, focus'
-  description: 'code2llm reports `Data Clump: ir, self, focus` in `ai_gateway/feedback_loop.py:241`.
+  title: 'Address code smell: Data Clump: self, focus, ir'
+  description: 'code2llm reports `Data Clump: self, focus, ir` in `ai_gateway/feedback_loop.py:241`.
 
 
-    Arguments (ir, self, focus) are used together in multiple functions: ai_gateway.feedback_loop.FeedbackLoop.analyze,
+    Arguments (self, focus, ir) are used together in multiple functions: ai_gateway.feedback_loop.FeedbackLoop.analyze,
     ai_gateway.feedback_loop.FeedbackLoop._build_analysis_prompt, cli.main.CLI.cmd_ai_suggest.
 
 
@@ -631,13 +568,13 @@ tickets:
   files:
   - ai_gateway/feedback_loop.py
   dedupe_key: 'code2llm:smell:data_clump:ai_gateway/feedback_loop.py:241:Data Clump:
-    ir, self, focus'
+    self, focus, ir'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: ir, self, focus'
-  description: 'code2llm reports `Data Clump: ir, self, focus` in `cli/main.py:529`.
+  title: 'Address code smell: Data Clump: self, focus, ir'
+  description: 'code2llm reports `Data Clump: self, focus, ir` in `cli/main.py:529`.
 
 
-    Arguments (ir, self, focus) are used together in multiple functions: ai_gateway.feedback_loop.FeedbackLoop.analyze,
+    Arguments (self, focus, ir) are used together in multiple functions: ai_gateway.feedback_loop.FeedbackLoop.analyze,
     ai_gateway.feedback_loop.FeedbackLoop._build_analysis_prompt, cli.main.CLI.cmd_ai_suggest.
 
 
@@ -650,55 +587,16 @@ tickets:
   - data-clump
   files:
   - cli/main.py
-  dedupe_key: 'code2llm:smell:data_clump:cli/main.py:529:Data Clump: ir, self, focus'
+  dedupe_key: 'code2llm:smell:data_clump:cli/main.py:529:Data Clump: self, focus,
+    ir'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: method, path, base_url'
-  description: 'code2llm reports `Data Clump: method, path, base_url` in `generator/contract_verify.py:89`.
+  title: 'Address code smell: Data Clump: self, max_tokens, model, system_prompt,
+    prompt, temperature'
+  description: 'code2llm reports `Data Clump: self, max_tokens, model, system_prompt,
+    prompt, temperature` in `ai_gateway/gateway.py:352`.
 
 
-    Arguments (method, path, base_url) are used together in multiple functions: generator.contract_verify._http_probe,
-    generator.expectations._http_probe.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - generator/contract_verify.py
-  dedupe_key: 'code2llm:smell:data_clump:generator/contract_verify.py:89:Data Clump:
-    method, path, base_url'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: method, path, base_url'
-  description: 'code2llm reports `Data Clump: method, path, base_url` in `generator/expectations.py:21`.
-
-
-    Arguments (method, path, base_url) are used together in multiple functions: generator.contract_verify._http_probe,
-    generator.expectations._http_probe.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - generator/expectations.py
-  dedupe_key: 'code2llm:smell:data_clump:generator/expectations.py:21:Data Clump:
-    method, path, base_url'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: prompt, system_prompt, model, max_tokens,
-    self, temperature'
-  description: 'code2llm reports `Data Clump: prompt, system_prompt, model, max_tokens,
-    self, temperature` in `ai_gateway/gateway.py:352`.
-
-
-    Arguments (prompt, system_prompt, model, max_tokens, self, temperature) are used
+    Arguments (self, max_tokens, model, system_prompt, prompt, temperature) are used
     together in multiple functions: ai_gateway.gateway.AIGateway.complete, ai_gateway.gateway.AIGateway.acomplete.
 
 
@@ -711,16 +609,16 @@ tickets:
   - data-clump
   files:
   - ai_gateway/gateway.py
-  dedupe_key: 'code2llm:smell:data_clump:ai_gateway/gateway.py:352:Data Clump: prompt,
-    system_prompt, model, max_tokens, self, temperature'
+  dedupe_key: 'code2llm:smell:data_clump:ai_gateway/gateway.py:352:Data Clump: self,
+    max_tokens, model, system_prompt, prompt, temperature'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: prompt, system_prompt, model, max_tokens,
-    self, temperature'
-  description: 'code2llm reports `Data Clump: prompt, system_prompt, model, max_tokens,
-    self, temperature` in `ai_gateway/gateway.py:418`.
+  title: 'Address code smell: Data Clump: self, max_tokens, model, system_prompt,
+    prompt, temperature'
+  description: 'code2llm reports `Data Clump: self, max_tokens, model, system_prompt,
+    prompt, temperature` in `ai_gateway/gateway.py:418`.
 
 
-    Arguments (prompt, system_prompt, model, max_tokens, self, temperature) are used
+    Arguments (self, max_tokens, model, system_prompt, prompt, temperature) are used
     together in multiple functions: ai_gateway.gateway.AIGateway.complete, ai_gateway.gateway.AIGateway.acomplete.
 
 
@@ -733,8 +631,92 @@ tickets:
   - data-clump
   files:
   - ai_gateway/gateway.py
-  dedupe_key: 'code2llm:smell:data_clump:ai_gateway/gateway.py:418:Data Clump: prompt,
-    system_prompt, model, max_tokens, self, temperature'
+  dedupe_key: 'code2llm:smell:data_clump:ai_gateway/gateway.py:418:Data Clump: self,
+    max_tokens, model, system_prompt, prompt, temperature'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: self, result, ir'
+  description: 'code2llm reports `Data Clump: self, result, ir` in `executor/runner.py:398`.
+
+
+    Arguments (self, result, ir) are used together in multiple functions: executor.runner.Executor._restart_container,
+    executor.runner.Executor._write_artifacts, executor.runner.Executor._execute_docker,
+    executor.runner.Executor._execute_local.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - executor/runner.py
+  dedupe_key: 'code2llm:smell:data_clump:executor/runner.py:398:Data Clump: self,
+    result, ir'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: self, result, ir'
+  description: 'code2llm reports `Data Clump: self, result, ir` in `executor/runner.py:412`.
+
+
+    Arguments (self, result, ir) are used together in multiple functions: executor.runner.Executor._restart_container,
+    executor.runner.Executor._write_artifacts, executor.runner.Executor._execute_docker,
+    executor.runner.Executor._execute_local.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - executor/runner.py
+  dedupe_key: 'code2llm:smell:data_clump:executor/runner.py:412:Data Clump: self,
+    result, ir'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: self, result, ir'
+  description: 'code2llm reports `Data Clump: self, result, ir` in `executor/runner.py:470`.
+
+
+    Arguments (self, result, ir) are used together in multiple functions: executor.runner.Executor._restart_container,
+    executor.runner.Executor._write_artifacts, executor.runner.Executor._execute_docker,
+    executor.runner.Executor._execute_local.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - executor/runner.py
+  dedupe_key: 'code2llm:smell:data_clump:executor/runner.py:470:Data Clump: self,
+    result, ir'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: self, result, ir'
+  description: 'code2llm reports `Data Clump: self, result, ir` in `executor/runner.py:559`.
+
+
+    Arguments (self, result, ir) are used together in multiple functions: executor.runner.Executor._restart_container,
+    executor.runner.Executor._write_artifacts, executor.runner.Executor._execute_docker,
+    executor.runner.Executor._execute_local.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - executor/runner.py
+  dedupe_key: 'code2llm:smell:data_clump:executor/runner.py:559:Data Clump: self,
+    result, ir'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _endpoint_to_func_name'
   description: 'code2llm reports `God Function: _endpoint_to_func_name` in `planner/simulator.py:17`.
@@ -1068,71 +1050,5 @@ tickets:
   files:
   - generator/session.py
   dedupe_key: 'code2llm:smell:god_function:generator/session.py:14:God Function: write_session_artifacts'
-- signal: slow_test_warning
-  title: 'Address slow test: tests.e2e.test_ai_gateway.TestConvenienceFunctions.test_complete_function'
-  description: 'Test `tests.e2e.test_ai_gateway.TestConvenienceFunctions.test_complete_function`
-    took 5.77s to run.
-
-
-    Optimize its setup, mock slow external dependencies, or refactor its logic to
-    reduce overall test suite execution time.'
-  priority: medium
-  labels:
-  - llm-ready
-  - test-optimization
-  - slow-test
-  files:
-  - tests/e2e/test_ai_gateway.py
-  dedupe_key: test-optimization:tests.e2e.test_ai_gateway.TestConvenienceFunctions:test_complete_function
-- signal: slow_test_warning
-  title: 'Address slow test: tests.e2e.test_web.TestiterunAndExecution.test_execute_without_iterun'
-  description: 'Test `tests.e2e.test_web.TestiterunAndExecution.test_execute_without_iterun`
-    took 2.72s to run.
-
-
-    Optimize its setup, mock slow external dependencies, or refactor its logic to
-    reduce overall test suite execution time.'
-  priority: medium
-  labels:
-  - llm-ready
-  - test-optimization
-  - slow-test
-  files:
-  - tests/e2e/test_web.py
-  dedupe_key: test-optimization:tests.e2e.test_web.TestiterunAndExecution:test_execute_without_iterun
-- signal: slow_test_warning
-  title: 'Address slow test: tests.e2e.test_ai_gateway.TestAIGateway.test_health_check'
-  description: 'Test `tests.e2e.test_ai_gateway.TestAIGateway.test_health_check` took
-    1.45s to run.
-
-
-    Optimize its setup, mock slow external dependencies, or refactor its logic to
-    reduce overall test suite execution time.'
-  priority: medium
-  labels:
-  - llm-ready
-  - test-optimization
-  - slow-test
-  files:
-  - tests/e2e/test_ai_gateway.py
-  dedupe_key: test-optimization:tests.e2e.test_ai_gateway.TestAIGateway:test_health_check
-- signal: slow_test_warning
-  title: Address high test suite startup overhead
-  description: 'The test suite startup and collection overhead is high: 5.84s.
-
-
-    This overhead is spent on imports, collection, and test environment initialization.
-
-    Analyze fixtures with broad scopes, reduce heavy imports on test collection, and
-    optimize pytest-xdist startup settings to decrease the delay before tests start
-    running.'
-  priority: high
-  labels:
-  - llm-ready
-  - test-optimization
-  - startup-overhead
-  files:
-  - pyproject.toml
-  dedupe_key: test-optimization:general:startup-overhead
 applied: []
 skipped: []

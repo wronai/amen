@@ -20,10 +20,10 @@ HUBS[20]:
     CC=11  in:0  out:21  total:21
   generator.intent_generator.IntentGenerator.generate
     CC=11  in:0  out:21  total:21
-  examples._scripts.intent_to_openapi.intent_to_openapi
-    CC=8  in:1  out:17  total:18
   cli.main.CLI.cmd_ai_chat
     CC=12  in:0  out:18  total:18
+  examples._scripts.intent_to_openapi.intent_to_openapi
+    CC=8  in:1  out:17  total:18
   generator.session.write_session_artifacts
     CC=5  in:1  out:16  total:17
   config.load_dotenv
@@ -32,18 +32,18 @@ HUBS[20]:
     CC=6  in:1  out:13  total:14
   ai_gateway.gateway.get_gateway
     CC=3  in:13  out:1  total:14
-  examples._scripts.annotate_intract._actions
-    CC=7  in:2  out:11  total:13
   generator.intract_manifest.parse_api_actions
     CC=6  in:4  out:9  total:13
-  examples._scripts.annotate_intract.annotate_python
-    CC=5  in:1  out:11  total:12
-  planner.simulator._endpoint_to_func_name
-    CC=5  in:2  out:10  total:12
+  examples._scripts.annotate_intract._actions
+    CC=7  in:2  out:11  total:13
   generator.intent_generator.extract_yaml_from_llm
     CC=6  in:1  out:11  total:12
+  planner.simulator._endpoint_to_func_name
+    CC=5  in:2  out:10  total:12
   cli.main.CLI.cmd_ai_health
     CC=4  in:0  out:12  total:12
+  generator.intract_manifest.build_intract_manifest
+    CC=6  in:1  out:11  total:12
 
 MODULES:
   ai_gateway.feedback_loop  [2 funcs]
@@ -151,53 +151,53 @@ MODULES:
     list_models  CC=2  out:4
 
 EDGES:
-  examples._scripts.verify_expectations.verify → examples._scripts.verify_expectations._load_yaml
-  examples._scripts.verify_expectations.verify → examples._scripts.verify_expectations._parse_actions
-  examples._scripts.verify_expectations.main → examples._scripts.verify_expectations.verify
-  generator.intract_manifest.build_intract_manifest → generator.intract_manifest._safe_id
-  generator.intract_manifest.build_intract_manifest → generator.intract_manifest.parse_api_actions
-  generator.intract_manifest.build_intract_manifest → generator.intract_manifest._slug
-  generator.intract_manifest.intent_to_intract_dict → generator.intract_manifest.build_intract_manifest
-  generator.intract_manifest.write_intract_manifest → generator.intract_manifest.intent_to_intract_dict
-  examples._scripts.intent_to_openapi.intent_to_openapi → examples._scripts.intent_to_openapi._slug
-  examples._scripts.intent_to_openapi.main → examples._scripts.intent_to_openapi.intent_to_openapi
+  config.reload_config → config.load_dotenv
+  generator.expectations.check_expectations → generator.intract_manifest.parse_api_actions
+  generator.expectations.load_and_check_expectations → generator.expectations.check_expectations
+  generator.intent_generator.IntentGenerator.__init__ → dsl.schema.get_system_prompt
+  generator.intent_generator.IntentGenerator.__init__ → ai_gateway.gateway.get_gateway
+  generator.intent_generator.IntentGenerator.generate → generator.intent_generator._build_user_prompt
+  generator.intent_generator.IntentGenerator.generate → generator.intent_generator.extract_yaml_from_llm
+  generator.intent_generator.IntentGenerator.generate → dsl.schema.validate_yaml_document
   generator.testql_scenario.build_testql_scenario → generator.intract_manifest.parse_api_actions
   generator.testql_scenario.build_testql_scenario → generator.testql_scenario._probe_path
   generator.testql_scenario.write_testql_scenario → generator.testql_scenario.build_testql_scenario
-  examples._scripts.intent_to_testql.main → generator.testql_scenario.write_testql_scenario
-  generator.contract_verify.write_contract_artifacts → generator.intract_manifest.write_intract_manifest
-  generator.contract_verify.write_contract_artifacts → generator.testql_scenario.write_testql_scenario
-  generator.contract_verify.verify_contract → generator.contract_verify.write_contract_artifacts
-  generator.contract_verify.verify_contract → generator.intract_manifest.parse_api_actions
-  generator.contract_verify.verify_contract → generator.expectations.load_and_check_expectations
-  generator.expectations.check_expectations → generator.intract_manifest.parse_api_actions
-  generator.expectations.load_and_check_expectations → generator.expectations.check_expectations
-  executor.runner.Executor.__init__ → config.get_config
-  sdk.client.IterunClient.schema → dsl.schema.get_json_schema
-  sdk.client.IterunClient.validate → dsl.schema.validate_yaml_document
-  sdk.client.IterunClient.generate_and_run → generator.pipeline.run_pipeline
-  sdk.client.IterunClient.parse → parser.dsl_parser.parse_dsl
-  examples._scripts.annotate_intract._comment → examples._scripts.annotate_intract._slug
-  examples._scripts.annotate_intract.annotate_python → examples._scripts.annotate_intract._actions
-  examples._scripts.annotate_intract.annotate_express → examples._scripts.annotate_intract._actions
-  examples._scripts.annotate_intract.main → examples._scripts.annotate_intract.annotate_python
-  examples._scripts.annotate_intract.main → examples._scripts.annotate_intract.annotate_express
-  planner.simulator.Planner._generate_fastapi_code → planner.simulator._endpoint_to_func_name
-  planner.simulator.Planner._generate_flask_code → planner.simulator._endpoint_to_func_name
-  examples._scripts.intent_to_intract.main → generator.intract_manifest.write_intract_manifest
-  ai_gateway.feedback_loop.FeedbackLoop.__init__ → ai_gateway.gateway.get_gateway
-  config.reload_config → config.load_dotenv
   generator.pipeline._write_plan_artifacts → generator.intract_manifest.write_intract_manifest
   generator.pipeline._write_plan_artifacts → generator.testql_scenario.write_testql_scenario
   generator.pipeline._finalize → generator.pipeline._container_logs
   generator.pipeline._finalize → generator.session.write_session_artifacts
   generator.pipeline.run_pipeline → generator.pipeline._finalize
   generator.pipeline.run_pipeline → planner.simulator.plan_intent
-  generator.intent_generator.IntentGenerator.__init__ → dsl.schema.get_system_prompt
-  generator.intent_generator.IntentGenerator.__init__ → ai_gateway.gateway.get_gateway
-  generator.intent_generator.IntentGenerator.generate → generator.intent_generator._build_user_prompt
-  generator.intent_generator.IntentGenerator.generate → generator.intent_generator.extract_yaml_from_llm
-  generator.intent_generator.IntentGenerator.generate → dsl.schema.validate_yaml_document
-  cli.main.CLI.cmd_new → parser.dsl_parser.parse_dsl
-  cli.main.CLI.cmd_load → parser.dsl_parser.parse_dsl_file
-  cli.main.CLI.cmd_parse → parser.dsl_parser.parse_dsl
+  generator.intract_manifest.build_intract_manifest → generator.intract_manifest._safe_id
+  generator.intract_manifest.build_intract_manifest → generator.intract_manifest.parse_api_actions
+  generator.intract_manifest.build_intract_manifest → generator.intract_manifest._slug
+  generator.intract_manifest.intent_to_intract_dict → generator.intract_manifest.build_intract_manifest
+  generator.intract_manifest.write_intract_manifest → generator.intract_manifest.intent_to_intract_dict
+  generator.contract_verify.write_contract_artifacts → generator.intract_manifest.write_intract_manifest
+  generator.contract_verify.write_contract_artifacts → generator.testql_scenario.write_testql_scenario
+  generator.contract_verify.verify_contract → generator.contract_verify.write_contract_artifacts
+  generator.contract_verify.verify_contract → generator.intract_manifest.parse_api_actions
+  generator.contract_verify.verify_contract → generator.expectations.load_and_check_expectations
+  examples._scripts.verify_expectations.verify → examples._scripts.verify_expectations._load_yaml
+  examples._scripts.verify_expectations.verify → examples._scripts.verify_expectations._parse_actions
+  examples._scripts.verify_expectations.main → examples._scripts.verify_expectations.verify
+  examples._scripts.annotate_intract._comment → examples._scripts.annotate_intract._slug
+  examples._scripts.annotate_intract.annotate_python → examples._scripts.annotate_intract._actions
+  examples._scripts.annotate_intract.annotate_express → examples._scripts.annotate_intract._actions
+  examples._scripts.annotate_intract.main → examples._scripts.annotate_intract.annotate_python
+  examples._scripts.annotate_intract.main → examples._scripts.annotate_intract.annotate_express
+  examples._scripts.intent_to_testql.main → generator.testql_scenario.write_testql_scenario
+  examples._scripts.intent_to_intract.main → generator.intract_manifest.write_intract_manifest
+  examples._scripts.intent_to_openapi.intent_to_openapi → examples._scripts.intent_to_openapi._slug
+  examples._scripts.intent_to_openapi.main → examples._scripts.intent_to_openapi.intent_to_openapi
+  planner.simulator.Planner._generate_fastapi_code → planner.simulator._endpoint_to_func_name
+  planner.simulator.Planner._generate_flask_code → planner.simulator._endpoint_to_func_name
+  web.app.get_schema → dsl.schema.get_json_schema
+  web.app.validate_yaml → dsl.schema.validate_yaml_document
+  web.app.generate_and_run_api → generator.pipeline.run_pipeline
+  web.app.parse_intent → parser.dsl_parser.parse_dsl
+  web.app.plan → planner.simulator.plan_intent
+  web.app.execute → executor.runner.execute_intent
+  web.app.validate_intent → config.get_config
+  web.app.ai_status → ai_gateway.gateway.get_gateway
+  web.app.list_models → ai_gateway.gateway.get_gateway

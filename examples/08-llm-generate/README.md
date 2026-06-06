@@ -14,7 +14,7 @@ Ten sam flow co pozostałe przykłady (`prompt.txt` → `generate`). Dodatkowo: 
 iterun generate "$(cat prompt.txt)" -o generated/ --run --quiet
 iterun generate "$(cat prompt.txt)" -o generated/ --execute --quiet
 iterun schema
-iterun validate generated/intent.yaml
+iterun validate generated/iterun.yaml
 ```
 
 ## SDK

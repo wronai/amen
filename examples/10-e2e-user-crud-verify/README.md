@@ -17,7 +17,7 @@ testql run tests/service.testql.toon.yaml --url "$(docker ps --filter name=inten
 
 ## Co sprawdzamy
 
-1. **intent.yaml** — czy LLM dodał wszystkie akcje z promptu
+1. **iterun.yaml** — czy LLM dodał wszystkie akcje z promptu
 2. **testql** — czy kontener odpowiada HTTP 200
 3. **intract** — `generated/intract.yaml` (auto z intent) vs kod + openapi
 4. **expectations** — pola JSON (`status`, `endpoint`, `method`)

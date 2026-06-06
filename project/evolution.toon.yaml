@@ -39,14 +39,14 @@ NEXT[10] (ranked by impact):
       EFFORT: ~1h  IMPACT: 210
 
   [10] !! SPLIT           planfile.yaml
-      WHY: 643L, 0 classes, max CC=0
+      WHY: 1046L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
 
 RISKS[3]:
+  ⚠ Splitting planfile.yaml may break 0 import paths
   ⚠ Splitting cli/main.py may break 25 import paths
   ⚠ Splitting ai_gateway/gateway.py may break 20 import paths
-  ⚠ Splitting planfile.yaml may break 0 import paths
 
 METRICS-TARGET:
   CC̄:          4.5 → ≤3.1
@@ -80,4 +80,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=4.2 → now CC̄=4.5
+  prev CC̄=4.5 → now CC̄=4.5

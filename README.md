@@ -22,17 +22,29 @@ Generated on 2026-06-06 using [openrouter/qwen/qwen3-coder-next](https://openrou
 
 ITERUN is a system that allows you to:
 
-1. **Define intents** using a simple YAML-based DSL
-2. **Simulate execution** with dry-run planning
-3. **Get AI suggestions** using local LLMs via Ollama
-4. **Iteratively refine** your intent through feedback loops
-5. **Execute safely** with the ITERUN boundary (explicit approval required)
+1. **Generate intents from prompts** (LiteLLM / OpenRouter / Ollama) → **`iterun.yaml`**
+2. **Define intents** manually in YAML DSL (sekcja `INTENT:`)
+3. **Simulate execution** with dry-run planning
+4. **Deploy services** in Docker with optional **contract verify** (TestQL + retry loop)
+5. **Get AI suggestions** in the interactive shell (Ollama / LiteLLM)
+6. **Execute safely** with the ITERUN boundary (explicit approval when enabled)
+
+**One-liner (prompt → running service):**
+
+```bash
+iterun generate "Create a REST API for user management" \
+  -o generated/ --execute --verify
+```
 
 ## Architecture
 
 ```
 ┌─────────────────────┐
-│  CLI / Web UI       │  ← User interface
+│  CLI / Web / SDK    │  ← User interface
+└─────────┬───────────┘
+          ↓
+┌─────────────────────┐
+│ Generator (LLM)     │  ← prompt → iterun.yaml + intract + testql
 └─────────┬───────────┘
           ↓
 ┌─────────────────────┐
@@ -40,27 +52,19 @@ ITERUN is a system that allows you to:
 └─────────┬───────────┘
           ↓
 ┌─────────────────────┐
-│ Intermediate Rep.   │  ← Canonical state
+│ Planner / Simulator │  ← Dry-run → app.py, Dockerfile
 └─────────┬───────────┘
           ↓
 ┌─────────────────────┐
-│ Planner / Simulator │  ← Dry-run
+│ Executor (Docker)   │  ← Deploy service
 └─────────┬───────────┘
           ↓
 ┌─────────────────────┐
-│ AI Gateway (Ollama) │  ← LLM suggestions
+│ Contract verify       │  ← TestQL + expectations; retry on fail
 └─────────┬───────────┘
           ↓
 ┌─────────────────────┐
-│ Feedback Loop       │  ← Iterate
-└─────────┬───────────┘
-          ↓
-┌─────────────────────┐
-│ ITERUN Boundary       │  ← Explicit approval
-└─────────┬───────────┘
-          ↓
-┌─────────────────────┐
-│ Executor            │  ← Real execution
+│ session.json        │  ← Full session log in generated/
 └─────────────────────┘
 ```
 
@@ -76,9 +80,9 @@ cd iterun
 # Full setup (recommended)
 make setup
 
-# Or manual install
-pip install -r requirements.txt
-pip install litellm
+# Editable install (recommended)
+python3 -m venv venv && source venv/bin/activate
+pip install -e ".[ai]"
 cp .env.example .env
 ```
 
@@ -87,19 +91,40 @@ cp .env.example .env
 Copy `.env.example` to `.env` and adjust:
 
 ```bash
-# Server
-HOST=0.0.0.0
-PORT=8080
+# LLM for `iterun generate` (priority: --model > LLM_MODEL > DEFAULT_MODEL)
+OPENROUTER_API_KEY=sk-or-...
+LLM_MODEL=openrouter/deepseek/deepseek-v4-pro
 
-# AI Gateway
+# Local Ollama (shell suggest/chat fallback)
 OLLAMA_BASE_URL=http://localhost:11434
 DEFAULT_MODEL=llama3.2
-MAX_MODEL_PARAMS=12.0
 
-# Execution (no ITERUN prompt by default)
+# Server / execution
+HOST=0.0.0.0
+PORT=8080
 SKIP_ITERUN_CONFIRMATION=true
 CONTAINER_PORT=8000
 ```
+
+### Generate from prompt
+
+```bash
+source venv/bin/activate
+
+# YAML only
+iterun generate "Create a ping API" -o generated/
+
+# Plan + artifacts
+iterun generate "..." -o generated/ --run
+
+# Docker + contract verify + repair loop
+iterun generate "..." -o generated/ --execute --verify --max-verify-iterations 5
+
+# Full JSON session log
+iterun generate "..." -o generated/ --execute --verify --json
+```
+
+Output directory (`generated/` by default) — see [Session artifacts](#session-artifacts).
 
 ### AI Gateway Setup (Ollama)
 
@@ -136,16 +161,16 @@ make clean         # Clean temp files
 make shell
 # Or: python -m cli.main
 
-# Execute intent directly (no ITERUN prompt)
+# Generate + execute from prompt
 make execute
-# Or: python -m cli.main execute examples/user-api.intent.yaml
+# Or: iterun generate "$(cat examples/01-user-api/prompt.txt)" -o examples/01-user-api/generated/ --execute --verify
 ```
 
 **Interactive Shell Commands:**
 
 ```
 intent> new my-api          # Create new intent
-intent> load file.yaml      # Load from file
+intent> load iterun.yaml    # Load package (generated/iterun.yaml)
 intent> plan                # Run dry-run
 intent> suggest             # Get AI suggestions
 intent> apply               # Auto-apply AI suggestions
@@ -171,7 +196,10 @@ python -m web.app
 
 ## AI Gateway
 
-The AI Gateway uses **LiteLLM** to provide unified access to local LLMs via Ollama.
+The AI Gateway uses **LiteLLM** for:
+
+- **`iterun generate`** — cloud models via **OpenRouter** (`OPENROUTER_API_KEY`, `LLM_MODEL`)
+- **Shell `suggest` / `chat`** — local **Ollama** (`OLLAMA_BASE_URL`, `DEFAULT_MODEL`)
 
 ### Supported Models (≤12B parameters)
 
@@ -200,7 +228,9 @@ export DEFAULT_MODEL="llama3.2"
 export MAX_MODEL_PARAMS="12.0"
 ```
 
-### DSL Format
+### Package file: `iterun.yaml`
+
+The canonical workspace filename is **`iterun.yaml`** (not `intent.yaml`). Full spec: [docs/INTENT_DSL_SPEC.md](docs/INTENT_DSL_SPEC.md).
 
 ```yaml
 INTENT:
@@ -252,6 +282,10 @@ EXECUTION:
 | `POST` | `/api/intents/{id}/iterun` | Approve for execution |
 | `POST` | `/api/intents/{id}/execute` | Execute approved intent |
 | `GET` | `/api/intents/{id}/code` | Get generated code |
+| `GET` | `/api/schema` | JSON Schema for DSL |
+| `POST` | `/api/intents/generate` | LLM → YAML |
+| `POST` | `/api/intents/generate-and-run` | Generate + plan (+ optional execute) |
+| `POST` | `/api/intents/validate-yaml` | Validate YAML document |
 
 ### AI Gateway Endpoints
 
@@ -267,81 +301,114 @@ EXECUTION:
 ### Python API
 
 ```python
-from ir.models import IntentIR
+from generator.pipeline import run_pipeline
 from parser import parse_dsl
 from planner import plan_intent
-from ai_gateway import get_gateway, create_feedback_loop
+from sdk import IterunClient
 
-# Parse DSL
-ir = parse_dsl(dsl_content)
+# Prompt → full pipeline
+result = run_pipeline(
+    "Create a REST API for user management",
+    output_dir="generated",
+    execute=True,
+    verify=True,
+)
+print(result.yaml_path)       # generated/iterun.yaml
+print(result.verification)    # testql + HTTP result
 
-# Run dry-run
-result = plan_intent(ir)
-print(result.generated_code)
+# Or SDK
+client = IterunClient()
+out = client.generate_and_run("Create a ping API", output_dir="generated", execute=True)
 
-# Get AI suggestions
-loop = create_feedback_loop()
-suggestions = loop.analyze(ir, focus="security")
-print(suggestions.suggestions)
-
-# Apply AI suggestions
-loop.iterate(ir, auto_apply=True)
-
-# Or chat directly
-gateway = get_gateway()
-response = gateway.complete("Explain FastAPI middleware")
-print(response["content"])
+# Manual DSL
+ir = parse_dsl(open("generated/iterun.yaml").read())
+plan = plan_intent(ir)
+print(plan.generated_code)
 ```
+
+## Examples
+
+| Script | Opis |
+|--------|------|
+| `./examples/run-all.sh` | 01–08: prompt → `iterun.yaml` → plan |
+| `./examples/run-e2e.sh` | 09–12: execute + TestQL + Intract |
+| `./examples/run-resilience.sh` | 13–16: skrajne prompty, pętla naprawcza |
+
+Szczegóły: [examples/README.md](examples/README.md).
+
+## Session artifacts
+
+Everything from one `iterun generate` run lands in `--output-dir` (default `generated/`):
+
+| File | Content |
+|------|---------|
+| `iterun.yaml` | DSL package from LLM |
+| `session.json` | **Full session** — prompt, generate attempts, plan, execute, verify |
+| `intract.yaml` | Intract contract manifest |
+| `service.testql.toon.yaml` | Auto-generated TestQL scenario |
+| `plan.result.json` | Plan logs + IR |
+| `execution.json` | Execute logs, endpoints, container id |
+| `container.log` | Docker logs (tail) |
+| `verify.result.json` | Contract verify result |
+| `verify.rounds.json` | Repair loop history (`--verify`) |
+| `app.py` / `Dockerfile` | Generated service |
 
 ## Testing
 
 ```bash
-# Run all tests (58 tests)
 pytest
-
-# Run specific test suites
-pytest tests/e2e/test_shell.py -v      # 17 tests
-pytest tests/e2e/test_web.py -v        # 18 tests  
-pytest tests/e2e/test_ai_gateway.py -v # 23 tests
-
-# Run with coverage
-pytest --cov=. --cov-report=html
+pytest tests/e2e/test_intent_generator.py -v
+pytest tests/e2e/test_shell.py -v
+pytest tests/e2e/test_web.py -v
+pytest tests/e2e/test_ai_gateway.py -v
 ```
 
 ## Project Structure
 
 ```
 iterun/
-├── ir/                 # Intermediate Representation models
+├── generator/          # LLM generate, pipeline, testql, intract, verify loop
+│   ├── intent_generator.py
+│   ├── pipeline.py
+│   ├── contract_verify.py
+│   └── session.py
+├── dsl/                # Pydantic schema for LLM validation
+├── ir/                 # Intermediate Representation
 ├── parser/             # DSL parser
 ├── planner/            # Dry-run simulator
-├── executor/           # Execution engine
-├── ai_gateway/         # LiteLLM AI Gateway
-│   ├── gateway.py      # Main gateway with Ollama models
-│   └── feedback_loop.py # LLM-powered feedback loop
-├── cli/                # Shell interface
-├── web/                # Web interface (FastAPI)
-├── tests/e2e/          # E2E test suite
-│   ├── test_shell.py
-│   ├── test_web.py
-│   └── test_ai_gateway.py
-├── examples/           # Example DSL files
-├── config.py           # Configuration loader
-├── Makefile            # Build automation
-├── .env.example        # Environment template
-├── requirements.txt
+├── executor/           # Docker execution + HTTP validation
+├── ai_gateway/         # LiteLLM (Ollama + OpenRouter)
+├── cli/                # `iterun` CLI
+├── web/                # FastAPI web UI
+├── sdk/                # Python SDK client
+├── mcp/                # MCP server (optional)
+├── examples/           # prompt.txt + run.sh → generated/
+├── docs/               # DSL spec, docs index
+├── tests/e2e/
+├── config.py           # PACKAGE_FILENAME = "iterun.yaml"
 └── README.md
 ```
 
 ## Workflow
 
-1. **Define Intent** → Write DSL or use web editor
-2. **Parse** → Convert DSL to IR (Intermediate Representation)
-3. **Plan** → Run dry-run simulation, review generated code
-4. **Get AI Suggestions** → Analyze with local LLM
-5. **Iterate** → Make changes, re-plan until satisfied
-6. **Execute** → Run with auto-validation and auto-fix
-7. **Validate** → Automatic health checks on all endpoints
+### Prompt-first (recommended)
+
+1. **Prompt** → `iterun generate "..." -o generated/`
+2. **Contracts** → auto `intract.yaml` + `service.testql.toon.yaml`
+3. **Plan** → `app.py`, `Dockerfile`, `plan.result.json`
+4. **Execute** → Docker container
+5. **Verify** → TestQL + HTTP (`--verify`); retry with error context on failure
+6. **Session** → `session.json` aggregates all steps
+
+### Manual / interactive
+
+1. **Edit** `iterun.yaml` or use shell `new` / `load`
+2. **Plan** → dry-run
+3. **Suggest / iterate** → AI or manual refinement
+4. **ITERUN** → approve (unless `SKIP_ITERUN_CONFIRMATION`)
+5. **Execute** → deploy + endpoint validation
+
+Documentation: [docs/README.md](docs/README.md) · [docs/INTENT_DSL_SPEC.md](docs/INTENT_DSL_SPEC.md)
 
 ## Validation & Auto-Fix
 

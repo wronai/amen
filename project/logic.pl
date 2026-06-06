@@ -1,40 +1,87 @@
 % ── Project Metadata ─────────────────────────────────────
-project_metadata('iterun', '0.1.0', 'python').
+project_metadata('iterun', '0.1.6', 'python').
 
 % ── Project Files ────────────────────────────────────────
 project_file('ai_gateway/__init__.py', 35, 'python').
 project_file('ai_gateway/feedback_loop.py', 385, 'python').
-project_file('ai_gateway/gateway.py', 616, 'python').
-project_file('app.doql.less', 231, 'less').
-project_file('cli/__init__.py', 4, 'python').
-project_file('cli/main.py', 764, 'python').
-project_file('config.py', 165, 'python').
+project_file('ai_gateway/gateway.py', 645, 'python').
+project_file('app.doql.less', 236, 'less').
+project_file('cli/__init__.py', 21, 'python').
+project_file('cli/__main__.py', 5, 'python').
+project_file('cli/main.py', 929, 'python').
+project_file('config.py', 169, 'python').
+project_file('dsl/__init__.py', 18, 'python').
+project_file('dsl/schema.py', 165, 'python').
+project_file('examples/01-user-api/run.sh', 15, 'shell').
+project_file('examples/02-ping-smoke/run.sh', 9, 'shell').
+project_file('examples/03-flask-api/run.sh', 9, 'shell').
+project_file('examples/04-express-api/run.sh', 9, 'shell').
+project_file('examples/05-ir-show/run.sh', 10, 'shell').
+project_file('examples/06-iterate-workflow/run.sh', 10, 'shell').
+project_file('examples/07-execution-smoke/run.sh', 18, 'shell').
+project_file('examples/08-llm-generate/run.sh', 14, 'shell').
+project_file('examples/09-e2e-ping-verify/run.sh', 12, 'shell').
+project_file('examples/10-e2e-user-crud-verify/run.sh', 11, 'shell').
+project_file('examples/11-e2e-express-verify/run.sh', 11, 'shell').
+project_file('examples/12-e2e-full-gate/run.sh', 41, 'shell').
+project_file('examples/13-resilience-vague/run.sh', 23, 'shell').
+project_file('examples/14-resilience-inventory/run.sh', 17, 'shell').
+project_file('examples/15-resilience-nested-paths/run.sh', 17, 'shell').
+project_file('examples/16-resilience-framework-trap/run.sh', 17, 'shell').
+project_file('examples/_common.sh', 96, 'shell').
+project_file('examples/_scripts/annotate_intract.py', 98, 'python').
+project_file('examples/_scripts/intent_to_intract.py', 30, 'python').
+project_file('examples/_scripts/intent_to_openapi.py', 77, 'python').
+project_file('examples/_scripts/intent_to_testql.py', 27, 'python').
+project_file('examples/_scripts/verify_expectations.py', 128, 'python').
+project_file('examples/_verify.sh', 135, 'shell').
+project_file('examples/run-all.sh', 25, 'shell').
+project_file('examples/run-e2e.sh', 32, 'shell').
+project_file('examples/run-resilience.sh', 26, 'shell').
 project_file('executor/__init__.py', 4, 'python').
 project_file('executor/runner.py', 615, 'python').
+project_file('generator/__init__.py', 24, 'python').
+project_file('generator/contract_verify.py', 202, 'python').
+project_file('generator/expectations.py', 90, 'python').
+project_file('generator/intent_generator.py', 233, 'python').
+project_file('generator/intract_manifest.py', 107, 'python').
+project_file('generator/pipeline.py', 221, 'python').
+project_file('generator/session.py', 53, 'python').
+project_file('generator/testql_scenario.py', 68, 'python').
 project_file('ir/__init__.py', 10, 'python').
 project_file('ir/models.py', 224, 'python').
+project_file('mcp/__init__.py', 2, 'python').
+project_file('mcp/server.py', 83, 'python').
 project_file('parser/__init__.py', 4, 'python').
 project_file('parser/dsl_parser.py', 264, 'python').
 project_file('planner/__init__.py', 4, 'python').
-project_file('planner/simulator.py', 349, 'python').
+project_file('planner/simulator.py', 375, 'python').
 project_file('project.sh', 59, 'shell').
-project_file('run.sh', 159, 'shell').
+project_file('run.sh', 161, 'shell').
+project_file('sdk/__init__.py', 6, 'python').
+project_file('sdk/client.py', 120, 'python').
 project_file('tests/__init__.py', 2, 'python').
 project_file('tests/conftest.py', 59, 'python').
-project_file('tests/e2e/test_ai_gateway.py', 376, 'python').
-project_file('tests/e2e/test_shell.py', 373, 'python').
+project_file('tests/e2e/test_ai_gateway.py', 388, 'python').
+project_file('tests/e2e/test_expectations.py', 46, 'python').
+project_file('tests/e2e/test_intent_generator.py', 109, 'python').
+project_file('tests/e2e/test_intract_manifest.py', 42, 'python').
+project_file('tests/e2e/test_shell.py', 403, 'python').
+project_file('tests/e2e/test_testql_scenario.py', 34, 'python').
 project_file('tests/e2e/test_web.py', 559, 'python').
 project_file('tree.sh', 2, 'shell').
 project_file('web/__init__.py', 4, 'python').
-project_file('web/app.py', 460, 'python').
+project_file('web/app.py', 524, 'python').
 
 % ── Python Functions ─────────────────────────────────────
 python_function('ai_gateway/feedback_loop.py', 'create_feedback_loop', 1, 1, 1).
 python_function('ai_gateway/feedback_loop.py', 'analyze_intent', 2, 1, 2).
 python_function('ai_gateway/gateway.py', 'get_gateway', 1, 3, 1).
-python_function('ai_gateway/gateway.py', 'complete', 1, 10, 2).
+python_function('ai_gateway/gateway.py', 'complete', 1, 9, 2).
 python_function('ai_gateway/gateway.py', 'suggest_improvements', 1, 8, 2).
-python_function('cli/main.py', 'main', 0, 21, 21).
+python_function('cli/__init__.py', '__getattr__', 1, 3, 1).
+python_function('cli/main.py', 'write_plan_artifacts', 3, 5, 6).
+python_function('cli/main.py', 'main', 0, 72, 36).
 python_function('config.py', 'load_dotenv', 1, 15, 11).
 python_function('config.py', 'get_env', 2, 1, 1).
 python_function('config.py', 'get_env_bool', 2, 1, 3).
@@ -43,20 +90,79 @@ python_function('config.py', 'get_env_float', 2, 2, 3).
 python_function('config.py', 'get_config', 0, 2, 1).
 python_function('config.py', 'reload_config', 0, 1, 2).
 python_function('config.py', 'configure', 0, 1, 1).
+python_function('dsl/schema.py', 'get_json_schema', 0, 1, 1).
+python_function('dsl/schema.py', 'document_to_yaml', 1, 1, 2).
+python_function('dsl/schema.py', 'validate_yaml_document', 1, 7, 6).
+python_function('dsl/schema.py', 'get_system_prompt', 0, 1, 2).
+python_function('examples/_scripts/annotate_intract.py', '_slug', 1, 2, 3).
+python_function('examples/_scripts/annotate_intract.py', '_actions', 1, 7, 9).
+python_function('examples/_scripts/annotate_intract.py', '_comment', 2, 1, 1).
+python_function('examples/_scripts/annotate_intract.py', 'annotate_python', 2, 5, 10).
+python_function('examples/_scripts/annotate_intract.py', 'annotate_express', 2, 6, 11).
+python_function('examples/_scripts/annotate_intract.py', 'main', 0, 3, 7).
+python_function('examples/_scripts/intent_to_intract.py', 'main', 0, 3, 7).
+python_function('examples/_scripts/intent_to_openapi.py', '_slug', 1, 2, 3).
+python_function('examples/_scripts/intent_to_openapi.py', 'intent_to_openapi', 1, 8, 11).
+python_function('examples/_scripts/intent_to_openapi.py', 'main', 0, 1, 8).
+python_function('examples/_scripts/intent_to_testql.py', 'main', 0, 1, 5).
+python_function('examples/_scripts/verify_expectations.py', '_load_yaml', 1, 2, 2).
+python_function('examples/_scripts/verify_expectations.py', '_parse_actions', 1, 6, 7).
+python_function('examples/_scripts/verify_expectations.py', '_http_probe', 4, 2, 7).
+python_function('examples/_scripts/verify_expectations.py', 'verify', 3, 23, 9).
+python_function('examples/_scripts/verify_expectations.py', 'main', 0, 3, 6).
 python_function('executor/runner.py', 'execute_intent', 5, 1, 2).
+python_function('generator/contract_verify.py', '_probe_path', 1, 1, 1).
+python_function('generator/contract_verify.py', 'discover_service_url', 2, 10, 7).
+python_function('generator/contract_verify.py', 'wait_for_service', 2, 5, 4).
+python_function('generator/contract_verify.py', '_http_probe', 3, 9, 9).
+python_function('generator/contract_verify.py', 'run_testql', 3, 4, 4).
+python_function('generator/contract_verify.py', 'write_contract_artifacts', 2, 1, 2).
+python_function('generator/contract_verify.py', 'verify_contract', 2, 16, 24).
+python_function('generator/expectations.py', '_probe_path', 1, 1, 1).
+python_function('generator/expectations.py', '_http_probe', 3, 3, 7).
+python_function('generator/expectations.py', 'check_expectations', 3, 20, 8).
+python_function('generator/expectations.py', 'load_and_check_expectations', 3, 4, 5).
+python_function('generator/intent_generator.py', 'extract_yaml_from_llm', 1, 6, 7).
+python_function('generator/intent_generator.py', '_fallback_yaml', 1, 5, 2).
+python_function('generator/intent_generator.py', '_build_user_prompt', 1, 4, 1).
+python_function('generator/intract_manifest.py', '_slug', 1, 2, 3).
+python_function('generator/intract_manifest.py', '_safe_id', 1, 1, 3).
+python_function('generator/intract_manifest.py', 'parse_api_actions', 1, 6, 7).
+python_function('generator/intract_manifest.py', 'build_intract_manifest', 1, 6, 7).
+python_function('generator/intract_manifest.py', 'intent_to_intract_dict', 1, 2, 4).
+python_function('generator/intract_manifest.py', 'write_intract_manifest', 2, 1, 5).
+python_function('generator/pipeline.py', '_write_plan_artifacts', 3, 4, 5).
+python_function('generator/pipeline.py', '_container_logs', 2, 4, 3).
+python_function('generator/pipeline.py', '_finalize', 2, 2, 3).
+python_function('generator/pipeline.py', 'run_pipeline', 1, 30, 19).
+python_function('generator/session.py', 'write_session_artifacts', 2, 5, 9).
+python_function('generator/testql_scenario.py', '_probe_path', 1, 1, 1).
+python_function('generator/testql_scenario.py', 'build_testql_scenario', 1, 7, 7).
+python_function('generator/testql_scenario.py', 'write_testql_scenario', 2, 2, 6).
 python_function('parser/dsl_parser.py', 'parse_dsl', 1, 1, 2).
 python_function('parser/dsl_parser.py', 'parse_dsl_file', 1, 1, 2).
+python_function('planner/simulator.py', '_endpoint_to_func_name', 3, 5, 6).
 python_function('planner/simulator.py', 'plan_intent', 1, 1, 2).
 python_function('tests/conftest.py', 'project_root', 0, 1, 2).
 python_function('tests/conftest.py', 'sample_dsl', 0, 1, 0).
 python_function('tests/conftest.py', 'sample_ir', 0, 1, 4).
 python_function('tests/e2e/test_ai_gateway.py', 'run_tests', 0, 1, 1).
+python_function('tests/e2e/test_expectations.py', 'test_check_expectations_missing_endpoints', 0, 4, 3).
+python_function('tests/e2e/test_expectations.py', 'test_check_expectations_framework_mismatch', 0, 2, 3).
+python_function('tests/e2e/test_intract_manifest.py', 'test_build_intract_manifest_require_list', 0, 5, 3).
+python_function('tests/e2e/test_intract_manifest.py', 'test_write_intract_manifest', 1, 3, 5).
 python_function('tests/e2e/test_shell.py', 'run_tests', 0, 1, 1).
+python_function('tests/e2e/test_testql_scenario.py', 'test_build_testql_contains_endpoints', 0, 5, 2).
+python_function('tests/e2e/test_testql_scenario.py', 'test_write_testql_scenario', 1, 3, 3).
 python_function('tests/e2e/test_web.py', 'anyio_backend', 0, 1, 0).
 python_function('tests/e2e/test_web.py', 'client', 0, 1, 2).
 python_function('tests/e2e/test_web.py', 'run_tests', 0, 1, 1).
 python_function('web/app.py', 'home', 1, 1, 4).
 python_function('web/app.py', 'list_intents', 0, 2, 2).
+python_function('web/app.py', 'get_schema', 0, 1, 2).
+python_function('web/app.py', 'validate_yaml', 1, 2, 3).
+python_function('web/app.py', 'generate_intent_api', 1, 3, 4).
+python_function('web/app.py', 'generate_and_run_api', 1, 3, 3).
 python_function('web/app.py', 'parse_intent', 1, 2, 5).
 python_function('web/app.py', 'get_intent', 1, 2, 3).
 python_function('web/app.py', 'delete_intent', 1, 2, 2).
@@ -97,37 +203,39 @@ python_class('ai_gateway/gateway.py', 'ModelProvider').
 python_class('ai_gateway/gateway.py', 'ModelConfig').
 python_method('ModelConfig', 'to_dict', 0, 2, 0).
 python_class('ai_gateway/gateway.py', 'GatewayConfig').
-python_method('GatewayConfig', '__post_init__', 0, 9, 2).
+python_method('GatewayConfig', '__post_init__', 0, 15, 3).
+python_method('GatewayConfig', 'resolve_model', 1, 3, 0).
+python_method('GatewayConfig', 'litellm_model_id', 1, 3, 1).
 python_method('GatewayConfig', 'get_available_models', 1, 6, 3).
 python_method('GatewayConfig', 'get_model', 1, 3, 0).
-python_method('GatewayConfig', 'to_dict', 0, 2, 2).
+python_method('GatewayConfig', 'to_dict', 0, 2, 4).
 python_class('ai_gateway/gateway.py', 'AIGateway').
 python_method('AIGateway', '__init__', 1, 2, 2).
 python_method('AIGateway', '_setup_litellm', 0, 5, 0).
-python_method('AIGateway', 'complete', 5, 10, 5).
-python_method('AIGateway', 'acomplete', 5, 10, 5).
+python_method('AIGateway', 'complete', 5, 9, 7).
+python_method('AIGateway', 'acomplete', 5, 9, 7).
 python_method('AIGateway', '_mock_response', 2, 2, 0).
 python_method('AIGateway', 'suggest_improvements', 1, 8, 8).
 python_method('AIGateway', 'generate_code_snippet', 3, 10, 5).
 python_method('AIGateway', 'explain_error', 2, 2, 1).
 python_method('AIGateway', 'list_models', 1, 2, 2).
-python_method('AIGateway', 'health_check', 0, 3, 4).
+python_method('AIGateway', 'health_check', 0, 3, 6).
 python_class('cli/main.py', 'Colors').
 python_method('Colors', 'disable', 1, 1, 0).
 python_class('cli/main.py', 'CLI').
-python_method('CLI', '__init__', 1, 2, 3).
-python_method('CLI', 'print_header', 1, 1, 1).
-python_method('CLI', 'print_success', 1, 1, 1).
+python_method('CLI', '__init__', 2, 3, 3).
+python_method('CLI', 'print_header', 1, 2, 1).
+python_method('CLI', 'print_success', 1, 2, 1).
 python_method('CLI', 'print_error', 1, 1, 1).
-python_method('CLI', 'print_warning', 1, 1, 1).
-python_method('CLI', 'print_info', 1, 1, 1).
+python_method('CLI', 'print_warning', 1, 2, 1).
+python_method('CLI', 'print_info', 1, 2, 1).
 python_method('CLI', 'cmd_new', 2, 4, 7).
 python_method('CLI', 'cmd_load', 1, 3, 6).
 python_method('CLI', 'cmd_parse', 1, 2, 4).
-python_method('CLI', 'cmd_plan', 1, 10, 11).
+python_method('CLI', 'cmd_plan', 1, 11, 11).
 python_method('CLI', 'cmd_iterate', 2, 12, 12).
 python_method('CLI', 'cmd_iterun', 2, 7, 10).
-python_method('CLI', 'cmd_execute', 4, 36, 15).
+python_method('CLI', 'cmd_execute', 4, 37, 15).
 python_method('CLI', 'cmd_show', 2, 8, 5).
 python_method('CLI', 'cmd_save', 2, 3, 5).
 python_method('CLI', 'interactive_mode', 0, 30, 23).
@@ -138,6 +246,12 @@ python_method('CLI', 'cmd_models', 1, 3, 5).
 python_method('CLI', 'cmd_ai_health', 0, 4, 7).
 python_method('CLI', '_show_help', 0, 1, 1).
 python_class('config.py', 'AppConfig').
+python_class('dsl/schema.py', 'IntentSection').
+python_method('IntentSection', 'name_kebab', 2, 2, 3).
+python_class('dsl/schema.py', 'EnvironmentSection').
+python_class('dsl/schema.py', 'ImplementationSection').
+python_class('dsl/schema.py', 'ExecutionSection').
+python_class('dsl/schema.py', 'IntentDSLDocument').
 python_class('executor/runner.py', 'ExecutionError').
 python_class('executor/runner.py', 'ValidationResult').
 python_method('ValidationResult', '__init__', 0, 3, 0).
@@ -161,6 +275,17 @@ python_method('Executor', '_execute_docker', 2, 12, 10).
 python_method('Executor', '_execute_local', 2, 4, 5).
 python_method('Executor', 'get_container_logs', 2, 2, 2).
 python_method('Executor', 'cleanup', 0, 2, 2).
+python_class('generator/contract_verify.py', 'VerifyResult').
+python_method('VerifyResult', 'to_dict', 0, 1, 0).
+python_class('generator/intent_generator.py', 'GenerateAttempt').
+python_method('GenerateAttempt', 'to_dict', 0, 3, 0).
+python_class('generator/intent_generator.py', 'GenerateResult').
+python_method('GenerateResult', 'to_dict', 0, 3, 1).
+python_class('generator/intent_generator.py', 'IntentGenerator').
+python_method('IntentGenerator', '__init__', 4, 2, 2).
+python_method('IntentGenerator', 'generate', 1, 11, 14).
+python_class('generator/pipeline.py', 'PipelineResult').
+python_method('PipelineResult', 'to_dict', 0, 2, 1).
 python_class('ir/models.py', 'ExecutionMode').
 python_class('ir/models.py', 'RuntimeType').
 python_class('ir/models.py', 'ActionType').
@@ -205,8 +330,8 @@ python_class('planner/simulator.py', 'Planner').
 python_method('Planner', '__init__', 0, 1, 0).
 python_method('Planner', 'dry_run', 1, 4, 8).
 python_method('Planner', '_generate_python_code', 1, 3, 3).
-python_method('Planner', '_generate_fastapi_code', 1, 6, 6).
-python_method('Planner', '_generate_flask_code', 1, 6, 4).
+python_method('Planner', '_generate_fastapi_code', 1, 5, 6).
+python_method('Planner', '_generate_flask_code', 1, 5, 4).
 python_method('Planner', '_generate_basic_python_code', 1, 1, 0).
 python_method('Planner', '_generate_node_code', 1, 2, 2).
 python_method('Planner', '_generate_express_code', 1, 5, 4).
@@ -214,12 +339,22 @@ python_method('Planner', '_generate_basic_node_code', 1, 1, 0).
 python_method('Planner', '_generate_dockerfile', 1, 8, 4).
 python_method('Planner', '_simulate_action', 2, 9, 2).
 python_method('Planner', '_estimate_resources', 1, 2, 1).
+python_class('sdk/client.py', 'IterunClient').
+python_method('IterunClient', '__init__', 4, 2, 2).
+python_method('IterunClient', 'schema', 0, 1, 1).
+python_method('IterunClient', 'validate', 1, 2, 2).
+python_method('IterunClient', 'generate', 1, 3, 3).
+python_method('IterunClient', 'generate_and_run', 1, 3, 2).
+python_method('IterunClient', 'parse', 1, 1, 1).
+python_method('IterunClient', '_remote_generate', 1, 2, 6).
+python_method('IterunClient', '_remote_pipeline', 4, 3, 7).
 python_class('tests/e2e/test_ai_gateway.py', 'TestModelConfig').
 python_method('TestModelConfig', 'test_ollama_models_exist', 0, 4, 1).
 python_method('TestModelConfig', 'test_model_config_properties', 0, 7, 1).
 python_method('TestModelConfig', 'test_models_under_12b', 0, 3, 2).
 python_class('tests/e2e/test_ai_gateway.py', 'TestGatewayConfig').
-python_method('TestGatewayConfig', 'test_default_config', 0, 5, 1).
+python_method('TestGatewayConfig', 'test_default_config', 1, 4, 2).
+python_method('TestGatewayConfig', 'test_resolve_model_prefers_llm_model', 1, 3, 5).
 python_method('TestGatewayConfig', 'test_config_from_env', 0, 4, 3).
 python_method('TestGatewayConfig', 'test_get_model', 0, 4, 2).
 python_class('tests/e2e/test_ai_gateway.py', 'TestAIGateway').
@@ -244,6 +379,19 @@ python_method('TestFeedbackSuggestion', 'test_suggestion_to_dict', 0, 3, 2).
 python_class('tests/e2e/test_ai_gateway.py', 'TestConvenienceFunctions').
 python_method('TestConvenienceFunctions', 'test_get_gateway_singleton', 0, 2, 1).
 python_method('TestConvenienceFunctions', 'test_complete_function', 0, 3, 1).
+python_class('tests/e2e/test_intent_generator.py', 'TestSchema').
+python_method('TestSchema', 'test_json_schema_has_intent', 0, 2, 1).
+python_method('TestSchema', 'test_example_yaml_valid', 0, 4, 1).
+python_method('TestSchema', 'test_invalid_yaml_rejected', 0, 2, 1).
+python_class('tests/e2e/test_intent_generator.py', 'TestExtractYaml').
+python_method('TestExtractYaml', 'test_strips_fences', 0, 2, 2).
+python_method('TestExtractYaml', 'test_plain_yaml', 0, 2, 2).
+python_class('tests/e2e/test_intent_generator.py', 'TestIntentGenerator').
+python_method('TestIntentGenerator', 'test_generate_success_mock', 0, 5, 3).
+python_method('TestIntentGenerator', 'test_retry_on_invalid_llm_output', 0, 3, 4).
+python_method('TestIntentGenerator', 'test_fails_after_max_iterations', 0, 3, 4).
+python_class('tests/e2e/test_intent_generator.py', 'TestPipeline').
+python_method('TestPipeline', 'test_pipeline_generate_only', 1, 7, 4).
 python_class('tests/e2e/test_shell.py', 'TestDSLParser').
 python_method('TestDSLParser', 'test_parse_valid_dsl', 0, 8, 2).
 python_method('TestDSLParser', 'test_parse_missing_intent', 0, 2, 3).
@@ -252,6 +400,7 @@ python_method('TestDSLParser', 'test_parse_multiple_actions', 0, 5, 2).
 python_method('TestDSLParser', 'test_parse_action_formats', 0, 5, 2).
 python_class('tests/e2e/test_shell.py', 'TestPlanner').
 python_method('TestPlanner', 'test_dry_run_fastapi', 0, 7, 4).
+python_method('TestPlanner', 'test_dry_run_fastapi_path_params', 0, 4, 3).
 python_method('TestPlanner', 'test_dry_run_express', 0, 5, 3).
 python_method('TestPlanner', 'test_resource_estimation', 0, 4, 2).
 python_class('tests/e2e/test_shell.py', 'TestCLI').
@@ -295,6 +444,9 @@ python_method('TestHomePage', 'test_home_page_renders', 1, 4, 1).
 python_class('web/app.py', 'DSLInput').
 python_class('web/app.py', 'IterationInput').
 python_class('web/app.py', 'ExecutionRequest').
+python_class('web/app.py', 'GenerateRequest').
+python_class('web/app.py', 'GenerateAndRunRequest').
+python_class('web/app.py', 'ValidateYAMLRequest').
 python_class('web/app.py', 'AICompletionRequest').
 python_class('web/app.py', 'AISuggestRequest').
 python_class('web/app.py', 'AIChatRequest').
@@ -329,6 +481,7 @@ makefile_target('web', '').
 makefile_target('shell', '').
 makefile_target('plan', '').
 makefile_target('execute', '').
+makefile_target('examples', '').
 makefile_target('run-intent', 'Run with custom intent file: make run-intent FILE=path/to/intent.yaml').
 makefile_target('test', '').
 makefile_target('test-shell', '').
@@ -357,7 +510,9 @@ env_variable('PORT', '8080', '').
 env_variable('DEBUG', 'false', '').
 env_variable('LOG_LEVEL', 'INFO', '').
 env_variable('AI_ENABLED', 'true', '=============================================================================').
-env_variable('OLLAMA_BASE_URL', 'http://localhost:11434', '').
+env_variable('OPENROUTER_API_KEY', 'sk-or-...', 'OpenRouter (zalecane gdy masz klucz) — LLM_MODEL ma pierwszeństwo nad DEFAULT_MODEL').
+env_variable('LLM_MODEL', 'openrouter/deepseek/deepseek-v4-pro', '').
+env_variable('OLLAMA_BASE_URL', 'http://localhost:11434', 'Ollama (lokalny fallback / suggest w shell)').
 env_variable('DEFAULT_MODEL', 'llama3.2', '').
 env_variable('MAX_MODEL_PARAMS', '12.0', '').
 env_variable('OLLAMA_TIMEOUT', '120', '').
@@ -413,9 +568,11 @@ sumd_workflow('shell', 'manual').
 sumd_workflow_step('shell', 1, 'echo "$(CYAN)Starting interactive shell$(RESET)"').
 sumd_workflow_step('shell', 2, '$(PYTHON) -m cli.main').
 sumd_workflow('plan', 'manual').
-sumd_workflow_step('plan', 1, '$(PYTHON) -m cli.main plan examples/user-api.intent.yaml').
+sumd_workflow_step('plan', 1, '$(PYTHON) -m cli.main plan examples/01-user-api/intent.yaml').
 sumd_workflow('execute', 'manual').
-sumd_workflow_step('execute', 1, '$(PYTHON) -m cli.main execute examples/user-api.intent.yaml').
+sumd_workflow_step('execute', 1, '$(PYTHON) -m cli.main execute examples/01-user-api/intent.yaml').
+sumd_workflow('examples', 'manual').
+sumd_workflow_step('examples', 1, './examples/run-all.sh').
 sumd_workflow('run-intent', 'manual').
 sumd_workflow_step('run-intent', 1, 'if [ -z "$(FILE)" ]').
 sumd_workflow_step('run-intent', 2, 'echo "$(RED)ERROR: FILE not specified$(RESET)"').

@@ -21,41 +21,41 @@ flowchart TD
     web__app ==>|5| ai_gateway__gateway
     cli__main ==>|4| ai_gateway__gateway
     cli__main -->|3| parser__dsl_parser
-    generator__contract_verify -->|2| generator__intract_manifest
-    sdk__client -->|2| dsl__schema
     generator__intent_generator -->|2| dsl__schema
+    generator__contract_verify -->|2| generator__intract_manifest
+    web__app -->|2| dsl__schema
+    web__app -->|2| ai_gateway__feedback_loop
     cli__main -->|2| config
     cli__main -->|2| ai_gateway__feedback_loop
     cli__main -->|2| dsl__schema
-    web__app -->|2| dsl__schema
-    web__app -->|2| ai_gateway__feedback_loop
-    generator__testql_scenario -->|1| generator__intract_manifest
-    examples___scripts -->|1| generator__testql_scenario
-    generator__contract_verify -->|1| generator__testql_scenario
-    generator__contract_verify -->|1| generator__expectations
+    sdk__client -->|2| dsl__schema
     generator__expectations -->|1| generator__intract_manifest
-    executor__runner -->|1| config
-    sdk__client -->|1| generator__pipeline
-    sdk__client -->|1| parser__dsl_parser
-    examples___scripts -->|1| generator__intract_manifest
-    ai_gateway__feedback_loop -->|1| ai_gateway__gateway
+    generator__intent_generator -->|1| ai_gateway__gateway
+    generator__intent_generator -->|1| parser__dsl_parser
+    generator__testql_scenario -->|1| generator__intract_manifest
     generator__pipeline -->|1| generator__intract_manifest
     generator__pipeline -->|1| generator__testql_scenario
     generator__pipeline -->|1| generator__session
     generator__pipeline -->|1| planner__simulator
     generator__pipeline -->|1| executor__runner
     generator__pipeline -->|1| generator__contract_verify
-    generator__intent_generator -->|1| ai_gateway__gateway
-    generator__intent_generator -->|1| parser__dsl_parser
-    cli__main -->|1| planner__simulator
-    cli__main -->|1| executor__runner
-    cli__main -->|1| generator__pipeline
-    cli__main -->|1| generator__intract_manifest
-    cli__main -->|1| generator__testql_scenario
-    dsl__schema -->|1| parser__dsl_parser
+    generator__contract_verify -->|1| generator__testql_scenario
+    generator__contract_verify -->|1| generator__expectations
+    examples___scripts -->|1| generator__testql_scenario
+    examples___scripts -->|1| generator__intract_manifest
     web__app -->|1| generator__pipeline
     web__app -->|1| parser__dsl_parser
     web__app -->|1| planner__simulator
     web__app -->|1| executor__runner
     web__app -->|1| config
     ai_gateway__gateway -->|1| config
+    ai_gateway__feedback_loop -->|1| ai_gateway__gateway
+    cli__main -->|1| planner__simulator
+    cli__main -->|1| executor__runner
+    cli__main -->|1| generator__pipeline
+    cli__main -->|1| generator__intract_manifest
+    cli__main -->|1| generator__testql_scenario
+    executor__runner -->|1| config
+    dsl__schema -->|1| parser__dsl_parser
+    sdk__client -->|1| generator__pipeline
+    sdk__client -->|1| parser__dsl_parser
