@@ -1,21 +1,21 @@
-# code2llm | 91f 9001L | python:36,shell:21,txt:17,yaml:15,toml:1 | 2026-06-06
-# generated in 0.02s
-# CC̅=4.2 | critical:10/235 | dups:0 | cycles:0
+# code2llm | 91f 9168L | python:36,shell:21,txt:17,yaml:15,toml:1 | 2026-06-06
+# generated in 0.01s
+# CC̅=4.2 | critical:10/245 | dups:0 | cycles:0
 
 HEALTH[13]:
   🔴 GOD   web/app.py = 523L, 9 classes, 25m, max CC=6
   🔴 GOD   ai_gateway/gateway.py = 644L, 4 classes, 20m, max CC=15
-  🔴 GOD   executor/runner.py = 614L, 4 classes, 20m, max CC=13
+  🔴 GOD   executor/runner.py = 637L, 4 classes, 21m, max CC=13
   🟡 CC    load_dotenv CC=15 (limit:15)
-  🟡 CC    check_expectations CC=20 (limit:15)
+  🟡 CC    check_expectations CC=23 (limit:15)
   🟡 CC    run_pipeline CC=30 (limit:15)
-  🟡 CC    verify_contract CC=16 (limit:15)
   🟡 CC    verify CC=23 (limit:15)
   🟡 CC    __post_init__ CC=15 (limit:15)
   🟡 CC    suggest_next_steps CC=17 (limit:15)
   🟡 CC    cmd_execute CC=37 (limit:15)
   🟡 CC    interactive_mode CC=30 (limit:15)
   🟡 CC    main CC=72 (limit:15)
+  🟡 CC    verify_contract CC=16 (limit:15)
 
 REFACTOR[4]:
   1. split web/app.py  (god module)
@@ -131,18 +131,18 @@ LAYERS:
   │ __init__                    20L  0C    1m  CC=3      ←0
   │ __main__                     4L  0C    0m  CC=0.0    ←0
   │
-  generator/                      CC̄=5.4    ←in:7  →out:6
+  generator/                      CC̄=5.4    ←in:7  →out:7
+  │ !! pipeline                   254L  1C    7m  CC=30     ←3
   │ intent_generator           232L  3C    7m  CC=11     ←0
-  │ !! pipeline                   220L  1C    5m  CC=30     ←3
-  │ !! contract_verify            201L  1C    8m  CC=16     ←1
+  │ !! contract_verify            227L  1C   10m  CC=16     ←1
   │ intract_manifest           106L  0C    6m  CC=6      ←6
-  │ !! expectations                89L  0C    4m  CC=20     ←1
-  │ testql_scenario             67L  0C    3m  CC=7      ←4
+  │ !! expectations                96L  0C    4m  CC=23     ←1
+  │ testql_scenario             79L  0C    4m  CC=7      ←4
   │ session                     52L  0C    1m  CC=5      ←1
   │ __init__                    23L  0C    0m  CC=0.0    ←0
   │
-  executor/                       CC̄=4.8    ←in:3  →out:1
-  │ !! runner                     614L  4C   20m  CC=13     ←3
+  executor/                       CC̄=4.8    ←in:4  →out:2
+  │ !! runner                     637L  4C   21m  CC=13     ←3
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │
   ai_gateway/                     CC̄=4.6    ←in:14  →out:1
@@ -159,7 +159,7 @@ LAYERS:
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=3.1    ←in:0  →out:0
-  │ !! planfile.yaml             1046L  0C    0m  CC=0.0    ←0
+  │ !! planfile.yaml             1072L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  512L  0C    0m  CC=0.0    ←0
   │ Makefile                   222L  0C    0m  CC=0.0    ←0
   │ !! config                     168L  1C    8m  CC=15     ←4
@@ -175,13 +175,17 @@ LAYERS:
   │ !! app                        523L  9C   25m  CC=6      ←0
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │
-  examples/                       CC̄=2.4    ←in:0  →out:0
-  │ _verify.sh                 134L  0C    9m  CC=0.0    ←0
+  dsl/                            CC̄=2.4    ←in:8  →out:1
+  │ schema                     166L  5C    5m  CC=7      ←4
+  │ __init__                    17L  0C    0m  CC=0.0    ←0
+  │
+  examples/                       CC̄=2.1    ←in:0  →out:0
+  │ _verify.sh                 168L  0C   13m  CC=0.0    ←0
   │ !! verify_expectations        127L  0C    5m  CC=23     ←0
+  │ _common.sh                  97L  0C    6m  CC=0.0    ←0
   │ annotate_intract            97L  0C    6m  CC=7      ←0
-  │ _common.sh                  95L  0C    6m  CC=0.0    ←0
   │ intent_to_openapi           76L  0C    3m  CC=8      ←0
-  │ run.sh                      40L  0C    0m  CC=0.0    ←0
+  │ run.sh                      41L  0C    0m  CC=0.0    ←0
   │ run-e2e.sh                  31L  0C    0m  CC=0.0    ←0
   │ expectations.yaml           31L  0C    0m  CC=0.0    ←0
   │ intent_to_intract           29L  0C    1m  CC=3      ←0
@@ -224,10 +228,6 @@ LAYERS:
   │ prompt.txt                   1L  0C    0m  CC=0.0    ←0
   │ prompt.txt                   1L  0C    0m  CC=0.0    ←0
   │
-  dsl/                            CC̄=2.4    ←in:8  →out:1
-  │ schema                     164L  5C    5m  CC=7      ←4
-  │ __init__                    17L  0C    0m  CC=0.0    ←0
-  │
   sdk/                            CC̄=2.1    ←in:0  →out:4
   │ client                     119L  1C    8m  CC=3      ←0
   │ __init__                     5L  0C    0m  CC=0.0    ←0
@@ -247,24 +247,24 @@ LAYERS:
   │
 
 COUPLING:
-                                   cli         ai_gateway                web          generator                dsl             parser             config           executor                sdk            planner  examples._scripts
-                cli                 ──                  6                                     3                  2                  3                  2                  1                                     1                     !! fan-out
-         ai_gateway                 ←6                 ──                 ←7                 ←1                                                        1                                                                              hub
-                web                                     7                 ──                  1                  2                  1                  1                  1                                     1                     !! fan-out
-          generator                 ←3                  1                 ←1                 ──                  2                  1                                     1                 ←1                  1                 ←2  hub
+                                   cli         ai_gateway          generator                web                dsl             parser             config           executor                sdk            planner  examples._scripts
+                cli                 ──                  6                  3                                     2                  3                  2                  1                                     1                     !! fan-out
+         ai_gateway                 ←6                 ──                 ←1                 ←7                                                        1                                                                              hub
+          generator                 ←3                  1                 ──                 ←1                  2                  1                                     2                 ←1                  1                 ←2  hub
+                web                                     7                  1                 ──                  2                  1                  1                  1                                     1                     !! fan-out
                 dsl                 ←2                                    ←2                 ←2                 ──                  1                                                       ←2                                        hub
              parser                 ←3                                    ←1                 ←1                 ←1                 ──                                                       ←1                                        hub
-             config                 ←2                 ←1                 ←1                                                                          ──                 ←1                                                           hub
-           executor                 ←1                                    ←1                 ←1                                                        1                 ──                                                         
-                sdk                                                                           1                  2                  1                                                       ──                                      
+             config                 ←2                 ←1                                    ←1                                                       ──                 ←2                                                           hub
+           executor                 ←1                                    ←2                 ←1                                                        2                 ──                                                         
+                sdk                                                        1                                     2                  1                                                       ──                                      
             planner                 ←1                                    ←1                 ←1                                                                                                                ──                   
-  examples._scripts                                                                           2                                                                                                                                   ──
+  examples._scripts                                                        2                                                                                                                                                      ──
   CYCLES: none
-  HUB: ai_gateway/ (fan-in=14)
-  HUB: config/ (fan-in=5)
+  HUB: config/ (fan-in=6)
   HUB: parser/ (fan-in=7)
-  HUB: generator/ (fan-in=7)
   HUB: dsl/ (fan-in=8)
+  HUB: generator/ (fan-in=7)
+  HUB: ai_gateway/ (fan-in=14)
   SMELL: web/ fan-out=14 → split needed
   SMELL: cli/ fan-out=18 → split needed
 

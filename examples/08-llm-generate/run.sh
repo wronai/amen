@@ -1,5 +1,5 @@
 #!/bin/bash
-# Generuj intent.yaml z promptu NL (LiteLLM) → plan → opcjonalnie execute.
+# Generuj iterun.yaml z promptu NL (LiteLLM) → plan → opcjonalnie execute.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"

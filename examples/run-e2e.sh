@@ -3,19 +3,12 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+PYTHON="${PYTHON:-python3}"
 
-if ! command -v docker >/dev/null 2>&1; then
-    echo "Docker required for run-e2e.sh" >&2
-    exit 1
-fi
-if ! command -v testql >/dev/null 2>&1; then
-    echo "testql required: pip install testql" >&2
-    exit 1
-fi
-if ! python3 -c "import intract" 2>/dev/null; then
-    echo "intract required: pip install -e ../semcod/intract" >&2
-    exit 1
-fi
+# shellcheck source=_bootstrap_deps.sh
+source "$SCRIPT_DIR/_bootstrap_deps.sh"
+_example_ensure_e2e_deps || exit 1
 
 echo "=== ITERUN e2e examples (prompt → execute → testql + intract) ==="
 failed=0

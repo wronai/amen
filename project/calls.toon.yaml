@@ -1,11 +1,11 @@
 # code2llm call graph | /home/tom/github/wronai/iterun
 # generated in 0.04s
-# nodes: 85 | edges: 77 | modules: 22
+# nodes: 93 | edges: 84 | modules: 22
 # CC̄=4.2
 
 HUBS[20]:
   generator.pipeline.run_pipeline
-    CC=30  in:3  out:35  total:38
+    CC=30  in:3  out:36  total:39
   cli.main.CLI.cmd_execute
     CC=37  in:0  out:37  total:37
   generator.contract_verify.verify_contract
@@ -13,37 +13,37 @@ HUBS[20]:
   examples._scripts.verify_expectations.verify
     CC=23  in:1  out:27  total:28
   generator.expectations.check_expectations
-    CC=20  in:1  out:23  total:24
+    CC=23  in:1  out:26  total:27
   cli.main.CLI.cmd_plan
     CC=11  in:0  out:24  total:24
-  cli.main.CLI.cmd_ai_suggest
-    CC=11  in:0  out:21  total:21
   generator.intent_generator.IntentGenerator.generate
     CC=11  in:0  out:21  total:21
-  cli.main.CLI.cmd_ai_chat
-    CC=12  in:0  out:18  total:18
+  cli.main.CLI.cmd_ai_suggest
+    CC=11  in:0  out:21  total:21
   examples._scripts.intent_to_openapi.intent_to_openapi
     CC=8  in:1  out:17  total:18
+  cli.main.CLI.cmd_ai_chat
+    CC=12  in:0  out:18  total:18
   generator.session.write_session_artifacts
     CC=5  in:1  out:16  total:17
   config.load_dotenv
     CC=15  in:1  out:15  total:16
-  examples._scripts.annotate_intract.annotate_express
-    CC=6  in:1  out:13  total:14
+  generator.pipeline._expectations_summary
+    CC=8  in:1  out:13  total:14
   ai_gateway.gateway.get_gateway
     CC=3  in:13  out:1  total:14
   generator.intract_manifest.parse_api_actions
-    CC=6  in:4  out:9  total:13
+    CC=6  in:5  out:9  total:14
+  examples._scripts.annotate_intract.annotate_express
+    CC=6  in:1  out:13  total:14
   examples._scripts.annotate_intract._actions
     CC=7  in:2  out:11  total:13
-  generator.intent_generator.extract_yaml_from_llm
-    CC=6  in:1  out:11  total:12
-  planner.simulator._endpoint_to_func_name
-    CC=5  in:2  out:10  total:12
   cli.main.CLI.cmd_ai_health
     CC=4  in:0  out:12  total:12
-  generator.intract_manifest.build_intract_manifest
-    CC=6  in:1  out:11  total:12
+  examples._scripts.annotate_intract.annotate_python
+    CC=5  in:1  out:11  total:12
+  planner.simulator._endpoint_to_func_name
+    CC=5  in:2  out:10  total:12
 
 MODULES:
   ai_gateway.feedback_loop  [2 funcs]
@@ -93,14 +93,19 @@ MODULES:
     _parse_actions  CC=6  out:9
     main  CC=3  out:9
     verify  CC=23  out:27
-  executor.runner  [2 funcs]
+  executor.runner  [3 funcs]
     __init__  CC=3  out:5
     execute_intent  CC=1  out:2
-  generator.contract_verify  [2 funcs]
+    stop_containers_for_intent  CC=5  out:6
+  generator.contract_verify  [6 funcs]
+    _endpoint_responding  CC=3  out:2
+    _probe_path  CC=1  out:1
+    readiness_paths  CC=5  out:2
     verify_contract  CC=16  out:32
+    wait_for_service  CC=5  out:4
     write_contract_artifacts  CC=1  out:2
   generator.expectations  [2 funcs]
-    check_expectations  CC=20  out:23
+    check_expectations  CC=23  out:26
     load_and_check_expectations  CC=4  out:8
   generator.intent_generator  [4 funcs]
     __init__  CC=2  out:2
@@ -114,16 +119,19 @@ MODULES:
     intent_to_intract_dict  CC=2  out:4
     parse_api_actions  CC=6  out:9
     write_intract_manifest  CC=1  out:5
-  generator.pipeline  [4 funcs]
+  generator.pipeline  [6 funcs]
+    _build_repair_prompt  CC=4  out:3
     _container_logs  CC=4  out:3
+    _expectations_summary  CC=8  out:13
     _finalize  CC=2  out:3
     _write_plan_artifacts  CC=4  out:8
-    run_pipeline  CC=30  out:35
+    run_pipeline  CC=30  out:36
   generator.session  [1 funcs]
     write_session_artifacts  CC=5  out:16
-  generator.testql_scenario  [3 funcs]
+  generator.testql_scenario  [4 funcs]
     _probe_path  CC=1  out:1
-    build_testql_scenario  CC=7  out:9
+    _startup_wait_ms  CC=7  out:3
+    build_testql_scenario  CC=7  out:10
     write_testql_scenario  CC=2  out:7
   parser.dsl_parser  [2 funcs]
     parse_dsl  CC=1  out:2
@@ -160,10 +168,12 @@ EDGES:
   generator.intent_generator.IntentGenerator.generate → generator.intent_generator.extract_yaml_from_llm
   generator.intent_generator.IntentGenerator.generate → dsl.schema.validate_yaml_document
   generator.testql_scenario.build_testql_scenario → generator.intract_manifest.parse_api_actions
+  generator.testql_scenario.build_testql_scenario → generator.testql_scenario._startup_wait_ms
   generator.testql_scenario.build_testql_scenario → generator.testql_scenario._probe_path
   generator.testql_scenario.write_testql_scenario → generator.testql_scenario.build_testql_scenario
   generator.pipeline._write_plan_artifacts → generator.intract_manifest.write_intract_manifest
   generator.pipeline._write_plan_artifacts → generator.testql_scenario.write_testql_scenario
+  generator.pipeline._build_repair_prompt → generator.pipeline._expectations_summary
   generator.pipeline._finalize → generator.pipeline._container_logs
   generator.pipeline._finalize → generator.session.write_session_artifacts
   generator.pipeline.run_pipeline → generator.pipeline._finalize
@@ -173,11 +183,6 @@ EDGES:
   generator.intract_manifest.build_intract_manifest → generator.intract_manifest._slug
   generator.intract_manifest.intent_to_intract_dict → generator.intract_manifest.build_intract_manifest
   generator.intract_manifest.write_intract_manifest → generator.intract_manifest.intent_to_intract_dict
-  generator.contract_verify.write_contract_artifacts → generator.intract_manifest.write_intract_manifest
-  generator.contract_verify.write_contract_artifacts → generator.testql_scenario.write_testql_scenario
-  generator.contract_verify.verify_contract → generator.contract_verify.write_contract_artifacts
-  generator.contract_verify.verify_contract → generator.intract_manifest.parse_api_actions
-  generator.contract_verify.verify_contract → generator.expectations.load_and_check_expectations
   examples._scripts.verify_expectations.verify → examples._scripts.verify_expectations._load_yaml
   examples._scripts.verify_expectations.verify → examples._scripts.verify_expectations._parse_actions
   examples._scripts.verify_expectations.main → examples._scripts.verify_expectations.verify
@@ -201,3 +206,6 @@ EDGES:
   web.app.validate_intent → config.get_config
   web.app.ai_status → ai_gateway.gateway.get_gateway
   web.app.list_models → ai_gateway.gateway.get_gateway
+  web.app.ai_complete → ai_gateway.gateway.get_gateway
+  web.app.ai_chat → ai_gateway.gateway.get_gateway
+  web.app.ai_suggest → ai_gateway.feedback_loop.create_feedback_loop

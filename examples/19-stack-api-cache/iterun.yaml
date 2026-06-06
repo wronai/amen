@@ -1,0 +1,26 @@
+INTENT:
+  name: api-cache-stack
+  goal: FastAPI service with Redis cache sidecar
+
+STACK:
+  network: cache-net
+  services:
+    api-service:
+      language: python
+      framework: fastapi
+      base_image: python:3.12-slim
+      port: 8000
+      host_port: 18090
+      depends_on: [redis-cache]
+      env_vars:
+        REDIS_URL: redis://redis-cache:6379
+      actions:
+        - api.expose GET /ping
+        - api.expose GET /health
+        - api.expose GET /cache/status
+    redis-cache:
+      image: redis:7-alpine
+      port: 6379
+
+EXECUTION:
+  mode: transactional

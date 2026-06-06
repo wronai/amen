@@ -1,0 +1,4 @@
+Multi-container STACK api-cache-stack:
+- api-service: FastAPI Python, host port 8090, GET /ping /health /cache/status, env REDIS_URL=redis://redis-cache:6379, depends on redis
+- redis-cache: pre-built image redis:7-alpine on port 6379 (no custom Dockerfile)
+Docker compose network cache-net. Transactional.

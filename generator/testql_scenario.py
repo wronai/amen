@@ -15,6 +15,17 @@ def _probe_path(path: str) -> str:
     return re.sub(r"\{[^}]+\}", "1", path)
 
 
+def _startup_wait_ms(intent_data: dict[str, Any]) -> int:
+    impl = intent_data.get("IMPLEMENTATION", {}) or {}
+    framework = impl.get("framework") or "fastapi"
+    language = impl.get("language") or "python"
+    if framework == "express" or language == "node":
+        return 3500
+    if framework == "flask":
+        return 3000
+    return 2500
+
+
 def build_testql_scenario(
     intent_data: dict[str, Any],
     *,
@@ -34,6 +45,7 @@ def build_testql_scenario(
 
     api_block = "\n".join(api_rows) if api_rows else "  GET,  /ping,  200,  status,  ok"
     count = len(api_rows) or 1
+    wait_ms = _startup_wait_ms(intent_data)
 
     return f"""# SCENARIO: iterun contract verify — {name}
 # TYPE: api
@@ -44,7 +56,7 @@ CONFIG[3]{{key, value}}:
   timeout_ms, 20000
   retry_count, 4
 
-WAIT 2500
+WAIT {wait_ms}
 
 API[{count}]{{method, endpoint, status, assert_key, assert_value}}:
 {api_block}

@@ -3,6 +3,17 @@
 ## [0.1.10] - 2026-06-06
 
 ### Fixed
+- Fix smart-return-type issues (ticket-aabd8ad8)
+
+## [0.1.10] - 2026-06-06
+
+### Fixed
+- Fix magic-numbers issues (ticket-2497d410)
+- Fix smart-return-type issues (ticket-24da5573)
+
+## [0.1.10] - 2026-06-06
+
+### Fixed
 - Fix ai-boilerplate issues (ticket-0e16010e)
 - Fix duplicate-imports issues (ticket-0c07b2b0)
 - Fix string-concat issues (ticket-cfee50f1)
@@ -36,6 +47,41 @@
 - Fix smart-return-type issues (ticket-29196399)
 
 ## [Unreleased]
+
+## [0.1.8] - 2026-06-06
+
+### Docs
+- Update .testql-auto/summary.md
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/INTENT_DSL_SPEC.md
+- Update examples/17-stack-shop-gateway/README.md
+- Update examples/18-stack-blog/README.md
+- Update examples/19-stack-api-cache/README.md
+- ... and 3 more files
+
+### Test
+- Update tests/e2e/test_contract_verify.py
+- Update tests/e2e/test_expectations.py
+- Update tests/e2e/test_pipeline_repair.py
+- Update tests/e2e/test_stack_planner.py
+- Update tests/e2e/test_testql_scenario.py
+
+### Other
+- Update .code2llm_cache/Makefile_1780755568355196027_7781.pkl
+- Update .code2llm_cache/_common_1780755175625802172_3024.pkl
+- Update .code2llm_cache/_verify_1780755175839804589_4982.pkl
+- Update .code2llm_cache/_verify_1780755565608165512_5142.pkl
+- Update .code2llm_cache/contract_verify_1780755565163160569_7557.pkl
+- Update .code2llm_cache/expectations_1780755177469822993_3539.pkl
+- Update .code2llm_cache/pipeline_1780755183617892395_8828.pkl
+- Update .code2llm_cache/planfile_1780755557914080033_28951.pkl
+- Update .code2llm_cache/run_1780755182301877541_326.pkl
+- Update .code2llm_cache/run_1780755182368878297_1463.pkl
+- ... and 68 more files
 
 ## [0.1.7] - 2026-06-06
 

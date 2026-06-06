@@ -113,6 +113,78 @@ class Implementation:
 
 
 @dataclass
+class StackService:
+    """Single service inside a multi-container STACK application."""
+    name: str
+    language: Optional[str] = None
+    framework: Optional[str] = None
+    image: Optional[str] = None
+    base_image: Optional[str] = None
+    port: int = 8000
+    host_port: Optional[int] = None
+    depends_on: List[str] = field(default_factory=list)
+    env_vars: Dict[str, str] = field(default_factory=dict)
+    actions: List[Action] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "language": self.language,
+            "framework": self.framework,
+            "image": self.image,
+            "base_image": self.base_image,
+            "port": self.port,
+            "host_port": self.host_port,
+            "depends_on": self.depends_on,
+            "env_vars": self.env_vars,
+            "actions": [a.to_dict() for a in self.actions],
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "StackService":
+        return cls(
+            name=data["name"],
+            language=data.get("language"),
+            framework=data.get("framework"),
+            image=data.get("image"),
+            base_image=data.get("base_image"),
+            port=int(data.get("port", 8000)),
+            host_port=data.get("host_port"),
+            depends_on=list(data.get("depends_on", []) or []),
+            env_vars=dict(data.get("env_vars", {}) or {}),
+            actions=[Action.from_dict(a) for a in data.get("actions", [])],
+        )
+
+
+@dataclass
+class Stack:
+    """Multi-service application (docker compose)."""
+    network: str = "app-net"
+    services: List[StackService] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "network": self.network,
+            "services": [s.to_dict() for s in self.services],
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Stack":
+        raw = data.get("services") or {}
+        if isinstance(raw, list):
+            services = [StackService.from_dict(s) for s in raw]
+        else:
+            services = [
+                StackService.from_dict({**svc, "name": name})
+                for name, svc in raw.items()
+            ]
+        return cls(
+            network=data.get("network", "app-net"),
+            services=services,
+        )
+
+
+@dataclass
 class Intent:
     """Main intent definition."""
     name: str
@@ -149,6 +221,7 @@ class IntentIR:
     intent: Intent = field(default_factory=lambda: Intent(name="", goal=""))
     environment: Environment = field(default_factory=Environment)
     implementation: Implementation = field(default_factory=Implementation)
+    stack: Optional[Stack] = None
     execution_mode: ExecutionMode = ExecutionMode.DRY_RUN
     
     # Execution state
@@ -170,6 +243,7 @@ class IntentIR:
             "intent": self.intent.to_dict(),
             "environment": self.environment.to_dict(),
             "implementation": self.implementation.to_dict(),
+            "stack": self.stack.to_dict() if self.stack else None,
             "execution_mode": self.execution_mode.value,
             "iterun_approved": self.iterun_approved,
             "iteration_count": self.iteration_count,
@@ -192,6 +266,7 @@ class IntentIR:
             intent=Intent.from_dict(data.get("intent", {})),
             environment=Environment.from_dict(data.get("environment", {})),
             implementation=Implementation.from_dict(data.get("implementation", {})),
+            stack=Stack.from_dict(data["stack"]) if data.get("stack") else None,
             execution_mode=ExecutionMode(data.get("execution_mode", "dry-run")),
             iterun_approved=data.get("iterun_approved", False),
             iteration_count=data.get("iteration_count", 0),

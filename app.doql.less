@@ -2,7 +2,7 @@
 
 app {
   name: iterun;
-  version: 0.1.6;
+  version: 0.1.7;
 }
 
 dependencies {
@@ -71,12 +71,12 @@ workflow[name="shell"] {
 
 workflow[name="plan"] {
   trigger: manual;
-  step-1: run cmd=$(PYTHON) -m cli.main plan examples/01-user-api/intent.yaml;
+  step-1: run cmd=$(PYTHON) -m cli.main plan examples/01-user-api/generated/iterun.yaml -o examples/01-user-api/generated/;
 }
 
 workflow[name="execute"] {
   trigger: manual;
-  step-1: run cmd=$(PYTHON) -m cli.main execute examples/01-user-api/intent.yaml;
+  step-1: run cmd=ITERUN_EXECUTE=1 ./examples/01-user-api/run.sh;
 }
 
 workflow[name="examples"] {
@@ -88,7 +88,7 @@ workflow[name="run-intent"] {
   trigger: manual;
   step-1: run cmd=if [ -z "$(FILE)" ]; then \;
   step-2: run cmd=echo "$(RED)ERROR: FILE not specified$(RESET)"; \;
-  step-3: run cmd=echo "Usage: make run-intent FILE=path/to/intent.yaml"; \;
+  step-3: run cmd=echo "Usage: make run-intent FILE=path/to/iterun.yaml"; \;
   step-4: run cmd=exit 1; \;
   step-5: run cmd=fi;
   step-6: run cmd=$(PYTHON) -m cli.main execute $(FILE);

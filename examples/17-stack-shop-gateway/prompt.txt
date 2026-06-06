@@ -1,0 +1,5 @@
+Create a multi-service Docker STACK application named shop-stack:
+- api-gateway (FastAPI, host port 18080) exposing GET /ping, /health, /users, /products and proxying to backends
+- users-service (FastAPI, internal) with GET /health and GET /users
+- catalog-service (Express/Node, internal) with GET /health and GET /products
+All services on network shop-net. Use docker compose. Transactional execution.

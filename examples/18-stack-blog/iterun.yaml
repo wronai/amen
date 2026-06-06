@@ -1,0 +1,39 @@
+INTENT:
+  name: blog-stack
+  goal: Blog platform with API, background worker, and public frontend
+
+STACK:
+  network: blog-net
+  services:
+    blog-api:
+      language: python
+      framework: fastapi
+      base_image: python:3.12-slim
+      port: 8000
+      host_port: 18000
+      depends_on: [blog-worker]
+      actions:
+        - api.expose GET /ping
+        - api.expose GET /health
+        - api.expose GET /posts
+    blog-worker:
+      language: python
+      framework: fastapi
+      base_image: python:3.12-slim
+      port: 8000
+      actions:
+        - api.expose GET /health
+        - api.expose GET /jobs
+    blog-frontend:
+      language: node
+      framework: express
+      base_image: node:20-slim
+      port: 8000
+      host_port: 13000
+      depends_on: [blog-api]
+      actions:
+        - api.expose GET /
+        - api.expose GET /health
+
+EXECUTION:
+  mode: transactional

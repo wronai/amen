@@ -1044,3 +1044,42 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
+  - id: ticket-2497d410
+    name: Fix magic-numbers issues
+    description: Resolve 3 magic-numbers issues in generator/testql_scenario.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - generator/testql_scenario.py
+    rule_id: magic-numbers
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-24da5573
+    name: Fix smart-return-type issues
+    description: Resolve 2 smart-return-type issues in tests/e2e/test_pipeline_repair.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/e2e/test_pipeline_repair.py
+    rule_id: smart-return-type
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-aabd8ad8
+    name: Fix smart-return-type issues
+    description: Resolve 3 smart-return-type issues in tests/e2e/test_contract_verify.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/e2e/test_contract_verify.py
+    rule_id: smart-return-type
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced

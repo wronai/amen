@@ -1,6 +1,22 @@
 # Przykłady ITERUN
 
+> **Repo:** `~/github/wronai/iterun` (nie `koru`). Aktywuj venv iterun: `source venv/bin/activate`.
+
 Każdy przykład: **prompt.txt** + **run.sh** + katalog **`generated/`** (cała sesja, gitignored).
+
+## Zależności E2E
+
+```bash
+# z katalogu iterun (auto-szuka ../../semcod/intract)
+./examples/run-e2e.sh
+
+# ręcznie
+export INTRACT_PATH=~/github/semcod/intract
+pip install -e "$INTRACT_PATH" testql
+
+# bez intract (tylko pipeline --verify + testql)
+ITERUN_SKIP_INTRACT=1 ./examples/run-resilience.sh
+```
 
 ```
 examples/01-user-api/
@@ -105,6 +121,22 @@ jq . generated/verify.rounds.json    # historia rund naprawczych
 ```
 
 `expectations.yaml` jest **surowszy niż prompt** — wymusza `--verify` retry (domyślnie 5 rund).
+
+## STACK — wiele Dockerfile w jednej aplikacji
+
+Sekcja **`STACK.services`** w `iterun.yaml` → N serwisów + `docker-compose.yaml`:
+
+```bash
+./examples/run-stacks.sh
+```
+
+| # | Katalog | Serwisy |
+|---|---------|---------|
+| 17 | `17-stack-shop-gateway` | gateway + users + catalog |
+| 18 | `18-stack-blog` | API + worker + frontend |
+| 19 | `19-stack-api-cache` | FastAPI + redis (image) |
+
+Spec: [docs/INTENT_DSL_SPEC.md](../docs/INTENT_DSL_SPEC.md#stack-multi-service)
 
 ## Katalog przykładów
 

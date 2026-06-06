@@ -17,11 +17,21 @@ _example_setup() {
     if [ "${ITERUN_SKIP_CLEAN:-}" != "1" ]; then
         rm -rf "$GENERATED"/*
     fi
+
+    _example_copy_expectations
 }
 
 _example_copy_expectations() {
     if [ -f "$EXAMPLE_DIR/expectations.yaml" ]; then
         cp "$EXAMPLE_DIR/expectations.yaml" "$GENERATED/expectations.yaml"
+    fi
+}
+
+# Przykłady STACK: iterun.yaml jest w repo (nie kopiuj do generated/).
+_example_use_source_pkg() {
+    if [ -f "$EXAMPLE_DIR/iterun.yaml" ]; then
+        ITERUN_PKG="$EXAMPLE_DIR/iterun.yaml"
+        INTENT="$ITERUN_PKG"
     fi
 }
 

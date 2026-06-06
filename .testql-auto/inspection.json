@@ -1,0 +1,497 @@
+{
+  "inspection": {
+    "refactor_plan": {
+      "actions": [],
+      "findings": [],
+      "id": "refactor.inspect.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated",
+      "metadata": {
+        "source_status": "passed",
+        "topology_id": "topology.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated"
+      },
+      "source_run_id": "inspect.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated",
+      "status": "no_action_required"
+    },
+    "result": {
+      "checks": [
+        {
+          "evidence_refs": [],
+          "id": "check.topology.confidence",
+          "metadata": {
+            "confidence": "full"
+          },
+          "node_id": "artifact.root",
+          "status": "passed",
+          "summary": "Manifest confidence is full."
+        },
+        {
+          "evidence_refs": [],
+          "id": "check.topology.nodes",
+          "metadata": {
+            "node_count": 9
+          },
+          "status": "passed",
+          "summary": "Topology contains 9 nodes."
+        },
+        {
+          "evidence_refs": [],
+          "id": "check.topology.edges",
+          "metadata": {
+            "edge_count": 8
+          },
+          "status": "passed",
+          "summary": "Topology contains 8 edges."
+        },
+        {
+          "evidence_refs": [],
+          "id": "check.topology.interfaces",
+          "metadata": {
+            "interface_count": 1
+          },
+          "status": "passed",
+          "summary": "Topology exposes 1 interface nodes."
+        },
+        {
+          "evidence_refs": [],
+          "id": "check.topology.evidence",
+          "metadata": {
+            "evidence_count": 3
+          },
+          "status": "passed",
+          "summary": "Topology has 3 evidence nodes."
+        }
+      ],
+      "failures": [],
+      "metadata": {
+        "confidence": "full",
+        "edge_count": 8,
+        "node_count": 9,
+        "source": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated"
+      },
+      "run_id": "inspect.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated",
+      "status": "passed",
+      "suggested_actions": [],
+      "topology_id": "topology.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated",
+      "traces": [
+        {
+          "edge_ids": [
+            "artifact.root->type.dockerfile:classified_as",
+            "artifact.root->type.python_pkg:classified_as",
+            "artifact.root->type.fastapi:classified_as",
+            "artifact.root->type.openapi3:classified_as",
+            "artifact.root->interface.rest.1:exposes",
+            "artifact.root->evidence.1:supported_by",
+            "artifact.root->evidence.2:supported_by",
+            "artifact.root->evidence.3:supported_by"
+          ],
+          "id": "trace.discovery.topology",
+          "metadata": {
+            "purpose": "discovery-derived traversal plan"
+          },
+          "node_ids": [
+            "artifact.root",
+            "type.dockerfile",
+            "type.python_pkg",
+            "type.fastapi",
+            "type.openapi3",
+            "interface.rest.1",
+            "evidence.1",
+            "evidence.2",
+            "evidence.3"
+          ],
+          "status": "planned"
+        }
+      ]
+    },
+    "topology": {
+      "confidence": "full",
+      "edges": [
+        {
+          "conditions": [],
+          "evidence": [
+            {
+              "detail": "container build marker",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile",
+              "probe": "filesystem.container_dockerfile"
+            },
+            {
+              "detail": "1 Python files",
+              "kind": "file_glob",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated",
+              "probe": "filesystem.package_python"
+            },
+            {
+              "detail": "OpenAPI/Swagger 3.1.0",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml",
+              "probe": "filesystem.api_openapi"
+            }
+          ],
+          "protocol": "manifest",
+          "relation": "classified_as",
+          "source_id": "artifact.root",
+          "target_id": "type.dockerfile"
+        },
+        {
+          "conditions": [],
+          "evidence": [
+            {
+              "detail": "container build marker",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile",
+              "probe": "filesystem.container_dockerfile"
+            },
+            {
+              "detail": "1 Python files",
+              "kind": "file_glob",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated",
+              "probe": "filesystem.package_python"
+            },
+            {
+              "detail": "OpenAPI/Swagger 3.1.0",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml",
+              "probe": "filesystem.api_openapi"
+            }
+          ],
+          "protocol": "manifest",
+          "relation": "classified_as",
+          "source_id": "artifact.root",
+          "target_id": "type.python_pkg"
+        },
+        {
+          "conditions": [],
+          "evidence": [
+            {
+              "detail": "container build marker",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile",
+              "probe": "filesystem.container_dockerfile"
+            },
+            {
+              "detail": "1 Python files",
+              "kind": "file_glob",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated",
+              "probe": "filesystem.package_python"
+            },
+            {
+              "detail": "OpenAPI/Swagger 3.1.0",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml",
+              "probe": "filesystem.api_openapi"
+            }
+          ],
+          "protocol": "manifest",
+          "relation": "classified_as",
+          "source_id": "artifact.root",
+          "target_id": "type.fastapi"
+        },
+        {
+          "conditions": [],
+          "evidence": [
+            {
+              "detail": "container build marker",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile",
+              "probe": "filesystem.container_dockerfile"
+            },
+            {
+              "detail": "1 Python files",
+              "kind": "file_glob",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated",
+              "probe": "filesystem.package_python"
+            },
+            {
+              "detail": "OpenAPI/Swagger 3.1.0",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml",
+              "probe": "filesystem.api_openapi"
+            }
+          ],
+          "protocol": "manifest",
+          "relation": "classified_as",
+          "source_id": "artifact.root",
+          "target_id": "type.openapi3"
+        },
+        {
+          "conditions": [],
+          "evidence": [
+            {
+              "detail": "container build marker",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile",
+              "probe": "filesystem.container_dockerfile"
+            },
+            {
+              "detail": "1 Python files",
+              "kind": "file_glob",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated",
+              "probe": "filesystem.package_python"
+            },
+            {
+              "detail": "OpenAPI/Swagger 3.1.0",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml",
+              "probe": "filesystem.api_openapi"
+            }
+          ],
+          "protocol": "http",
+          "relation": "exposes",
+          "source_id": "artifact.root",
+          "target_id": "interface.rest.1"
+        },
+        {
+          "conditions": [],
+          "evidence": [
+            {
+              "detail": "container build marker",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile",
+              "probe": "filesystem.container_dockerfile"
+            }
+          ],
+          "protocol": "file",
+          "relation": "supported_by",
+          "source_id": "artifact.root",
+          "target_id": "evidence.1"
+        },
+        {
+          "conditions": [],
+          "evidence": [
+            {
+              "detail": "1 Python files",
+              "kind": "file_glob",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated",
+              "probe": "filesystem.package_python"
+            }
+          ],
+          "protocol": "file",
+          "relation": "supported_by",
+          "source_id": "artifact.root",
+          "target_id": "evidence.2"
+        },
+        {
+          "conditions": [],
+          "evidence": [
+            {
+              "detail": "OpenAPI/Swagger 3.1.0",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml",
+              "probe": "filesystem.api_openapi"
+            }
+          ],
+          "protocol": "file",
+          "relation": "supported_by",
+          "source_id": "artifact.root",
+          "target_id": "evidence.3"
+        }
+      ],
+      "metadata": {
+        "generator": "testql.topology",
+        "source_types": [
+          "dockerfile",
+          "python_pkg",
+          "fastapi",
+          "openapi3"
+        ]
+      },
+      "nodes": [
+        {
+          "evidence": [
+            {
+              "detail": "container build marker",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile",
+              "probe": "filesystem.container_dockerfile"
+            },
+            {
+              "detail": "1 Python files",
+              "kind": "file_glob",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated",
+              "probe": "filesystem.package_python"
+            },
+            {
+              "detail": "OpenAPI/Swagger 3.1.0",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml",
+              "probe": "filesystem.api_openapi"
+            }
+          ],
+          "id": "artifact.root",
+          "kind": "artifact",
+          "metadata": {
+            "confidence": "full",
+            "dependency_count": 0,
+            "description": "Create a FastAPI product API for an e-commerce catalog",
+            "evidence_count": 3,
+            "interface_count": 1,
+            "name": "product-api",
+            "types": [
+              "dockerfile",
+              "python_pkg",
+              "fastapi",
+              "openapi3"
+            ],
+            "version": "1.0.0"
+          },
+          "source": {
+            "kind": "path",
+            "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated"
+          }
+        },
+        {
+          "evidence": [],
+          "id": "type.dockerfile",
+          "kind": "artifact_type",
+          "metadata": {
+            "type": "dockerfile"
+          },
+          "source": {
+            "kind": "path",
+            "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated"
+          }
+        },
+        {
+          "evidence": [],
+          "id": "type.python_pkg",
+          "kind": "artifact_type",
+          "metadata": {
+            "type": "python_pkg"
+          },
+          "source": {
+            "kind": "path",
+            "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated"
+          }
+        },
+        {
+          "evidence": [],
+          "id": "type.fastapi",
+          "kind": "artifact_type",
+          "metadata": {
+            "type": "fastapi"
+          },
+          "source": {
+            "kind": "path",
+            "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated"
+          }
+        },
+        {
+          "evidence": [],
+          "id": "type.openapi3",
+          "kind": "artifact_type",
+          "metadata": {
+            "type": "openapi3"
+          },
+          "source": {
+            "kind": "path",
+            "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated"
+          }
+        },
+        {
+          "evidence": [],
+          "id": "interface.rest.1",
+          "kind": "interface",
+          "metadata": {
+            "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml",
+            "metadata": {
+              "paths": 5
+            },
+            "type": "rest"
+          },
+          "source": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml"
+        },
+        {
+          "evidence": [
+            {
+              "detail": "container build marker",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile",
+              "probe": "filesystem.container_dockerfile"
+            }
+          ],
+          "id": "evidence.1",
+          "kind": "evidence",
+          "metadata": {
+            "detail": "container build marker",
+            "kind": "file",
+            "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile",
+            "probe": "filesystem.container_dockerfile"
+          },
+          "source": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile"
+        },
+        {
+          "evidence": [
+            {
+              "detail": "1 Python files",
+              "kind": "file_glob",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated",
+              "probe": "filesystem.package_python"
+            }
+          ],
+          "id": "evidence.2",
+          "kind": "evidence",
+          "metadata": {
+            "detail": "1 Python files",
+            "kind": "file_glob",
+            "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated",
+            "probe": "filesystem.package_python"
+          },
+          "source": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated"
+        },
+        {
+          "evidence": [
+            {
+              "detail": "OpenAPI/Swagger 3.1.0",
+              "kind": "file",
+              "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml",
+              "probe": "filesystem.api_openapi"
+            }
+          ],
+          "id": "evidence.3",
+          "kind": "evidence",
+          "metadata": {
+            "detail": "OpenAPI/Swagger 3.1.0",
+            "kind": "file",
+            "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml",
+            "probe": "filesystem.api_openapi"
+          },
+          "source": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml"
+        }
+      ],
+      "root": {
+        "kind": "path",
+        "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated"
+      },
+      "traces": [
+        {
+          "edge_ids": [
+            "artifact.root->type.dockerfile:classified_as",
+            "artifact.root->type.python_pkg:classified_as",
+            "artifact.root->type.fastapi:classified_as",
+            "artifact.root->type.openapi3:classified_as",
+            "artifact.root->interface.rest.1:exposes",
+            "artifact.root->evidence.1:supported_by",
+            "artifact.root->evidence.2:supported_by",
+            "artifact.root->evidence.3:supported_by"
+          ],
+          "id": "trace.discovery.topology",
+          "metadata": {
+            "purpose": "discovery-derived traversal plan"
+          },
+          "node_ids": [
+            "artifact.root",
+            "type.dockerfile",
+            "type.python_pkg",
+            "type.fastapi",
+            "type.openapi3",
+            "interface.rest.1",
+            "evidence.1",
+            "evidence.2",
+            "evidence.3"
+          ],
+          "status": "planned"
+        }
+      ]
+    }
+  }
+}

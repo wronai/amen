@@ -1,0 +1,20 @@
+INSPECTION{key, value}:
+  topology_id, topology.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated
+  topology_nodes, 9
+  topology_edges, 8
+  run_id, inspect.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated
+  status, passed
+  checks, 5
+  failures, 0
+  actions, 0
+
+CHECKS[5]{id, status, summary}:
+  check.topology.confidence, passed, Manifest confidence is full.
+  check.topology.nodes, passed, Topology contains 9 nodes.
+  check.topology.edges, passed, Topology contains 8 edges.
+  check.topology.interfaces, passed, Topology exposes 1 interface nodes.
+  check.topology.evidence, passed, Topology has 3 evidence nodes.
+
+FINDINGS[0]{id, severity, node_id, summary}:
+
+ACTIONS[0]{id, type, target, summary}:

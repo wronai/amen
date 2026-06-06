@@ -1,0 +1,35 @@
+{
+  "version": "1.2.52",
+  "source": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated",
+  "url": "http://localhost:8037",
+  "api_url": "http://localhost:8037",
+  "status": "passed",
+  "topology": {
+    "nodes": 9,
+    "edges": 8,
+    "testable": 0
+  },
+  "checks": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0,
+    "warnings": 0
+  },
+  "findings": [],
+  "artifacts": [
+    "topology.json",
+    "topology.yaml",
+    "topology.toon.yaml",
+    "result.json",
+    "result.yaml",
+    "result.toon.yaml",
+    "refactor-plan.json",
+    "refactor-plan.yaml",
+    "refactor-plan.toon.yaml",
+    "inspection.json",
+    "inspection.yaml",
+    "inspection.toon.yaml",
+    "summary.md",
+    "metadata.json"
+  ]
+}

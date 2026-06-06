@@ -64,13 +64,20 @@ def check_expectations(
                     f"expectations HTTP {method} {path}: want {expected_status}, got {status} ({detail})"
                 )
                 continue
+            try:
+                data = json.loads(detail)
+            except json.JSONDecodeError:
+                errors.append(f"expectations JSON parse failed on {path}")
+                continue
+
             for field in endpoint.get("json_fields", []) or []:
-                try:
-                    data = json.loads(detail)
-                    if field not in data:
-                        errors.append(f"expectations JSON field missing: {field} on {path}")
-                except json.JSONDecodeError:
-                    errors.append(f"expectations JSON parse failed on {path}")
+                if field not in data:
+                    errors.append(f"expectations JSON field missing: {field} on {path}")
+
+            for needle in endpoint.get("body_contains", []) or []:
+                blob = json.dumps(data)
+                if needle not in blob:
+                    errors.append(f"expectations response missing {needle!r} on {path}")
 
     return errors
 

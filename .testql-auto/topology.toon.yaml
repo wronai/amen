@@ -1,0 +1,29 @@
+TOPOLOGY{key, value}:
+  root, /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+  confidence, full
+  nodes, 9
+  edges, 8
+
+NODES[9]{id, kind, source}:
+  artifact.root, artifact, /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+  type.dockerfile, artifact_type, /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+  type.python_pkg, artifact_type, /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+  type.fastapi, artifact_type, /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+  type.openapi3, artifact_type, /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+  interface.rest.1, interface, /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml
+  evidence.1, evidence, /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile
+  evidence.2, evidence, /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+  evidence.3, evidence, /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml
+
+EDGES[8]{source_id, relation, target_id, protocol}:
+  artifact.root, classified_as, type.dockerfile, manifest
+  artifact.root, classified_as, type.python_pkg, manifest
+  artifact.root, classified_as, type.fastapi, manifest
+  artifact.root, classified_as, type.openapi3, manifest
+  artifact.root, exposes, interface.rest.1, http
+  artifact.root, supported_by, evidence.1, file
+  artifact.root, supported_by, evidence.2, file
+  artifact.root, supported_by, evidence.3, file
+
+TRACES[1]{id, status, nodes, edges}:
+  trace.discovery.topology, planned, 9, 8

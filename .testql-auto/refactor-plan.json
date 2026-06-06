@@ -1,0 +1,13 @@
+{
+  "refactor_plan": {
+    "actions": [],
+    "findings": [],
+    "id": "refactor.inspect.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated",
+    "metadata": {
+      "source_status": "passed",
+      "topology_id": "topology.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated"
+    },
+    "source_run_id": "inspect.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated",
+    "status": "no_action_required"
+  }
+}

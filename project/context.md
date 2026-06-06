@@ -7,10 +7,10 @@
 - **Primary Language**: python
 - **Languages**: python: 36, shell: 21, txt: 17, yaml: 15, toml: 1
 - **Analysis Mode**: static
-- **Total Functions**: 235
+- **Total Functions**: 245
 - **Total Classes**: 47
 - **Modules**: 91
-- **Entry Points**: 183
+- **Entry Points**: 187
 
 ## Architecture by Module
 
@@ -24,15 +24,15 @@
 - **Classes**: 2
 - **File**: `main.py`
 
+### executor.runner
+- **Functions**: 21
+- **Classes**: 4
+- **File**: `runner.py`
+
 ### ai_gateway.gateway
 - **Functions**: 20
 - **Classes**: 4
 - **File**: `gateway.py`
-
-### executor.runner
-- **Functions**: 20
-- **Classes**: 4
-- **File**: `runner.py`
 
 ### planner.simulator
 - **Functions**: 17
@@ -55,18 +55,18 @@
 - **File**: `dsl_parser.py`
 
 ### examples._verify
-- **Functions**: 9
+- **Functions**: 13
 - **File**: `_verify.sh`
+
+### generator.contract_verify
+- **Functions**: 10
+- **Classes**: 1
+- **File**: `contract_verify.py`
 
 ### config
 - **Functions**: 8
 - **Classes**: 1
 - **File**: `config.py`
-
-### generator.contract_verify
-- **Functions**: 8
-- **Classes**: 1
-- **File**: `contract_verify.py`
 
 ### sdk.client
 - **Functions**: 8
@@ -77,6 +77,11 @@
 - **Functions**: 7
 - **Classes**: 3
 - **File**: `intent_generator.py`
+
+### generator.pipeline
+- **Functions**: 7
+- **Classes**: 1
+- **File**: `pipeline.py`
 
 ### generator.intract_manifest
 - **Functions**: 6
@@ -89,11 +94,6 @@
 ### examples._scripts.annotate_intract
 - **Functions**: 6
 - **File**: `annotate_intract.py`
-
-### generator.pipeline
-- **Functions**: 5
-- **Classes**: 1
-- **File**: `pipeline.py`
 
 ### examples._scripts.verify_expectations
 - **Functions**: 5
@@ -511,13 +511,13 @@ Functions exposed as public API (no underscore prefix):
 
 - `cli.main.main` - 103 calls
 - `cli.main.CLI.cmd_execute` - 37 calls
-- `generator.pipeline.run_pipeline` - 35 calls
+- `generator.pipeline.run_pipeline` - 36 calls
 - `generator.contract_verify.verify_contract` - 32 calls
 - `cli.main.CLI.interactive_mode` - 31 calls
 - `examples._scripts.verify_expectations.verify` - 27 calls
+- `generator.expectations.check_expectations` - 26 calls
 - `ir.models.IntentIR.from_dict` - 25 calls
 - `cli.main.CLI.cmd_plan` - 24 calls
-- `generator.expectations.check_expectations` - 23 calls
 - `generator.intent_generator.IntentGenerator.generate` - 21 calls
 - `cli.main.CLI.cmd_show` - 21 calls
 - `cli.main.CLI.cmd_ai_suggest` - 21 calls
@@ -537,10 +537,10 @@ Functions exposed as public API (no underscore prefix):
 - `examples._scripts.annotate_intract.annotate_python` - 11 calls
 - `cli.main.write_plan_artifacts` - 11 calls
 - `parser.dsl_parser.DSLParser.parse` - 11 calls
+- `generator.testql_scenario.build_testql_scenario` - 10 calls
 - `ai_gateway.gateway.AIGateway.generate_code_snippet` - 10 calls
 - `ai_gateway.feedback_loop.FeedbackLoop.suggest_next_steps` - 10 calls
 - `cli.main.CLI.cmd_ai_apply` - 10 calls
-- `generator.testql_scenario.build_testql_scenario` - 9 calls
 - `generator.intract_manifest.parse_api_actions` - 9 calls
 - `examples._scripts.verify_expectations.main` - 9 calls
 - `examples._scripts.intent_to_intract.main` - 9 calls
@@ -548,7 +548,7 @@ Functions exposed as public API (no underscore prefix):
 - `web.app.validate_intent` - 9 calls
 - `cli.main.CLI.cmd_models` - 9 calls
 - `generator.expectations.load_and_check_expectations` - 8 calls
-- `generator.contract_verify.discover_service_url` - 8 calls
+- `examples._scripts.annotate_intract.main` - 8 calls
 
 ## System Interactions
 

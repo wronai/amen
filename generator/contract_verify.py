@@ -59,6 +59,7 @@ def discover_service_url(intent_name: str, fallback_endpoints: list[str] | None 
         return fallback_endpoints[0].rstrip("/") if fallback_endpoints else None
 
     pattern = f"intent-{intent_name}"
+    # STACK compose project name matches executor _execute_compose_stack
     proc = subprocess.run(
         ["docker", "ps", "--filter", f"name={pattern}", "--format", "{{.Ports}}"],
         capture_output=True,
@@ -72,16 +73,42 @@ def discover_service_url(intent_name: str, fallback_endpoints: list[str] | None 
     return fallback_endpoints[0].rstrip("/") if fallback_endpoints else None
 
 
-def wait_for_service(base_url: str, attempts: int = 30) -> bool:
-    probes = ("/ping", "/health", "/")
+def readiness_paths(intent_data: dict[str, Any] | None) -> list[str]:
+    """Paths to probe until the deployed service responds."""
+    if intent_data:
+        get_paths = [
+            _probe_path(path)
+            for method, path in parse_api_actions(intent_data)
+            if method == "GET"
+        ]
+        if get_paths:
+            return get_paths
+    return ["/ping", "/health", "/live", "/ready", "/"]
+
+
+def _endpoint_responding(base_url: str, path: str) -> bool:
+    url = f"{base_url.rstrip('/')}{path}"
+    try:
+        with urllib.request.urlopen(url, timeout=3) as resp:
+            return resp.status < 500
+    except urllib.error.HTTPError as exc:
+        # 404 still means the HTTP server is up (wrong path, not connection refused)
+        return exc.code < 500
+    except Exception:
+        return False
+
+
+def wait_for_service(
+    base_url: str,
+    attempts: int = 30,
+    paths: list[str] | None = None,
+    intent_data: dict[str, Any] | None = None,
+) -> bool:
+    probes = paths or readiness_paths(intent_data)
     for _ in range(attempts):
         for path in probes:
-            try:
-                with urllib.request.urlopen(f"{base_url.rstrip('/')}{path}", timeout=3) as resp:
-                    if resp.status < 500:
-                        return True
-            except Exception:
-                continue
+            if _endpoint_responding(base_url, path):
+                return True
         time.sleep(1)
     return False
 
@@ -167,7 +194,7 @@ def verify_contract(
         return result
 
     result.service_url = base_url
-    if not wait_for_service(base_url):
+    if not wait_for_service(base_url, intent_data=data):
         result.errors.append(f"Service not ready at {base_url}")
         return result
 

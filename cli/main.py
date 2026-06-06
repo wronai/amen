@@ -34,8 +34,12 @@ def write_plan_artifacts(ir: IntentIR, result: DryRunResult, output_dir: str | P
     """Write plan output (JSON, app code, Dockerfile) into output_dir."""
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
-    written: dict[str, str] = {}
 
+    if ir.stack and ir.stack.services:
+        from planner.stack_artifacts import write_stack_artifacts
+        return write_stack_artifacts(out, ir, result)
+
+    written: dict[str, str] = {}
     plan_payload = {"intent": ir.to_dict(), "plan": result.to_dict()}
     plan_file = out / "plan.result.json"
     plan_file.write_text(json.dumps(plan_payload, indent=2), encoding="utf-8")
@@ -281,20 +285,23 @@ EXECUTION:
         except ImportError:
             skip_confirmation = False
         
-        self.print_header("ITERUN Boundary")
-        
-        print(f"{Colors.BOLD}Intent Summary:{Colors.RESET}")
-        print(f"  Name: {ir.intent.name}")
-        print(f"  Goal: {ir.intent.goal}")
-        print(f"  Actions: {len(ir.implementation.actions)}")
-        print(f"  Runtime: {ir.environment.runtime.value}")
-        print(f"  Iterations: {ir.iteration_count}")
-        
         # Auto-approve if configured or forced
         if skip_confirmation or force:
             ir.approve_iterun()
-            self.print_success("ITERUN auto-approved (SKIP_ITERUN_CONFIRMATION=true)")
+            if not self.quiet:
+                self.print_success("ITERUN auto-approved (SKIP_ITERUN_CONFIRMATION=true)")
             return True
+
+        self.print_header("ITERUN Boundary")
+        print(f"{Colors.BOLD}Intent Summary:{Colors.RESET}")
+        print(f"  Name: {ir.intent.name}")
+        print(f"  Goal: {ir.intent.goal}")
+        action_count = len(ir.implementation.actions)
+        if ir.stack and ir.stack.services:
+            action_count = sum(len(s.actions) for s in ir.stack.services)
+        print(f"  Actions: {action_count}")
+        print(f"  Runtime: {ir.environment.runtime.value}")
+        print(f"  Iterations: {ir.iteration_count}")
         
         print(f"\n{Colors.YELLOW}This will execute the intent with real side effects.{Colors.RESET}")
         confirm = input(f"\n{Colors.BOLD}Type 'ITERUN' to confirm execution: {Colors.RESET}").strip()

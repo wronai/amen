@@ -1,0 +1,5 @@
+Build a blog STACK with three connected Docker services:
+1. blog-api — FastAPI on host port 8000, GET /ping /health /posts, depends on worker
+2. blog-worker — FastAPI internal, GET /health /jobs (background processing stub)
+3. blog-frontend — Express on host port 3000, GET / and /health, depends on blog-api
+Network blog-net, docker compose, transactional.

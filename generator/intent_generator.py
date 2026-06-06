@@ -13,6 +13,7 @@ import yaml
 
 from ai_gateway.gateway import AIGateway, get_gateway
 from dsl.schema import (
+    EXAMPLE_STACK_YAML,
     EXAMPLE_YAML,
     IntentDSLDocument,
     get_system_prompt,
@@ -96,6 +97,11 @@ def _fallback_yaml(prompt: str) -> str:
     """Deterministic fallback when LLM unavailable (tests / offline)."""
     name = "generated-api"
     lower = prompt.lower()
+    if any(k in lower for k in ("stack", "multi-service", "microservice", "docker compose", "gateway")):
+        return EXAMPLE_STACK_YAML.replace(
+            "E-commerce stack with API gateway, users, and catalog",
+            prompt[:200],
+        )
     if "user" in lower:
         name = "user-api"
     elif "flask" in lower:

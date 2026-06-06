@@ -12,6 +12,7 @@ _example_require_tools
 
 _example_wait_service
 _example_emit_contracts
+_example_discover_url
 _example_annotate_intract
 
 # Intract: validate + graph + artifact scan (manifest w generated/intract.yaml)

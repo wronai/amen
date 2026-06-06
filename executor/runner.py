@@ -174,7 +174,10 @@ class Executor:
             
             # Execute based on runtime
             if ir.environment.runtime == RuntimeType.DOCKER:
-                self._execute_docker(ir, result)
+                if ir.stack and (self.workspace / "docker-compose.yaml").is_file():
+                    self._execute_compose_stack(ir, result)
+                else:
+                    self._execute_docker(ir, result)
             elif ir.environment.runtime == RuntimeType.LOCAL:
                 self._execute_local(ir, result)
             else:
@@ -411,6 +414,11 @@ app.listen({port}, '0.0.0.0', () => {{
     
     def _write_artifacts(self, ir: IntentIR, result: ExecutionResult):
         """Write generated code and config files."""
+        if ir.stack and (self.workspace / "docker-compose.yaml").is_file():
+            result.add_log("STACK workspace: using services/* + docker-compose.yaml")
+            result.artifacts["docker-compose.yaml"] = str(self.workspace / "docker-compose.yaml")
+            return
+
         lang = ir.implementation.language
         
         # Main application file
@@ -467,6 +475,71 @@ app.listen({port}, '0.0.0.0', () => {{
         
         return start_port + max_attempts  # Fallback
     
+    def _patch_compose_host_ports(self, ir: IntentIR, compose_file: Path, result: ExecutionResult) -> None:
+        """Rewrite compose port mappings when host_port is already taken."""
+        import yaml
+
+        data = yaml.safe_load(compose_file.read_text(encoding="utf-8")) or {}
+        services = data.get("services") or {}
+        for svc in ir.stack.services:
+            if not svc.host_port or svc.name not in services:
+                continue
+            host_port = self._find_available_port(svc.host_port)
+            if host_port != svc.host_port:
+                result.add_log(
+                    f"Port {svc.host_port} in use — publishing {svc.name} on {host_port}"
+                )
+            services[svc.name]["ports"] = [f"{host_port}:{svc.port}"]
+            svc.host_port = host_port
+        compose_file.write_text(
+            yaml.dump(data, default_flow_style=False, sort_keys=False),
+            encoding="utf-8",
+        )
+
+    def _execute_compose_stack(self, ir: IntentIR, result: ExecutionResult):
+        """Build and run multi-service STACK via docker compose."""
+        compose_file = self.workspace / "docker-compose.yaml"
+        prefix = self.config.container_prefix
+        project = f"{prefix}-{ir.intent.name}"
+
+        result.add_log(f"STACK compose project: {project}")
+
+        subprocess.run(
+            ["docker", "compose", "-f", str(compose_file), "-p", project, "down"],
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+
+        self._patch_compose_host_ports(ir, compose_file, result)
+
+        proc = subprocess.run(
+            ["docker", "compose", "-f", str(compose_file), "-p", project, "up", "-d", "--build"],
+            capture_output=True,
+            text=True,
+            timeout=600,
+        )
+        if proc.returncode != 0:
+            result.error = f"docker compose up failed: {proc.stderr[-800:]}"
+            result.add_log(result.error)
+            return
+
+        result.add_log("docker compose stack started")
+        result.container_id = project
+
+        for svc in ir.stack.services:
+            if not svc.host_port:
+                continue
+            base = f"http://localhost:{svc.host_port}"
+            if base not in result.endpoints:
+                result.endpoints.append(base)
+            for action in svc.actions:
+                from ir.models import ActionType
+                if action.type == ActionType.API_EXPOSE and action.target:
+                    url = f"{base.rstrip('/')}{action.target}"
+                    if url not in result.endpoints:
+                        result.endpoints.append(url)
+
     def _execute_docker(self, ir: IntentIR, result: ExecutionResult):
         """Build and run Docker container."""
         prefix = self.config.container_prefix
@@ -600,6 +673,29 @@ app.listen({port}, '0.0.0.0', () => {{
         """Clean up workspace."""
         if self.workspace.exists():
             shutil.rmtree(self.workspace)
+
+
+def stop_containers_for_intent(intent_name: str, prefix: str | None = None) -> int:
+    """Stop all Docker containers whose name matches intent-{name}-*."""
+    if not shutil.which("docker"):
+        return 0
+    cfg = get_config()
+    name_prefix = prefix or cfg.container_prefix
+    pattern = f"{name_prefix}-{intent_name}"
+    proc = subprocess.run(
+        ["docker", "ps", "-aq", "--filter", f"name={pattern}"],
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    stopped = 0
+    for cid in proc.stdout.splitlines():
+        cid = cid.strip()
+        if not cid:
+            continue
+        subprocess.run(["docker", "rm", "-f", cid], capture_output=True, timeout=30)
+        stopped += 1
+    return stopped
 
 
 def execute_intent(

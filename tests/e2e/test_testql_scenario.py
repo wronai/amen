@@ -23,6 +23,21 @@ def test_build_testql_contains_endpoints():
     assert "/health" in text
     assert "GENERATED: true" in text
     assert "API[2]" in text
+    assert "WAIT 2500" in text
+
+
+def test_build_testql_express_longer_wait():
+    data = yaml.safe_load("""
+INTENT:
+  name: express-api
+IMPLEMENTATION:
+  language: node
+  framework: express
+  actions:
+    - api.expose GET /
+""")
+    text = build_testql_scenario(data)
+    assert "WAIT 3500" in text
 
 
 def test_write_testql_scenario(tmp_path: Path):

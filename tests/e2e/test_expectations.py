@@ -43,3 +43,25 @@ def test_check_expectations_framework_mismatch():
     exp = yaml.safe_load("framework: flask\nendpoints: []")
     errors = check_expectations(intent, exp)
     assert any("framework" in e for e in errors)
+
+
+def test_check_expectations_body_contains():
+    intent = yaml.safe_load(INTENT_MINIMAL)
+    exp = yaml.safe_load("""
+endpoints:
+  - method: GET
+    path: /ping
+    status: 200
+    body_contains: ['"missing_field"']
+""")
+    errors = check_expectations(intent, exp, base_url=None)
+    assert not errors
+
+    from unittest.mock import patch
+
+    with patch(
+        "generator.expectations._http_probe",
+        return_value=(True, '{"status": "ok"}', 200),
+    ):
+        errors = check_expectations(intent, exp, base_url="http://localhost:8000")
+    assert any("missing_field" in e for e in errors)

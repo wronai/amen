@@ -1,0 +1,67 @@
+result:
+  topology_id: topology.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated
+  run_id: inspect.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated
+  status: passed
+  metadata:
+    source: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+    node_count: 9
+    edge_count: 8
+    confidence: full
+  checks:
+  - id: check.topology.confidence
+    status: passed
+    summary: Manifest confidence is full.
+    evidence_refs: []
+    metadata:
+      confidence: full
+    node_id: artifact.root
+  - id: check.topology.nodes
+    status: passed
+    summary: Topology contains 9 nodes.
+    evidence_refs: []
+    metadata:
+      node_count: 9
+  - id: check.topology.edges
+    status: passed
+    summary: Topology contains 8 edges.
+    evidence_refs: []
+    metadata:
+      edge_count: 8
+  - id: check.topology.interfaces
+    status: passed
+    summary: Topology exposes 1 interface nodes.
+    evidence_refs: []
+    metadata:
+      interface_count: 1
+  - id: check.topology.evidence
+    status: passed
+    summary: Topology has 3 evidence nodes.
+    evidence_refs: []
+    metadata:
+      evidence_count: 3
+  failures: []
+  traces:
+  - id: trace.discovery.topology
+    node_ids:
+    - artifact.root
+    - type.dockerfile
+    - type.python_pkg
+    - type.fastapi
+    - type.openapi3
+    - interface.rest.1
+    - evidence.1
+    - evidence.2
+    - evidence.3
+    edge_ids:
+    - artifact.root->type.dockerfile:classified_as
+    - artifact.root->type.python_pkg:classified_as
+    - artifact.root->type.fastapi:classified_as
+    - artifact.root->type.openapi3:classified_as
+    - artifact.root->interface.rest.1:exposes
+    - artifact.root->evidence.1:supported_by
+    - artifact.root->evidence.2:supported_by
+    - artifact.root->evidence.3:supported_by
+    status: planned
+    metadata:
+      purpose: discovery-derived traversal plan
+  suggested_actions: []

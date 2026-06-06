@@ -20,6 +20,51 @@ Dwa tryby wejścia:
 | SDK | `IterunClient().generate_and_run(prompt, output_dir=...)` |
 | MCP | `iterun_generate_intent` tool |
 
+## STACK (multi-service)
+
+Jedna paczka `iterun.yaml` → wiele Dockerfile + `docker-compose.yaml`:
+
+```yaml
+INTENT:
+  name: shop-stack
+  goal: Multi-service application
+
+STACK:
+  network: shop-net
+  services:
+    api-gateway:
+      language: python
+      framework: fastapi
+      port: 8000
+      host_port: 18080          # publikacja na hoście (gateway)
+      depends_on: [users-service]
+      actions:
+        - api.expose GET /ping
+        - api.expose GET /users
+    users-service:
+      language: python
+      framework: fastapi
+      port: 8000                # tylko sieć Docker (brak host_port)
+      actions:
+        - api.expose GET /users
+    redis-cache:
+      image: redis:7-alpine     # bez własnego Dockerfile
+      port: 6379
+
+EXECUTION:
+  mode: transactional
+```
+
+| Pole serwisu | Opis |
+|--------------|------|
+| `language` + `framework` | Generuje `services/<name>/Dockerfile` + kod |
+| `image` | Gotowy obraz (Redis, Postgres, …) |
+| `host_port` | Mapowanie na localhost (entrypoint) |
+| `depends_on` | Kolejność startu w compose |
+| `port` | Port wewnątrz kontenera (domyślnie 8000) |
+
+Execute: `docker compose up --build` (projekt `intent-<INTENT.name>`).
+
 ## Document structure (`iterun.yaml`)
 
 ```yaml

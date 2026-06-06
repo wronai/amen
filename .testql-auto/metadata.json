@@ -1,0 +1,36 @@
+{
+  "counts": {
+    "actions": 0,
+    "checks": 5,
+    "edges": 8,
+    "findings": 0,
+    "nodes": 9
+  },
+  "created_at": "2026-06-06T14:33:18.463269+00:00",
+  "files": [
+    "topology.json",
+    "topology.yaml",
+    "topology.toon.yaml",
+    "result.json",
+    "result.yaml",
+    "result.toon.yaml",
+    "refactor-plan.json",
+    "refactor-plan.yaml",
+    "refactor-plan.toon.yaml",
+    "inspection.json",
+    "inspection.yaml",
+    "inspection.toon.yaml",
+    "summary.md",
+    "metadata.json"
+  ],
+  "generator": "testql.inspect",
+  "refactor_plan_id": "refactor.inspect.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated",
+  "root": {
+    "kind": "path",
+    "location": "/home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated"
+  },
+  "run_id": "inspect.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated",
+  "status": "passed",
+  "testql_version": "1.2.52",
+  "topology_id": "topology.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated"
+}

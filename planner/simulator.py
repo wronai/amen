@@ -45,6 +45,8 @@ class DryRunResult:
         self.logs: List[str] = []
         self.generated_code: str = ""
         self.dockerfile: str = ""
+        self.compose_yaml: str = ""
+        self.service_artifacts: Dict[str, Dict[str, Any]] = {}
         self.warnings: List[str] = []
         self.estimated_resources: Dict[str, Any] = {}
     
@@ -58,6 +60,11 @@ class DryRunResult:
             "logs": self.logs,
             "generated_code": self.generated_code,
             "dockerfile": self.dockerfile,
+            "compose_yaml": self.compose_yaml,
+            "service_artifacts": {
+                k: {kk: vv for kk, vv in v.items() if kk != "code"}
+                for k, v in self.service_artifacts.items()
+            },
             "warnings": self.warnings,
             "estimated_resources": self.estimated_resources
         }
@@ -370,5 +377,8 @@ console.log("Goal: {ir.intent.goal}");
 
 def plan_intent(ir: IntentIR) -> DryRunResult:
     """Convenience function to plan and simulate an intent."""
+    if ir.stack and ir.stack.services:
+        from planner.stack_planner import plan_stack
+        return plan_stack(ir)
     planner = Planner()
     return planner.dry_run(ir)

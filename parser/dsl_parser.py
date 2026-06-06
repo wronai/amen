@@ -13,7 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from ir.models import (
     IntentIR, Intent, Environment, Implementation, Action,
-    ExecutionMode, RuntimeType, ActionType
+    ExecutionMode, RuntimeType, ActionType, Stack, StackService,
 )
 
 
@@ -102,6 +102,9 @@ class DSLParser:
         
         if "IMPLEMENTATION" in data:
             ir.implementation = self._parse_implementation(data["IMPLEMENTATION"])
+
+        if "STACK" in data:
+            ir.stack = self._parse_stack(data["STACK"])
         
         if "EXECUTION" in data:
             ir.execution_mode = self._parse_execution(data["EXECUTION"])
@@ -220,6 +223,52 @@ class DSLParser:
             params=params
         )
     
+    def _parse_stack(self, data: Dict[str, Any]) -> Stack:
+        if not isinstance(data, dict):
+            self.errors.append("STACK must be a dictionary")
+            return Stack()
+
+        services_raw = data.get("services") or {}
+        if not isinstance(services_raw, dict):
+            self.errors.append("STACK.services must be a dictionary")
+            return Stack(network=data.get("network", "app-net"))
+
+        services: list[StackService] = []
+        for name, svc_data in services_raw.items():
+            if not isinstance(svc_data, dict):
+                self.errors.append(f"STACK.services.{name} must be a dictionary")
+                continue
+            actions = []
+            for action_str in svc_data.get("actions", []) or []:
+                action = self._parse_action(action_str)
+                if action:
+                    actions.append(action)
+            image = svc_data.get("image")
+            language = svc_data.get("language")
+            if not image and not language:
+                self.errors.append(
+                    f"STACK.services.{name}: require language or image"
+                )
+            services.append(
+                StackService(
+                    name=name,
+                    language=language,
+                    framework=svc_data.get("framework"),
+                    image=image,
+                    base_image=svc_data.get("base_image"),
+                    port=int(svc_data.get("port", 8000)),
+                    host_port=svc_data.get("host_port"),
+                    depends_on=list(svc_data.get("depends_on", []) or []),
+                    env_vars=dict(svc_data.get("env_vars", {}) or {}),
+                    actions=actions,
+                )
+            )
+
+        if len(services) < 2:
+            self.errors.append("STACK requires at least 2 services")
+
+        return Stack(network=data.get("network", "app-net"), services=services)
+
     def _parse_execution(self, data: Dict[str, Any]) -> ExecutionMode:
         """Parse EXECUTION section."""
         if not isinstance(data, dict):
@@ -235,6 +284,24 @@ class DSLParser:
     
     def _validate(self, ir: IntentIR):
         """Validate the parsed IR."""
+        if ir.stack and ir.stack.services:
+            svc_names = {s.name for s in ir.stack.services}
+            for svc in ir.stack.services:
+                for dep in svc.depends_on:
+                    if dep not in svc_names:
+                        self.errors.append(
+                            f"STACK.services.{svc.name}: unknown depends_on {dep!r}"
+                        )
+                if svc.framework == "fastapi" and svc.language not in (None, "python"):
+                    self.errors.append(f"STACK.services.{svc.name}: FastAPI requires python")
+                if svc.framework == "express" and svc.language not in (None, "node"):
+                    self.errors.append(f"STACK.services.{svc.name}: Express requires node")
+            if not ir.implementation.actions:
+                return
+
+        if not ir.stack and not ir.implementation.actions:
+            self.errors.append("IMPLEMENTATION.actions or STACK.services is required")
+
         # Check for dangerous actions
         for action in ir.implementation.actions:
             if action.type == ActionType.SHELL_EXEC:

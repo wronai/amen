@@ -1,21 +1,11 @@
 # Wspólna weryfikacja e2e: generated/intract.yaml + generated/service.testql.toon.yaml
 # shellcheck shell=bash
 
+# shellcheck source=_bootstrap_deps.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_bootstrap_deps.sh"
+
 _example_require_tools() {
-    local missing=0
-    for tool in docker; do
-        if ! command -v "$tool" >/dev/null 2>&1; then
-            echo "Missing required tool: $tool" >&2
-            missing=1
-        fi
-    done
-    if ! "$PYTHON" -c "import intract" 2>/dev/null; then
-        echo "Missing Python package: intract (pip install -e ../intract or pip install intract)" >&2
-        missing=1
-    fi
-    if [ "$missing" -ne 0 ]; then
-        return 1
-    fi
+    _example_ensure_e2e_deps
 }
 
 _example_intent_name() {
@@ -60,6 +50,40 @@ PY
 _example_emit_openapi() {
     "$PYTHON" "$EXAMPLES_ROOT/_scripts/intent_to_openapi.py" \
         "$INTENT" -o "$GENERATED/openapi.yaml"
+}
+
+_example_wait_service() {
+    _example_discover_url || return 1
+    if ! "$PYTHON" -c "
+from pathlib import Path
+import sys, yaml
+from generator.contract_verify import wait_for_service
+url, intent = sys.argv[1], Path(sys.argv[2])
+data = yaml.safe_load(intent.read_text(encoding='utf-8')) or {}
+sys.exit(0 if wait_for_service(url, intent_data=data) else 1)
+" "$SERVICE_URL" "$INTENT"; then
+        echo "Service not ready at $SERVICE_URL" >&2
+        return 1
+    fi
+}
+
+_example_emit_contracts() {
+    if [ ! -f "$INTENT" ]; then
+        echo "Missing $INTENT for contract emit" >&2
+        return 1
+    fi
+    _example_emit_openapi
+    "$PYTHON" - <<'PY' "$INTENT" "$GENERATED"
+from pathlib import Path
+import sys
+from generator.intract_manifest import write_intract_manifest
+from generator.testql_scenario import write_testql_scenario
+
+intent = Path(sys.argv[1])
+gen = Path(sys.argv[2])
+write_intract_manifest(intent, gen / "intract.yaml")
+write_testql_scenario(intent, gen / "service.testql.toon.yaml")
+PY
 }
 
 _example_annotate_intract() {
@@ -114,6 +138,13 @@ _example_verify_expectations() {
 }
 
 _example_e2e_verify() {
+    if [ "${ITERUN_SKIP_INTRACT:-}" = "1" ]; then
+        _example_discover_url || return 1
+        _example_run_testql
+        _example_verify_expectations
+        echo "OK e2e verified (pipeline + testql, intract skipped) at ${SERVICE_URL:-?}"
+        return 0
+    fi
     _example_require_tools || return 1
     if [ -f "$GENERATED/verify.result.json" ]; then
         if ! "$PYTHON" - <<'PY' "$GENERATED/verify.result.json"

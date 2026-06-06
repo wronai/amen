@@ -116,6 +116,10 @@ flowchart TD
         examples___verify___example_intent_name["_example_intent_name"]
         examples___verify___example_discover_url["_example_discover_url"]
         examples___verify___example_emit_openapi["_example_emit_openapi"]
+        examples___verify___example_wait_service["_example_wait_service"]
+        examples___verify___example_emit_contracts["_example_emit_contracts"]
+        examples___verify__write_intract_manifest["write_intract_manifest"]
+        examples___verify__write_testql_scenario["write_testql_scenario"]
         examples___verify___example_annotate_intract["_example_annotate_intract"]
         examples___verify___example_run_intract["_example_run_intract"]
         examples___verify___example_run_testql["_example_run_testql"]
@@ -142,12 +146,15 @@ flowchart TD
         executor__runner__Executor___execute_local["_execute_local"]
         executor__runner__Executor__get_container_logs["get_container_logs"]
         executor__runner__Executor__cleanup["cleanup"]
+        executor__runner__stop_containers_for_intent["stop_containers_for_intent"]
         executor__runner__execute_intent["execute_intent"]
     end
     subgraph generator__contract_verify
         generator__contract_verify__VerifyResult__to_dict["to_dict"]
         generator__contract_verify___probe_path["_probe_path"]
         generator__contract_verify__discover_service_url("discover_service_url CC=10")
+        generator__contract_verify__readiness_paths["readiness_paths"]
+        generator__contract_verify___endpoint_responding["_endpoint_responding"]
         generator__contract_verify__wait_for_service["wait_for_service"]
         generator__contract_verify___http_probe("_http_probe CC=9")
         generator__contract_verify__run_testql["run_testql"]
@@ -157,7 +164,7 @@ flowchart TD
     subgraph generator__expectations
         generator__expectations___probe_path["_probe_path"]
         generator__expectations___http_probe["_http_probe"]
-        generator__expectations__check_expectations{{check_expectations CC=20}}
+        generator__expectations__check_expectations{{check_expectations CC=23}}
         generator__expectations__load_and_check_expectations["load_and_check_expectations"]
     end
     subgraph generator__intent_generator
@@ -180,6 +187,8 @@ flowchart TD
     subgraph generator__pipeline
         generator__pipeline__PipelineResult__to_dict["to_dict"]
         generator__pipeline___write_plan_artifacts["_write_plan_artifacts"]
+        generator__pipeline___expectations_summary("_expectations_summary CC=8")
+        generator__pipeline___build_repair_prompt["_build_repair_prompt"]
         generator__pipeline___container_logs["_container_logs"]
         generator__pipeline___finalize["_finalize"]
         generator__pipeline__run_pipeline{{run_pipeline CC=30}}
@@ -189,6 +198,7 @@ flowchart TD
     end
     subgraph generator__testql_scenario
         generator__testql_scenario___probe_path["_probe_path"]
+        generator__testql_scenario___startup_wait_ms["_startup_wait_ms"]
         generator__testql_scenario__build_testql_scenario["build_testql_scenario"]
         generator__testql_scenario__write_testql_scenario["write_testql_scenario"]
     end
@@ -290,10 +300,12 @@ flowchart TD
     generator__intent_generator__IntentGenerator__generate --> generator__intent_generator__extract_yaml_from_llm
     generator__intent_generator__IntentGenerator__generate --> dsl__schema__validate_yaml_document
     generator__testql_scenario__build_testql_scenario --> generator__intract_manifest__parse_api_actions
+    generator__testql_scenario__build_testql_scenario --> generator__testql_scenario___startup_wait_ms
     generator__testql_scenario__build_testql_scenario --> generator__testql_scenario___probe_path
     generator__testql_scenario__write_testql_scenario --> generator__testql_scenario__build_testql_scenario
     generator__pipeline___write_plan_artifacts --> generator__intract_manifest__write_intract_manifest
     generator__pipeline___write_plan_artifacts --> generator__testql_scenario__write_testql_scenario
+    generator__pipeline___build_repair_prompt --> generator__pipeline___expectations_summary
     generator__pipeline___finalize --> generator__pipeline___container_logs
     generator__pipeline___finalize --> generator__session__write_session_artifacts
     generator__pipeline__run_pipeline --> generator__pipeline___finalize
@@ -305,13 +317,6 @@ flowchart TD
     generator__intract_manifest__build_intract_manifest --> generator__intract_manifest___slug
     generator__intract_manifest__intent_to_intract_dict --> generator__intract_manifest__build_intract_manifest
     generator__intract_manifest__write_intract_manifest --> generator__intract_manifest__intent_to_intract_dict
-    generator__contract_verify__write_contract_artifacts --> generator__intract_manifest__write_intract_manifest
-    generator__contract_verify__write_contract_artifacts --> generator__testql_scenario__write_testql_scenario
-    generator__contract_verify__verify_contract --> generator__contract_verify__write_contract_artifacts
-    generator__contract_verify__verify_contract --> generator__intract_manifest__parse_api_actions
-    generator__contract_verify__verify_contract --> generator__expectations__load_and_check_expectations
-    generator__contract_verify__verify_contract --> generator__contract_verify__discover_service_url
-    generator__contract_verify__verify_contract --> generator__contract_verify__wait_for_service
     examples___scripts__verify_expectations__verify --> examples___scripts__verify_expectations___load_yaml
     examples___scripts__verify_expectations__verify --> examples___scripts__verify_expectations___parse_actions
     examples___scripts__verify_expectations__main --> examples___scripts__verify_expectations__verify
@@ -359,14 +364,26 @@ flowchart TD
     cli__main__CLI__cmd_models --> ai_gateway__gateway__get_gateway
     cli__main__CLI__cmd_ai_health --> ai_gateway__gateway__get_gateway
     executor__runner__Executor____init__ --> config__get_config
+    executor__runner__stop_containers_for_intent --> config__get_config
     dsl__schema__validate_yaml_document --> parser__dsl_parser__parse_dsl
     dsl__schema__get_system_prompt --> dsl__schema__get_json_schema
     sdk__client__IterunClient__schema --> dsl__schema__get_json_schema
     sdk__client__IterunClient__validate --> dsl__schema__validate_yaml_document
     sdk__client__IterunClient__generate_and_run --> generator__pipeline__run_pipeline
     sdk__client__IterunClient__parse --> parser__dsl_parser__parse_dsl
+    generator__contract_verify__readiness_paths --> generator__contract_verify___probe_path
+    generator__contract_verify__readiness_paths --> generator__intract_manifest__parse_api_actions
+    generator__contract_verify__wait_for_service --> generator__contract_verify__readiness_paths
+    generator__contract_verify__wait_for_service --> generator__contract_verify___endpoint_responding
+    generator__contract_verify__write_contract_artifacts --> generator__intract_manifest__write_intract_manifest
+    generator__contract_verify__write_contract_artifacts --> generator__testql_scenario__write_testql_scenario
+    generator__contract_verify__verify_contract --> generator__contract_verify__write_contract_artifacts
+    generator__contract_verify__verify_contract --> generator__intract_manifest__parse_api_actions
+    generator__contract_verify__verify_contract --> generator__expectations__load_and_check_expectations
+    generator__contract_verify__verify_contract --> generator__contract_verify__discover_service_url
+    generator__contract_verify__verify_contract --> generator__contract_verify__wait_for_service
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
-    class config__load_dotenv,generator__expectations__check_expectations,generator__pipeline__run_pipeline,generator__contract_verify__verify_contract,examples___scripts__verify_expectations__verify,ai_gateway__gateway__GatewayConfig____post_init__,ai_gateway__feedback_loop__FeedbackLoop__suggest_next_steps,cli__main__CLI__cmd_execute,cli__main__CLI__interactive_mode,cli__main__main highCC
-    class generator__intent_generator__IntentGenerator__generate,generator__contract_verify__discover_service_url,generator__contract_verify___http_probe,examples___scripts__intent_to_openapi__intent_to_openapi,planner__simulator__Planner___generate_dockerfile,planner__simulator__Planner___simulate_action,ai_gateway__gateway__AIGateway__complete,ai_gateway__gateway__AIGateway__acomplete,ai_gateway__gateway__AIGateway__suggest_improvements,ai_gateway__gateway__AIGateway__generate_code_snippet,ai_gateway__feedback_loop__FeedbackLoop__apply_suggestions,ai_gateway__feedback_loop__FeedbackLoop___parse_suggestions,cli__main__CLI__cmd_plan,cli__main__CLI__cmd_iterate,cli__main__CLI__cmd_show,cli__main__CLI__cmd_ai_suggest,cli__main__CLI__cmd_ai_apply,cli__main__CLI__cmd_ai_chat,parser__dsl_parser__DSLParser__parse,parser__dsl_parser__DSLParser___parse_action,parser__dsl_parser__DSLParser___validate,executor__runner__Executor__execute,executor__runner__Executor___validate_and_fix,executor__runner__Executor___validate_endpoints,executor__runner__Executor___attempt_fix,executor__runner__Executor___execute_docker medCC
+    class config__load_dotenv,generator__expectations__check_expectations,generator__pipeline__run_pipeline,examples___scripts__verify_expectations__verify,ai_gateway__gateway__GatewayConfig____post_init__,ai_gateway__feedback_loop__FeedbackLoop__suggest_next_steps,cli__main__CLI__cmd_execute,cli__main__CLI__interactive_mode,cli__main__main,generator__contract_verify__verify_contract highCC
+    class generator__intent_generator__IntentGenerator__generate,generator__pipeline___expectations_summary,examples___scripts__intent_to_openapi__intent_to_openapi,planner__simulator__Planner___generate_dockerfile,planner__simulator__Planner___simulate_action,ai_gateway__gateway__AIGateway__complete,ai_gateway__gateway__AIGateway__acomplete,ai_gateway__gateway__AIGateway__suggest_improvements,ai_gateway__gateway__AIGateway__generate_code_snippet,ai_gateway__feedback_loop__FeedbackLoop__apply_suggestions,ai_gateway__feedback_loop__FeedbackLoop___parse_suggestions,cli__main__CLI__cmd_plan,cli__main__CLI__cmd_iterate,cli__main__CLI__cmd_show,cli__main__CLI__cmd_ai_suggest,cli__main__CLI__cmd_ai_apply,cli__main__CLI__cmd_ai_chat,parser__dsl_parser__DSLParser__parse,parser__dsl_parser__DSLParser___parse_action,parser__dsl_parser__DSLParser___validate,executor__runner__Executor__execute,executor__runner__Executor___validate_and_fix,executor__runner__Executor___validate_endpoints,executor__runner__Executor___attempt_fix,executor__runner__Executor___execute_docker,generator__contract_verify__discover_service_url,generator__contract_verify___http_probe medCC

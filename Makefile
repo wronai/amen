@@ -93,20 +93,20 @@ shell: ## Start interactive shell
 	@echo "$(CYAN)Starting interactive shell$(RESET)"
 	$(PYTHON) -m cli.main
 
-plan: ## Run dry-run on examples/01-user-api/intent.yaml
-	$(PYTHON) -m cli.main plan examples/01-user-api/intent.yaml
+plan: ## Run dry-run on examples/01-user-api/generated/iterun.yaml
+	$(PYTHON) -m cli.main plan examples/01-user-api/generated/iterun.yaml -o examples/01-user-api/generated/
 
-execute: ## Execute examples/01-user-api/intent.yaml
-	$(PYTHON) -m cli.main execute examples/01-user-api/intent.yaml
+execute: ## Generate + execute example 01 from prompt
+	ITERUN_EXECUTE=1 ./examples/01-user-api/run.sh
 
 examples: ## Run all examples (dry-run)
 	./examples/run-all.sh
 
-# Run with custom intent file: make run-intent FILE=path/to/intent.yaml
-run-intent: ## Run specific intent file (FILE=path/to/intent.yaml)
+# Run with custom package file: make run-intent FILE=path/to/iterun.yaml
+run-intent: ## Run specific package (FILE=path/to/iterun.yaml)
 	@if [ -z "$(FILE)" ]; then \
 		echo "$(RED)ERROR: FILE not specified$(RESET)"; \
-		echo "Usage: make run-intent FILE=path/to/intent.yaml"; \
+		echo "Usage: make run-intent FILE=path/to/iterun.yaml"; \
 		exit 1; \
 	fi
 	$(PYTHON) -m cli.main execute $(FILE)

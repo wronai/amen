@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from config import PACKAGE_FILENAME
-from executor.runner import Executor, execute_intent
+from executor.runner import Executor, execute_intent, stop_containers_for_intent
 from generator.contract_verify import verify_contract
 from generator.intract_manifest import write_intract_manifest
 from generator.intent_generator import GenerateResult, IntentGenerator
@@ -56,19 +56,58 @@ def _write_plan_artifacts(
     prompt: str,
     yaml_path: Path,
 ) -> None:
-    plan_payload = {"intent": ir.to_dict(), "plan": plan_result.to_dict()}
-    (workspace / "plan.result.json").write_text(
-        json.dumps(plan_payload, indent=2),
-        encoding="utf-8",
-    )
+    if ir.stack and ir.stack.services:
+        from planner.stack_artifacts import write_stack_artifacts
+        write_stack_artifacts(workspace, ir, plan_result)
+    else:
+        plan_payload = {"intent": ir.to_dict(), "plan": plan_result.to_dict()}
+        (workspace / "plan.result.json").write_text(
+            json.dumps(plan_payload, indent=2),
+            encoding="utf-8",
+        )
+        if plan_result.generated_code:
+            lang = ir.implementation.language
+            app_name = "app.py" if lang == "python" else "app.js"
+            (workspace / app_name).write_text(plan_result.generated_code, encoding="utf-8")
+        if plan_result.dockerfile:
+            (workspace / "Dockerfile").write_text(plan_result.dockerfile, encoding="utf-8")
+
     write_intract_manifest(yaml_path, workspace / "intract.yaml", prompt=prompt)
     write_testql_scenario(yaml_path, workspace / "service.testql.toon.yaml")
-    if plan_result.generated_code:
-        lang = ir.implementation.language
-        app_name = "app.py" if lang == "python" else "app.js"
-        (workspace / app_name).write_text(plan_result.generated_code, encoding="utf-8")
-    if plan_result.dockerfile:
-        (workspace / "Dockerfile").write_text(plan_result.dockerfile, encoding="utf-8")
+
+
+def _expectations_summary(workspace: Path) -> str | None:
+    import yaml
+
+    exp_file = workspace / "expectations.yaml"
+    if not exp_file.is_file():
+        return None
+    data = yaml.safe_load(exp_file.read_text(encoding="utf-8")) or {}
+    lines: list[str] = []
+    if data.get("name"):
+        lines.append(f"intent name must be: {data['name']}")
+    if data.get("framework"):
+        lines.append(f"framework must be: {data['framework']}")
+    for ep in data.get("endpoints", []) or []:
+        method = ep.get("method", "GET").upper()
+        path = ep.get("path", "/")
+        lines.append(f"required endpoint: {method} {path}")
+    return "\n".join(lines) if lines else None
+
+
+def _build_repair_prompt(prompt: str, errors: list[str], workspace: Path | None) -> str:
+    parts = [
+        prompt,
+        "",
+        "Contract verification failed after deploy. Regenerate iterun.yaml so all endpoints work.",
+        "Failures:",
+        *[f"- {e}" for e in errors[-20:]],
+    ]
+    if workspace:
+        summary = _expectations_summary(workspace)
+        if summary:
+            parts.extend(["", "Contract expectations (must satisfy):", summary])
+    return "\n".join(parts)
 
 
 def _container_logs(workspace: Path | None, container_id: str | None) -> str | None:
@@ -118,14 +157,11 @@ def run_pipeline(
 
     for verify_round in range(1, verify_rounds + 1):
         out.verify_iterations = verify_round
-        effective_prompt = prompt
-        if contract_feedback:
-            effective_prompt = (
-                f"{prompt}\n\n"
-                "Contract verification failed after deploy. "
-                "Regenerate intent so all endpoints work and match the prompt.\n"
-                "Failures:\n" + "\n".join(f"- {e}" for e in contract_feedback[-20:])
-            )
+        effective_prompt = (
+            _build_repair_prompt(prompt, contract_feedback, workspace)
+            if contract_feedback
+            else prompt
+        )
 
         gen_result = generator.generate(effective_prompt)
         out.generate = gen_result
@@ -150,6 +186,9 @@ def run_pipeline(
         if not execute:
             out.success = True
             return _finalize(out, workspace)
+
+        if verify_round > 1:
+            stop_containers_for_intent(ir.intent.name)
 
         ir.approve_iterun()
         exec_result = execute_intent(

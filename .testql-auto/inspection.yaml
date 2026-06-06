@@ -1,0 +1,346 @@
+inspection:
+  topology:
+    root:
+      kind: path
+      location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+    confidence: full
+    metadata:
+      generator: testql.topology
+      source_types:
+      - dockerfile
+      - python_pkg
+      - fastapi
+      - openapi3
+    nodes:
+    - id: artifact.root
+      kind: artifact
+      source:
+        kind: path
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+      metadata:
+        types:
+        - dockerfile
+        - python_pkg
+        - fastapi
+        - openapi3
+        confidence: full
+        dependency_count: 0
+        interface_count: 1
+        evidence_count: 3
+        name: product-api
+        version: 1.0.0
+        description: Create a FastAPI product API for an e-commerce catalog
+      evidence:
+      - probe: filesystem.container_dockerfile
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile
+        detail: container build marker
+      - probe: filesystem.package_python
+        kind: file_glob
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+        detail: 1 Python files
+      - probe: filesystem.api_openapi
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml
+        detail: OpenAPI/Swagger 3.1.0
+    - id: type.dockerfile
+      kind: artifact_type
+      source:
+        kind: path
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+      metadata:
+        type: dockerfile
+      evidence: []
+    - id: type.python_pkg
+      kind: artifact_type
+      source:
+        kind: path
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+      metadata:
+        type: python_pkg
+      evidence: []
+    - id: type.fastapi
+      kind: artifact_type
+      source:
+        kind: path
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+      metadata:
+        type: fastapi
+      evidence: []
+    - id: type.openapi3
+      kind: artifact_type
+      source:
+        kind: path
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+      metadata:
+        type: openapi3
+      evidence: []
+    - id: interface.rest.1
+      kind: interface
+      source: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml
+      metadata:
+        type: rest
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml
+        metadata:
+          paths: 5
+      evidence: []
+    - id: evidence.1
+      kind: evidence
+      source: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile
+      metadata:
+        probe: filesystem.container_dockerfile
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile
+        detail: container build marker
+      evidence:
+      - probe: filesystem.container_dockerfile
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile
+        detail: container build marker
+    - id: evidence.2
+      kind: evidence
+      source: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+      metadata:
+        probe: filesystem.package_python
+        kind: file_glob
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+        detail: 1 Python files
+      evidence:
+      - probe: filesystem.package_python
+        kind: file_glob
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+        detail: 1 Python files
+    - id: evidence.3
+      kind: evidence
+      source: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml
+      metadata:
+        probe: filesystem.api_openapi
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml
+        detail: OpenAPI/Swagger 3.1.0
+      evidence:
+      - probe: filesystem.api_openapi
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml
+        detail: OpenAPI/Swagger 3.1.0
+    edges:
+    - source_id: artifact.root
+      target_id: type.dockerfile
+      relation: classified_as
+      conditions: []
+      evidence:
+      - probe: filesystem.container_dockerfile
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile
+        detail: container build marker
+      - probe: filesystem.package_python
+        kind: file_glob
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+        detail: 1 Python files
+      - probe: filesystem.api_openapi
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml
+        detail: OpenAPI/Swagger 3.1.0
+      protocol: manifest
+    - source_id: artifact.root
+      target_id: type.python_pkg
+      relation: classified_as
+      conditions: []
+      evidence:
+      - probe: filesystem.container_dockerfile
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile
+        detail: container build marker
+      - probe: filesystem.package_python
+        kind: file_glob
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+        detail: 1 Python files
+      - probe: filesystem.api_openapi
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml
+        detail: OpenAPI/Swagger 3.1.0
+      protocol: manifest
+    - source_id: artifact.root
+      target_id: type.fastapi
+      relation: classified_as
+      conditions: []
+      evidence:
+      - probe: filesystem.container_dockerfile
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile
+        detail: container build marker
+      - probe: filesystem.package_python
+        kind: file_glob
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+        detail: 1 Python files
+      - probe: filesystem.api_openapi
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml
+        detail: OpenAPI/Swagger 3.1.0
+      protocol: manifest
+    - source_id: artifact.root
+      target_id: type.openapi3
+      relation: classified_as
+      conditions: []
+      evidence:
+      - probe: filesystem.container_dockerfile
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile
+        detail: container build marker
+      - probe: filesystem.package_python
+        kind: file_glob
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+        detail: 1 Python files
+      - probe: filesystem.api_openapi
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml
+        detail: OpenAPI/Swagger 3.1.0
+      protocol: manifest
+    - source_id: artifact.root
+      target_id: interface.rest.1
+      relation: exposes
+      conditions: []
+      evidence:
+      - probe: filesystem.container_dockerfile
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile
+        detail: container build marker
+      - probe: filesystem.package_python
+        kind: file_glob
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+        detail: 1 Python files
+      - probe: filesystem.api_openapi
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml
+        detail: OpenAPI/Swagger 3.1.0
+      protocol: http
+    - source_id: artifact.root
+      target_id: evidence.1
+      relation: supported_by
+      conditions: []
+      evidence:
+      - probe: filesystem.container_dockerfile
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/Dockerfile
+        detail: container build marker
+      protocol: file
+    - source_id: artifact.root
+      target_id: evidence.2
+      relation: supported_by
+      conditions: []
+      evidence:
+      - probe: filesystem.package_python
+        kind: file_glob
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+        detail: 1 Python files
+      protocol: file
+    - source_id: artifact.root
+      target_id: evidence.3
+      relation: supported_by
+      conditions: []
+      evidence:
+      - probe: filesystem.api_openapi
+        kind: file
+        location: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated/openapi.yaml
+        detail: OpenAPI/Swagger 3.1.0
+      protocol: file
+    traces:
+    - id: trace.discovery.topology
+      node_ids:
+      - artifact.root
+      - type.dockerfile
+      - type.python_pkg
+      - type.fastapi
+      - type.openapi3
+      - interface.rest.1
+      - evidence.1
+      - evidence.2
+      - evidence.3
+      edge_ids:
+      - artifact.root->type.dockerfile:classified_as
+      - artifact.root->type.python_pkg:classified_as
+      - artifact.root->type.fastapi:classified_as
+      - artifact.root->type.openapi3:classified_as
+      - artifact.root->interface.rest.1:exposes
+      - artifact.root->evidence.1:supported_by
+      - artifact.root->evidence.2:supported_by
+      - artifact.root->evidence.3:supported_by
+      status: planned
+      metadata:
+        purpose: discovery-derived traversal plan
+  result:
+    topology_id: topology.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated
+    run_id: inspect.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated
+    status: passed
+    metadata:
+      source: /home/tom/github/wronai/iterun/examples/12-e2e-full-gate/generated
+      node_count: 9
+      edge_count: 8
+      confidence: full
+    checks:
+    - id: check.topology.confidence
+      status: passed
+      summary: Manifest confidence is full.
+      evidence_refs: []
+      metadata:
+        confidence: full
+      node_id: artifact.root
+    - id: check.topology.nodes
+      status: passed
+      summary: Topology contains 9 nodes.
+      evidence_refs: []
+      metadata:
+        node_count: 9
+    - id: check.topology.edges
+      status: passed
+      summary: Topology contains 8 edges.
+      evidence_refs: []
+      metadata:
+        edge_count: 8
+    - id: check.topology.interfaces
+      status: passed
+      summary: Topology exposes 1 interface nodes.
+      evidence_refs: []
+      metadata:
+        interface_count: 1
+    - id: check.topology.evidence
+      status: passed
+      summary: Topology has 3 evidence nodes.
+      evidence_refs: []
+      metadata:
+        evidence_count: 3
+    failures: []
+    traces:
+    - id: trace.discovery.topology
+      node_ids:
+      - artifact.root
+      - type.dockerfile
+      - type.python_pkg
+      - type.fastapi
+      - type.openapi3
+      - interface.rest.1
+      - evidence.1
+      - evidence.2
+      - evidence.3
+      edge_ids:
+      - artifact.root->type.dockerfile:classified_as
+      - artifact.root->type.python_pkg:classified_as
+      - artifact.root->type.fastapi:classified_as
+      - artifact.root->type.openapi3:classified_as
+      - artifact.root->interface.rest.1:exposes
+      - artifact.root->evidence.1:supported_by
+      - artifact.root->evidence.2:supported_by
+      - artifact.root->evidence.3:supported_by
+      status: planned
+      metadata:
+        purpose: discovery-derived traversal plan
+    suggested_actions: []
+  refactor_plan:
+    id: refactor.inspect.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated
+    source_run_id: inspect.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated
+    status: no_action_required
+    metadata:
+      topology_id: topology.home_tom_github_wronai_iterun_examples_12_e2e_full_gate_generated
+      source_status: passed
+    findings: []
+    actions: []
