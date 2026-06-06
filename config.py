@@ -64,6 +64,9 @@ def load_dotenv(env_path: Path = None):
 # Load .env on module import
 load_dotenv()
 
+# Canonical DSL package filename written to workspace/generated/
+PACKAGE_FILENAME = "iterun.yaml"
+
 
 def get_env(key: str, default: str = None) -> Optional[str]:
     """Get environment variable."""

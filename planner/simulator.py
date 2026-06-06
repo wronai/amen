@@ -3,7 +3,8 @@ ITERUN: Planner / Simulator
 Performs dry-run execution and generates artifacts without side effects.
 """
 
-from typing import Dict, Any, List
+import re
+from typing import Dict, Any, List, Set
 from datetime import datetime
 from pathlib import Path
 
@@ -11,6 +12,30 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from ir.models import IntentIR, ActionType, RuntimeType
+
+
+def _endpoint_to_func_name(endpoint: str, method: str, used: Set[str]) -> str:
+    """Turn a route path into a valid, unique Python function name."""
+    name = endpoint.strip("/")
+    name = re.sub(r"\{([^}]+)\}", r"_by_\1", name)
+    name = name.replace("/", "_")
+    name = re.sub(r"[^\w]", "_", name)
+    name = re.sub(r"_+", "_", name).strip("_")
+    if not name:
+        name = "root"
+    if name[0].isdigit():
+        name = f"_{name}"
+
+    candidate = name
+    if candidate in used:
+        candidate = f"{name}_{method.lower()}"
+    suffix = 2
+    while candidate in used:
+        candidate = f"{name}_{method.lower()}_{suffix}"
+        suffix += 1
+
+    used.add(candidate)
+    return candidate
 
 
 class DryRunResult:
@@ -118,12 +143,12 @@ class Planner:
         ]
         
         # Generate endpoints from actions
+        used_func_names: Set[str] = set()
         for action in ir.implementation.actions:
             if action.type == ActionType.API_EXPOSE:
                 method = (action.method or "GET").lower()
                 endpoint = action.target or "/"
-                
-                func_name = endpoint.replace("/", "_").strip("_") or "root"
+                func_name = _endpoint_to_func_name(endpoint, method, used_func_names)
                 
                 code_lines.extend([
                     f'@app.{method}("{endpoint}")',
@@ -151,11 +176,12 @@ class Planner:
             "",
         ]
         
+        used_func_names: Set[str] = set()
         for action in ir.implementation.actions:
             if action.type == ActionType.API_EXPOSE:
                 method = action.method or "GET"
                 endpoint = action.target or "/"
-                func_name = endpoint.replace("/", "_").strip("_") or "root"
+                func_name = _endpoint_to_func_name(endpoint, method, used_func_names)
                 
                 code_lines.extend([
                     f'@app.route("{endpoint}", methods=["{method}"])',

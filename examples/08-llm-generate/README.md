@@ -1,6 +1,6 @@
-# 08 — LLM Generate
+# 08 — LLM Generate (SDK / MCP)
 
-Generuje `intent.yaml` z promptu NL (LiteLLM + pętla walidacji), potem plan/execute.
+Ten sam flow co pozostałe przykłady (`prompt.txt` → `generate`). Dodatkowo: SDK i MCP.
 
 ## Uruchomienie
 
@@ -11,19 +11,10 @@ Generuje `intent.yaml` z promptu NL (LiteLLM + pętla walidacji), potem plan/exe
 ## Komendy
 
 ```bash
-# tylko YAML
-iterun generate "Create a REST API for user management" \
-  -o examples/08-llm-generate/generated --quiet
-
-# YAML + plan + execute
-iterun generate "Create a REST API for user management" \
-  -o examples/08-llm-generate/generated --run --execute
-
-# JSON Schema
+iterun generate "$(cat prompt.txt)" -o generated/ --run --quiet
+iterun generate "$(cat prompt.txt)" -o generated/ --execute --quiet
 iterun schema
-
-# walidacja
-iterun validate examples/08-llm-generate/generated/intent.yaml
+iterun validate generated/intent.yaml
 ```
 
 ## SDK
@@ -33,7 +24,7 @@ from sdk import IterunClient
 
 client = IterunClient()
 result = client.generate_and_run(
-    "Create a REST API for user management",
+    open("prompt.txt").read(),
     output_dir="generated",
     execute=False,
 )
@@ -45,18 +36,8 @@ print(result.yaml_path)
 ```bash
 pip install mcp litellm
 python -m mcp.server
-# tool: iterun_generate_intent(prompt=...)
 ```
 
-## `generated/`
+## Wymagania
 
-| Plik | Skąd |
-|------|------|
-| `intent.yaml` | LLM + validate-retry |
-| `app.py`, `Dockerfile` | `plan` |
-
-Wymaga: `pip install litellm` + w `.env`:
-- `OPENROUTER_API_KEY` + `LLM_MODEL=openrouter/...` (zalecane), lub
-- lokalny Ollama (`DEFAULT_MODEL=llama3.2`)
-
-Model z `.env` jest używany automatycznie (bez `-m`).
+`pip install -e ".[ai]"` + `.env` z `OPENROUTER_API_KEY` lub lokalny Ollama.

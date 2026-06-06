@@ -1,6 +1,6 @@
 # 03 — Flask API
 
-Generowanie kodu Flask z DSL — 3 endpointy REST.
+Prompt → Flask REST API — 3 endpointy.
 
 ## Uruchomienie
 
@@ -11,9 +11,9 @@ Generowanie kodu Flask z DSL — 3 endpointy REST.
 ## Komendy
 
 ```bash
-python -m cli plan examples/03-flask-api/intent.yaml --output-dir examples/03-flask-api/generated
+iterun generate "$(cat prompt.txt)" -o generated/ --run --quiet
 ```
 
 ## `generated/`
 
-`plan.result.json`, `app.py` (Flask + `@app.route`), `Dockerfile`
+`intent.yaml`, `plan.result.json`, `app.py` (Flask), `Dockerfile`

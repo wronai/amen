@@ -1,0 +1,27 @@
+name: product-api
+framework: fastapi
+endpoints:
+  - method: GET
+    path: /ping
+    status: 200
+    json_fields: [status]
+  - method: GET
+    path: /health
+    status: 200
+    json_fields: [status]
+  - method: GET
+    path: /products
+    status: 200
+    json_fields: [status]
+  - method: POST
+    path: /products
+    status: 200
+    json_fields: [status]
+  - method: GET
+    path: /products/{id}
+    status: 200
+    json_fields: [status]
+  - method: GET
+    path: /metrics
+    status: 200
+    json_fields: [status]

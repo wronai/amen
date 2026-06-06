@@ -1,0 +1,20 @@
+# SCENARIO: iterun 12-e2e-full-gate
+# TYPE: api
+
+CONFIG[3]{key, value}:
+  api_url, $TARGET_URL
+  timeout_ms, 20000
+  retry_count, 4
+
+WAIT 2000
+
+API[6]{method, endpoint, status, assert_key, assert_value}:
+  GET,  /ping,           200,  status,  ok
+  GET,  /health,         200,  status,  ok
+  GET,  /products,       200,  status,  ok
+  POST, /products,       200,  status,  ok
+  GET,  /products/42,    200,  status,  ok
+  GET,  /metrics,        200,  status,  ok
+
+FLOW[1]{condition, action}:
+  _status >= 500, LOG 'product-api regression'

@@ -1,0 +1,14 @@
+# SCENARIO: iterun 11-e2e-express-verify
+# TYPE: api
+
+CONFIG[2]{key, value}:
+  api_url, $TARGET_URL
+  timeout_ms, 25000
+
+WAIT 3000
+
+API[4]{method, endpoint, status}:
+  GET,  /,            200
+  GET,  /api/health,  200
+  POST, /api/items,   200
+  GET,  /api/items,   200

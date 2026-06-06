@@ -1,0 +1,1 @@
+Create a FastAPI smoke-test API named exec-smoke for Docker execution pipeline. Docker python:3.12-slim, port 8000. Endpoints GET /ping and GET /health. Use transactional execution mode (not dry-run).

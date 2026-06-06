@@ -1,0 +1,1 @@
+Create a simple Flask REST API named flask-api with status endpoints. Docker python:3.12-slim, port 8000. Endpoints: GET /, GET /status, GET /api/v1/info. Dry-run mode.

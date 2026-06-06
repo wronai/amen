@@ -150,6 +150,36 @@ IMPLEMENTATION:
         assert "@app.post" in result.generated_code
         assert "FROM python:3.12-slim" in result.dockerfile
         assert len(result.logs) > 0
+
+    def test_dry_run_fastapi_path_params(self):
+        """Path params and duplicate routes produce valid Python identifiers."""
+        dsl = """
+INTENT:
+  name: fastapi-params
+  goal: Test path param naming
+
+ENVIRONMENT:
+  runtime: docker
+  base_image: python:3.12-slim
+
+IMPLEMENTATION:
+  language: python
+  framework: fastapi
+  actions:
+    - api.expose GET /users
+    - api.expose POST /users
+    - api.expose GET /users/{id}
+    - api.expose PUT /users/{id}
+    - api.expose DELETE /users/{id}
+"""
+        ir = parse_dsl(dsl)
+        result = plan_intent(ir)
+
+        assert result.success
+        code = result.generated_code
+        assert "async def users_by_id" in code
+        assert "users_{id}" not in code
+        compile(code, "<generated>", "exec")
     
     def test_dry_run_express(self):
         """Test dry-run for Express.js project."""

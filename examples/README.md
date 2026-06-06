@@ -1,79 +1,113 @@
 # Przykłady ITERUN
 
-Każdy przykład to **3 pliki** + katalog `generated/` (tworzony przy uruchomieniu):
+Każdy przykład: **prompt.txt** + **run.sh** + katalog **`generated/`** (cała sesja, gitignored).
 
 ```
 examples/01-user-api/
-├── intent.yaml    # ŹRÓDŁO — ręcznie pisany DSL (fixture, w repo)
-├── README.md      # opis + komendy
-├── run.sh         # uruchomienie
-└── generated/     # WYNIK — generowany przez CLI (gitignored)
+├── prompt.txt
+├── run.sh
+└── generated/              # ← wszystko od promptu do testów
+    ├── iterun.yaml         # paczka DSL (dawne intent.yaml)
+    ├── session.json        # pełny zapis sesji
+    ├── plan.result.json
+    ├── execution.json
+    ├── verify.result.json
+    ├── container.log
+    └── app.py, Dockerfile, …
 ```
 
-## Źródło vs `generated/`
+## Paczka `iterun.yaml`
 
-| Plik | Generowany? | Kiedy / jak |
-|------|-------------|-------------|
-| `intent.yaml` | **Nie** | Pisany ręcznie, commitowany do repo — to wejście DSL |
-| `generated/plan.result.json` | **Tak** | `plan` — parser + symulator (bez LLM) |
-| `generated/app.py` / `app.js` | **Tak** | `plan` — szablony w `planner/simulator.py` |
-| `generated/Dockerfile` | **Tak** | `plan` — szablony w `planner/simulator.py` |
-| `generated/ir.json` | **Tak** | `parse` — serializacja IntentIR |
+Główny plik DSL w workspace to **`iterun.yaml`** (nie `intent.yaml`). Stała: `config.PACKAGE_FILENAME`.
 
-**`./examples/run-all.sh` nie używa LLM ani promptów.** To deterministyczny pipeline:
-`intent.yaml` → parse → plan → zapis do `generated/`.
+```bash
+iterun plan examples/01-user-api/generated/iterun.yaml -o generated/
+iterun execute examples/01-user-api/generated/iterun.yaml --workspace generated/
+```
 
-Prompty LLM (Ollama) są tylko w interaktywnej powłoce: `suggest`, `apply`, `chat`
-— nie w przykładach `run.sh`.
+## Gdzie są dane i logi? (`generated/`)
+
+Wszystko z jednego uruchomienia trafia do **`--output-dir`** (domyślnie `generated/`):
+
+| Plik | Zawartość |
+|------|-----------|
+| **`prompt.txt`** | Kopia promptu użytego w sesji |
+| **`iterun.yaml`** | Paczka DSL z LLM (INTENT + IMPLEMENTATION + …) |
+| **`session.json`** | **Główny log sesji** — prompt, generate attempts, plan, execute, verify, błędy |
+| **`plan.result.json`** | IR + logi dry-run planera (`plan.logs` wewnątrz JSON) |
+| **`execution.json`** | Wynik execute: `logs`, `endpoints`, `container_id`, walidacja HTTP |
+| **`container.log`** | Ostatnie ~200 linii `docker logs` kontenera usługi |
+| **`verify.result.json`** | TestQL + sondy HTTP (`--verify`) |
+| **`intract.yaml`** | Kontrakt Intract (`require: implement.*`) |
+| **`service.testql.toon.yaml`** | Scenariusz TestQL wygenerowany z endpointów |
+| **`openapi.yaml`** | OpenAPI + `x-intract` (E2E, przed `intract validate`) |
+| **`app.py` / `app.js`** | Wygenerowany kod usługi |
+| **`Dockerfile`** | Obraz Docker |
+
+### Co jest w `session.json`?
+
+```json
+{
+  "timestamp": "...",
+  "success": true,
+  "prompt": "...",
+  "generate": { "attempts": [...], "iterations": 1 },
+  "plan": { "logs": ["[12:00:01] Dry-run started", "..."] },
+  "execution": { "logs": [...], "endpoints": ["http://localhost:8003"] },
+  "verification": { "testql_passed": true, "service_url": "..." },
+  "verify_iterations": 1,
+  "yaml_path": ".../iterun.yaml"
+}
+```
+
+### Logi runtime usługi (działający kontener)
+
+| Źródło | Gdzie |
+|--------|--------|
+| Build/run pipeline | `execution.json` → pole `logs` |
+| Docker stdout/stderr | `generated/container.log` |
+| Na żywo | `docker logs intent-<nazwa>-<id>` |
+| API (web) | `GET /api/containers/{id}/logs` |
+
+### Poza `generated/`
+
+| Co | Gdzie |
+|----|--------|
+| Konfiguracja LLM | `.env` w root repo (`OPENROUTER_API_KEY`, `LLM_MODEL`) |
+| Stary fixture prompt | `examples/*/prompt.txt` (repo) |
+| Expectations (E2E) | `examples/*/expectations.yaml` (repo, opcjonalnie) |
+
+## Pipeline
+
+```text
+prompt.txt
+  → iterun generate --execute --verify -o generated/
+  → iterun.yaml + intract.yaml + service.testql.toon.yaml
+  → plan + Docker
+  → verify (testql)
+  → session.json + execution.json + container.log
+```
 
 ## Szybki start
 
 ```bash
-cd /path/to/iterun
-pip install -r requirements.txt
+pip install -e ".[ai]"
 ./examples/run-all.sh
+cd examples/01-user-api && ./run.sh
 ```
 
-Pojedynczy przykład:
+## Jedna komenda
 
 ```bash
-cd examples/01-user-api
-./run.sh
+iterun generate "$(cat prompt.txt)" -o generated/ --execute --verify --json
+# pełny log: generated/session.json
 ```
-
-## Przykłady
-
-| Katalog | Opis | Główna komenda |
-|---------|------|----------------|
-| [01-user-api](01-user-api/) | FastAPI CRUD | `plan` |
-| [02-ping-smoke](02-ping-smoke/) | Minimalny smoke | `plan` |
-| [03-flask-api](03-flask-api/) | Flask | `plan` |
-| [04-express-api](04-express-api/) | Node/Express | `plan` |
-| [05-ir-show](05-ir-show/) | IntentIR + plan | `parse` + `plan` |
-| [06-iterate-workflow](06-iterate-workflow/) | Iteracja (shell) | `plan` / interaktywny `shell` |
-| [07-execution-smoke](07-execution-smoke/) | Smoke plan/execute | `plan` (+ `execute`) |
-| [08-llm-generate](08-llm-generate/) | **LLM** → YAML → plan | `generate` (LiteLLM) |
-
-## `generated/`
-
-CLI zapisuje artefakty przez `--output-dir`:
-
-```bash
-python -m cli plan examples/01-user-api/intent.yaml \
-  --output-dir examples/01-user-api/generated
-```
-
-| Plik | Opis |
-|------|------|
-| `plan.result.json` | IR + wynik dry-run |
-| `app.py` / `app.js` | Wygenerowany kod |
-| `Dockerfile` | Obraz Docker |
-| `ir.json` | IntentIR (przy `parse --output-dir`) |
-| `execution.json` | Wynik execute (przy `execute --json`) |
 
 ## Zmienne
 
 | Zmienna | Opis |
 |---------|------|
-| `ITERUN_EXECUTE=1` | Włącz Docker execute w 01 i 07 |
+| `ITERUN_PROMPT` | Nadpisz `prompt.txt` |
+| `ITERUN_EXECUTE=1` | Docker execute (01, 07, 08) |
+| `ITERUN_VERIFY=1` | TestQL po execute (domyślnie w E2E) |
 | `ITERUN_SKIP_CLEAN=1` | Nie czyść `generated/` przed runem |

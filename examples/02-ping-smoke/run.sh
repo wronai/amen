@@ -5,4 +5,4 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "$SCRIPT_DIR/../_common.sh"
 _example_setup "$SCRIPT_DIR"
 
-$CLI plan "$INTENT" --output-dir "$GENERATED" --quiet
+_example_generate plan

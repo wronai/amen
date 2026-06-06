@@ -101,5 +101,8 @@ class TestPipeline:
         finally:
             pipe_mod.IntentGenerator = original
         assert result.success
-        assert (tmp_path / "intent.yaml").is_file()
+        assert (tmp_path / "iterun.yaml").is_file()
+        assert (tmp_path / "session.json").is_file()
+        assert (tmp_path / "intract.yaml").is_file()
+        assert (tmp_path / "service.testql.toon.yaml").is_file()
         assert (tmp_path / "app.py").is_file()

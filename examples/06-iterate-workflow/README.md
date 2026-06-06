@@ -1,8 +1,8 @@
 # 06 — Iterate Workflow
 
-Plan początkowy. Pełny cykl iterate → ITERUN → execute w interaktywnej powłoce.
+Generate + plan początkowy. Pełny cykl iterate → ITERUN → execute w interaktywnej powłoce.
 
-## Uruchomienie (plan)
+## Uruchomienie (generate + plan)
 
 ```bash
 ./run.sh
@@ -15,7 +15,7 @@ python -m cli
 ```
 
 ```
-intent> load examples/06-iterate-workflow/intent.yaml
+intent> load examples/06-iterate-workflow/generated/intent.yaml
 intent> plan
 intent> iterate
 > action=api.expose GET /health
@@ -26,13 +26,12 @@ intent> iterun
 intent> execute
 ```
 
-## Jedna komenda (plan → execute, bez ręcznej iteracji)
+## Jedna komenda (generate → execute)
 
 ```bash
-python -m cli execute examples/06-iterate-workflow/intent.yaml \
-  --workspace examples/06-iterate-workflow/generated
+iterun generate "$(cat prompt.txt)" -o generated/ --execute --quiet
 ```
 
 ## `generated/`
 
-`plan.result.json`, `app.py`, `Dockerfile`
+`intent.yaml`, `plan.result.json`, `app.py`, `Dockerfile`

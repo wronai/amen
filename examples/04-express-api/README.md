@@ -1,6 +1,6 @@
 # 04 — Express API (Node.js)
 
-Generowanie kodu Express.js — 4 endpointy JSON, obraz `node:20-slim`.
+Prompt → Express.js — 4 endpointy JSON, obraz `node:20-slim`.
 
 ## Uruchomienie
 
@@ -11,9 +11,9 @@ Generowanie kodu Express.js — 4 endpointy JSON, obraz `node:20-slim`.
 ## Komendy
 
 ```bash
-python -m cli plan examples/04-express-api/intent.yaml --output-dir examples/04-express-api/generated
+iterun generate "$(cat prompt.txt)" -o generated/ --run --quiet
 ```
 
 ## `generated/`
 
-`plan.result.json`, `app.js`, `Dockerfile`
+`intent.yaml`, `plan.result.json`, `app.js`, `Dockerfile`

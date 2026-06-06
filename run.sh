@@ -58,12 +58,14 @@ case "${1:-help}" in
         echo "Setup complete!"
         ;;
     plan)
-        echo "Running dry-run..."
-        python -m cli.main plan "${2:-examples/user-api.intent.yaml}"
+        echo "Generate + plan from prompt..."
+        python -m cli generate "$(cat "${2:-examples/user-api.prompt}")" \
+            -o examples/01-user-api/generated --run
         ;;
     execute|exec)
-        echo "Executing intent..."
-        python -m cli.main execute "${2:-examples/user-api.intent.yaml}"
+        echo "Generate + execute from prompt..."
+        python -m cli generate "$(cat "${2:-examples/user-api.prompt}")" \
+            -o examples/01-user-api/generated --execute
         ;;
     ollama-start)
         echo "Starting Ollama server..."

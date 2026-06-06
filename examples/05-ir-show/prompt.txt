@@ -1,0 +1,1 @@
+Create an intent named ir-show to demonstrate IntentIR parsing. Use FastAPI Python in Docker (python:3.12-slim). Actions: api.expose GET /ping, db.create users, db.add_column users email string, shell.exec echo hello, file.create config.json. Dry-run mode.

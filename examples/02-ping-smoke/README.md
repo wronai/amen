@@ -1,6 +1,6 @@
 # 02 — Ping Smoke
 
-Minimalny intent: `/ping` + `/health`. Szybki smoke test parsera i planera.
+Minimalny intent: `/ping` + `/health`. Szybki smoke test generatora i planera.
 
 ## Uruchomienie
 
@@ -11,9 +11,9 @@ Minimalny intent: `/ping` + `/health`. Szybki smoke test parsera i planera.
 ## Komendy
 
 ```bash
-python -m cli plan examples/02-ping-smoke/intent.yaml --output-dir examples/02-ping-smoke/generated
+iterun generate "$(cat prompt.txt)" -o generated/ --run --quiet
 ```
 
 ## `generated/`
 
-`plan.result.json`, `app.py`, `Dockerfile`
+`intent.yaml`, `plan.result.json`, `app.py`, `Dockerfile`

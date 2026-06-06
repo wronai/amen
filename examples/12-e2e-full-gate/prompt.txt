@@ -1,0 +1,1 @@
+Create a FastAPI product API named product-api for an e-commerce catalog. Docker python:3.12-slim port 8000. Endpoints: GET /ping, GET /health, GET /products, POST /products, GET /products/{id}, GET /metrics. Add env CATALOG_MODE=demo. Transactional execution mode.

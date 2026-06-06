@@ -1,0 +1,1 @@
+Create a Node.js Express API named express-api with JSON endpoints. Docker node:20-slim, port 8000. Endpoints: GET /, GET /api/health, POST /api/items, GET /api/items. Transactional execution mode.

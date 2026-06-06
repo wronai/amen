@@ -1,0 +1,17 @@
+# SCENARIO: iterun 09-e2e-ping-verify
+# TYPE: api
+
+CONFIG[3]{key, value}:
+  api_url, $TARGET_URL
+  timeout_ms, 15000
+  retry_count, 5
+
+WAIT 2000
+
+API[2]{method, endpoint, status, assert_key, assert_value}:
+  GET,  /ping,   200,  status,  ok
+  GET,  /health, 200,  status,  ok
+
+ASSERT[2]{field, operator, expected}:
+  _status, >=, 200
+  _status, <, 500

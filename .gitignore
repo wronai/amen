@@ -28,7 +28,7 @@
 .env.example
 .idea
 .vscode
-
+generated
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

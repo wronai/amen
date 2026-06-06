@@ -1,0 +1,1 @@
+Create a FastAPI demo API named iterate-demo for iterative refinement workflow. Docker python:3.12-slim, port 8000, single endpoint GET /ping. Dry-run mode.

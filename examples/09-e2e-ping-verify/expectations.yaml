@@ -1,0 +1,13 @@
+name: ping-smoke
+framework: fastapi
+endpoints:
+  - method: GET
+    path: /ping
+    status: 200
+    json_fields: [status, endpoint]
+    body_contains: ["ok", "/ping"]
+  - method: GET
+    path: /health
+    status: 200
+    json_fields: [status, endpoint]
+    body_contains: ["ok", "/health"]

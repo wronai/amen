@@ -1,0 +1,1 @@
+Create a REST API named user-api for user management using Python FastAPI in Docker (python:3.12-slim, port 8000). Include GET /ping, GET /health, and full CRUD on /users: GET list, POST create, GET /users/{id}, PUT /users/{id}, DELETE /users/{id}. Set env vars DEBUG=true and LOG_LEVEL=info. Transactional execution mode.

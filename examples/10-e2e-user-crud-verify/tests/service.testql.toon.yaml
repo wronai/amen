@@ -1,0 +1,17 @@
+# SCENARIO: iterun 10-e2e-user-crud-verify
+# TYPE: api
+
+CONFIG[2]{key, value}:
+  api_url, $TARGET_URL
+  timeout_ms, 20000
+
+WAIT 2500
+
+API[7]{method, endpoint, status}:
+  GET,    /ping,          200
+  GET,    /health,        200
+  GET,    /users,         200
+  POST,   /users,         200
+  GET,    /users/1,       200
+  PUT,    /users/1,       200
+  DELETE, /users/1,       200

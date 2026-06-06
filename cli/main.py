@@ -737,7 +737,7 @@ Examples:
   %(prog)s plan myintent.yaml        # Run dry-run on file
   %(prog)s new my-api                # Create new intent
   %(prog)s execute myintent.yaml     # Plan, approve and execute
-  %(prog)s generate "REST API" -o out/  # LLM → intent.yaml
+  %(prog)s generate "REST API" -o out/  # LLM → iterun.yaml
   %(prog)s schema                    # JSON Schema for intent DSL
         """
     )
@@ -757,6 +757,8 @@ Examples:
     parser.add_argument('--model', '-m', help='LiteLLM model name')
     parser.add_argument('--run', action='store_true', help='Plan after generate (generate command)')
     parser.add_argument('--execute', action='store_true', help='Execute after generate (generate command)')
+    parser.add_argument('--verify', action='store_true', help='TestQL contract verify after execute; retry on failure')
+    parser.add_argument('--max-verify-iterations', type=int, default=3, help='Regenerate+redeploy attempts when --verify fails')
     
     args = parser.parse_args()
     
@@ -869,17 +871,26 @@ Examples:
                 prompt,
                 output_dir=output_dir,
                 execute=args.execute,
+                verify=args.verify,
                 max_iterations=args.max_iterations,
+                max_verify_iterations=args.max_verify_iterations,
                 model=args.model,
             )
             if args.json:
                 print(json.dumps(result.to_dict(), indent=2))
             elif args.quiet and result.success:
-                print(f"OK {result.yaml_path or output_dir}")
+                msg = f"OK {result.yaml_path or output_dir}"
+                if result.verification and result.verification.get("service_url"):
+                    msg += f" verified={result.verification['service_url']}"
+                print(msg)
             elif result.success:
                 cli.print_success(f"Generated: {result.yaml_path}")
                 if result.execution:
                     cli.print_info("Service executed (see execution logs in JSON with --json)")
+                if result.verification:
+                    url = result.verification.get("service_url", "")
+                    n = result.verify_iterations
+                    cli.print_success(f"Contract verified at {url} (round {n})")
             else:
                 cli.print_error(result.error or "Generation failed")
                 if result.generate and result.generate.attempts:
@@ -894,8 +905,14 @@ Examples:
             if gen_result.success and gen_result.yaml_content:
                 out = Path(output_dir)
                 out.mkdir(parents=True, exist_ok=True)
-                yaml_path = out / "intent.yaml"
+                from config import PACKAGE_FILENAME
+                yaml_path = out / PACKAGE_FILENAME
                 yaml_path.write_text(gen_result.yaml_content, encoding="utf-8")
+                from generator.intract_manifest import write_intract_manifest
+                from generator.testql_scenario import write_testql_scenario
+                write_intract_manifest(yaml_path, out / "intract.yaml", prompt=prompt)
+                write_testql_scenario(yaml_path, out / "service.testql.toon.yaml")
+                (out / "prompt.txt").write_text(prompt, encoding="utf-8")
                 if args.json:
                     print(json.dumps(gen_result.to_dict(), indent=2))
                 elif args.quiet:

@@ -2,6 +2,40 @@
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-06-06
+
+### Docs
+- Update README.md
+- Update examples/01-user-api/README.md
+- Update examples/02-ping-smoke/README.md
+- Update examples/03-flask-api/README.md
+- Update examples/04-express-api/README.md
+- Update examples/05-ir-show/README.md
+- Update examples/06-iterate-workflow/README.md
+- Update examples/07-execution-smoke/README.md
+- Update examples/08-llm-generate/README.md
+- Update examples/09-e2e-ping-verify/README.md
+- ... and 4 more files
+
+### Test
+- Update tests/e2e/test_intent_generator.py
+- Update tests/e2e/test_intract_manifest.py
+- Update tests/e2e/test_shell.py
+- Update tests/e2e/test_testql_scenario.py
+
+### Other
+- Update .gitignore
+- Update cli/main.py
+- Update config.py
+- Update examples/01-user-api/intent.yaml
+- Update examples/01-user-api/prompt.txt
+- Update examples/01-user-api/run.sh
+- Update examples/02-ping-smoke/intent.yaml
+- Update examples/02-ping-smoke/prompt.txt
+- Update examples/02-ping-smoke/run.sh
+- Update examples/03-flask-api/intent.yaml
+- ... and 52 more files
+
 ## [0.1.5] - 2026-06-06
 
 ### Docs

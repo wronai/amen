@@ -1,0 +1,19 @@
+name: express-api
+framework: express
+endpoints:
+  - method: GET
+    path: /
+    status: 200
+    json_fields: [status]
+  - method: GET
+    path: /api/health
+    status: 200
+    json_fields: [status]
+  - method: POST
+    path: /api/items
+    status: 200
+    json_fields: [status, method]
+  - method: GET
+    path: /api/items
+    status: 200
+    json_fields: [status, endpoint]
