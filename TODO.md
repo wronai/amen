@@ -93,7 +93,7 @@
 - [ ] parser/__init__.py:1 - Relative import (level=1): '.dsl_parser'
 - [ ] planner/__init__.py:1 - Relative import (level=1): '.simulator'
 - [ ] ir/models.py:208 - Function 'add_iteration' missing return type (suggested: -> None)
-- [ ] ir/models.py:219 - Function 'approve_amen' missing return type (suggested: -> None)
+- [ ] ir/models.py:219 - Function 'approve_iterun' missing return type (suggested: -> None)
 - [ ] parser/dsl_parser.py:8 - Unused Tuple imported from typing
 - [ ] parser/dsl_parser.py:8 - Unused import: 'Tuple'
 - [ ] planner/simulator.py:26 - Function 'add_log' missing return type (suggested: -> None)

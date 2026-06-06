@@ -221,6 +221,7 @@ class GatewayConfig:
     """AI Gateway configuration."""
     default_provider: ModelProvider = ModelProvider.OLLAMA
     default_model: str = None
+    llm_model: Optional[str] = None  # e.g. openrouter/deepseek/deepseek-v4-pro (from .env LLM_MODEL)
     ollama_base_url: str = None
     openai_api_key: Optional[str] = None
     anthropic_api_key: Optional[str] = None
@@ -239,6 +240,7 @@ class GatewayConfig:
             app_config = get_config()
             self.ollama_base_url = self.ollama_base_url or app_config.ollama_base_url
             self.default_model = self.default_model or app_config.default_model
+            self.llm_model = self.llm_model or app_config.llm_model
             self.timeout = app_config.ollama_timeout
             self.max_parameters_billions = app_config.max_model_params
             self.openai_api_key = app_config.openai_api_key
@@ -253,6 +255,31 @@ class GatewayConfig:
         self.openai_api_key = self.openai_api_key or os.getenv("OPENAI_API_KEY")
         self.anthropic_api_key = self.anthropic_api_key or os.getenv("ANTHROPIC_API_KEY")
         self.openrouter_api_key = self.openrouter_api_key or os.getenv("OPENROUTER_API_KEY")
+        # Live env wins over cached AppConfig (important for tests and .env edits)
+        self.llm_model = os.getenv("LLM_MODEL") or self.llm_model
+
+        if self.llm_model and self.llm_model.startswith("openrouter/"):
+            self.default_provider = ModelProvider.OPENROUTER
+        elif self.openrouter_api_key and not self.llm_model:
+            self.default_provider = ModelProvider.OPENROUTER
+
+    def resolve_model(self, explicit: str | None = None) -> str:
+        """Effective model: CLI arg > LLM_MODEL (.env) > DEFAULT_MODEL (Ollama)."""
+        if explicit:
+            return explicit
+        if self.llm_model:
+            return self.llm_model
+        return self.default_model
+
+    def litellm_model_id(self, model_name: str) -> str:
+        """Map config name to LiteLLM model id."""
+        model_config = self.get_model(model_name)
+        if model_config:
+            return model_config.model_id
+        # Full provider route from .env (openrouter/..., anthropic/..., etc.)
+        if "/" in model_name:
+            return model_name
+        return f"ollama/{model_name}"
     
     def get_available_models(self, max_params: float = None) -> List[ModelConfig]:
         """Get all available models under parameter limit."""
@@ -281,7 +308,10 @@ class GatewayConfig:
         return {
             "default_provider": self.default_provider.value,
             "default_model": self.default_model,
+            "llm_model": self.llm_model,
+            "effective_model": self.resolve_model(),
             "ollama_base_url": self.ollama_base_url,
+            "openrouter_configured": bool(self.openrouter_api_key),
             "max_parameters_billions": self.max_parameters_billions,
             "timeout": self.timeout,
             "available_models": [m.to_dict() for m in self.get_available_models()]
@@ -344,14 +374,10 @@ class AIGateway:
         if not LITELLM_AVAILABLE:
             return self._mock_response(prompt, model)
         
-        model_name = model or self.config.default_model
+        model_name = self.config.resolve_model(model)
         model_config = self.config.get_model(model_name)
-        
-        if not model_config:
-            # Try using model name directly
-            model_id = f"ollama/{model_name}"
-        else:
-            model_id = model_config.model_id
+        model_id = self.config.litellm_model_id(model_name)
+        if model_config:
             temperature = temperature or model_config.temperature
             max_tokens = max_tokens or model_config.max_tokens
         
@@ -402,13 +428,10 @@ class AIGateway:
         if not LITELLM_AVAILABLE:
             return self._mock_response(prompt, model)
         
-        model_name = model or self.config.default_model
+        model_name = self.config.resolve_model(model)
         model_config = self.config.get_model(model_name)
-        
-        if not model_config:
-            model_id = f"ollama/{model_name}"
-        else:
-            model_id = model_config.model_id
+        model_id = self.config.litellm_model_id(model_name)
+        if model_config:
             temperature = temperature or model_config.temperature
             max_tokens = max_tokens or model_config.max_tokens
         
@@ -573,20 +596,26 @@ Be concise but thorough."""
     
     def health_check(self) -> Dict[str, Any]:
         """Check if the AI Gateway is operational."""
+        effective = self.config.resolve_model()
         result = {
             "litellm_available": LITELLM_AVAILABLE,
             "default_model": self.config.default_model,
+            "llm_model": self.config.llm_model,
+            "effective_model": effective,
+            "provider": self.config.default_provider.value,
+            "openrouter_configured": bool(self.config.openrouter_api_key),
             "ollama_url": self.config.ollama_base_url,
             "available_models": len(self.config.get_available_models())
         }
         
         if LITELLM_AVAILABLE:
-            # Try a simple completion
             test = self.complete("Say 'ok'", max_tokens=10)
-            result["ollama_connected"] = test["success"]
+            result["llm_connected"] = test["success"]
+            result["ollama_connected"] = test["success"]  # backward compat
             if not test["success"]:
                 result["error"] = test.get("error")
         else:
+            result["llm_connected"] = False
             result["ollama_connected"] = False
             result["error"] = "LiteLLM not installed"
         

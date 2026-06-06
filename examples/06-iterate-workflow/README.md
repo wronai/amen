@@ -1,6 +1,6 @@
 # 06 — Iterate Workflow
 
-Plan początkowy. Pełny cykl iterate → AMEN → execute w interaktywnej powłoce.
+Plan początkowy. Pełny cykl iterate → ITERUN → execute w interaktywnej powłoce.
 
 ## Uruchomienie (plan)
 
@@ -22,7 +22,7 @@ intent> iterate
 > action=api.expose POST /data
 > done
 intent> plan
-intent> amen
+intent> iterun
 intent> execute
 ```
 

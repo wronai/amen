@@ -20,14 +20,14 @@ def load_dotenv(env_path: Path = None):
     """Load environment variables from .env file.
 
     Delegates to getv.EnvStore when available.
-    Also loads getv app defaults (``getv use amen llm PROFILE``).
+    Also loads getv app defaults (``getv use iterun llm PROFILE``).
     """
     # Load getv app defaults first (if configured)
     if _HAS_GETV:
         try:
             from getv import AppDefaults
             from getv.integrations.pydantic_env import load_profile_into_env
-            defaults = AppDefaults("amen")
+            defaults = AppDefaults("iterun")
             for category in ("llm", "devices"):
                 profile = defaults.get(category)
                 if profile:
@@ -107,6 +107,7 @@ class AppConfig:
     # AI Gateway
     ai_enabled: bool = field(default_factory=lambda: get_env_bool("AI_ENABLED", True))
     default_model: str = field(default_factory=lambda: get_env("DEFAULT_MODEL", "llama3.2"))
+    llm_model: Optional[str] = field(default_factory=lambda: get_env("LLM_MODEL"))
     max_model_params: float = field(default_factory=lambda: get_env_float("MAX_MODEL_PARAMS", 12.0))
     
     # Ollama
@@ -122,7 +123,7 @@ class AppConfig:
     docker_enabled: bool = field(default_factory=lambda: get_env_bool("DOCKER_ENABLED", True))
     workspace_dir: str = field(default_factory=lambda: get_env("WORKSPACE_DIR", "/tmp/iterun"))
     auto_execute: bool = field(default_factory=lambda: get_env_bool("AUTO_EXECUTE", True))
-    skip_amen_confirmation: bool = field(default_factory=lambda: get_env_bool("SKIP_AMEN_CONFIRMATION", True))
+    skip_iterun_confirmation: bool = field(default_factory=lambda: get_env_bool("SKIP_ITERUN_CONFIRMATION", True))
     
     # Docker container settings
     container_port: int = field(default_factory=lambda: get_env_int("CONTAINER_PORT", 8000))

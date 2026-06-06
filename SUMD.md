@@ -256,7 +256,7 @@ workflow[name="show-config"] {
   step-6: run cmd=echo "  CONTAINER_PORT=$(CONTAINER_PORT)";
   step-7: run cmd=echo "  CONTAINER_PREFIX=$(CONTAINER_PREFIX)";
   step-8: run cmd=echo "  OLLAMA_BASE_URL=$(OLLAMA_BASE_URL)";
-  step-9: run cmd=echo "  SKIP_AMEN_CONFIRMATION=$(SKIP_AMEN_CONFIRMATION)";
+  step-9: run cmd=echo "  SKIP_ITERUN_CONFIRMATION=$(SKIP_ITERUN_CONFIRMATION)";
   step-10: run cmd=echo "";
 }
 
@@ -400,14 +400,14 @@ ASSERT[32]{field, operator, expected}:
 
 ```yaml markpact:pyqual path=pyqual.yaml
 pipeline:
-  name: amen-quality
+  name: iterun-quality
 
   metrics:
     cc_max: 15
     critical_max: 0
 
   custom_tools:
-    - name: code2llm_amen
+    - name: code2llm_iterun
       binary: code2llm
       command: >-
         code2llm {workdir} -f toon -o ./project --no-chunk
@@ -415,7 +415,7 @@ pipeline:
       output: ""
       allow_failure: false
 
-    - name: vallm_amen
+    - name: vallm_iterun
       binary: vallm
       command: >-
         vallm batch {workdir} --recursive --format toon --output ./project
@@ -425,12 +425,12 @@ pipeline:
 
   stages:
     - name: analyze
-      tool: code2llm_amen
+      tool: code2llm_iterun
       optional: true
       timeout: 0
 
     - name: validate
-      tool: vallm_amen
+      tool: vallm_iterun
       optional: true
       timeout: 0
 
@@ -530,7 +530,7 @@ pip install -e .[dev]
 | `DOCKER_ENABLED` | `true` | ============================================================================= |
 | `WORKSPACE_DIR` | `/tmp/iterun` |  |
 | `AUTO_EXECUTE` | `true` |  |
-| `SKIP_AMEN_CONFIRMATION` | `true` |  |
+| `SKIP_ITERUN_CONFIRMATION` | `true` |  |
 | `CONTAINER_PORT` | `8000` | ============================================================================= |
 | `CONTAINER_PREFIX` | `intent` |  |
 | `VALIDATE_AFTER_EXECUTE` | `true` | Enable post-execution validation |
@@ -590,7 +590,7 @@ pip install -e .[dev]
 ### `project/map.toon.yaml`
 
 ```toon markpact:analysis path=project/map.toon.yaml
-# amen | 25f 5727L | python:21,shell:3,less:1 | 2026-06-06
+# iterun | 25f 5727L | python:21,shell:3,less:1 | 2026-06-06
 # stats: 47 func | 52 cls | 25 mod | CC̄=3.0 | critical:3 | cycles:0
 # alerts[5]: CC main=21; CC load_dotenv=15; CC complete=10; CC suggest_improvements=8; CC iterate=6
 # hotspots[5]: main fan=21; load_dotenv fan=11; validate_intent fan=9; iterate fan=7; ai_suggest fan=6
@@ -644,7 +644,7 @@ D:
   cli/main.py:
     e: main,Colors,CLI
     Colors: disable(1)  # ANSI color codes for terminal output.
-    CLI: __init__(1),print_header(1),print_success(1),print_error(1),print_warning(1),print_info(1),cmd_new(2),cmd_load(1),cmd_parse(1),cmd_plan(1),cmd_iterate(2),cmd_amen(2),cmd_execute(4),cmd_show(2),cmd_save(2),interactive_mode(0),cmd_ai_suggest(2),cmd_ai_apply(1),cmd_ai_chat(2),cmd_models(1),cmd_ai_health(0),_show_help(0)  # Interactive CLI for iterun system.
+    CLI: __init__(1),print_header(1),print_success(1),print_error(1),print_warning(1),print_info(1),cmd_new(2),cmd_load(1),cmd_parse(1),cmd_plan(1),cmd_iterate(2),cmd_iterun(2),cmd_execute(4),cmd_show(2),cmd_save(2),interactive_mode(0),cmd_ai_suggest(2),cmd_ai_apply(1),cmd_ai_chat(2),cmd_models(1),cmd_ai_health(0),_show_help(0)  # Interactive CLI for iterun system.
     main()
   config.py:
     e: load_dotenv,get_env,get_env_bool,get_env_int,get_env_float,get_config,reload_config,configure,AppConfig
@@ -664,7 +664,7 @@ D:
     ValidationResult: __init__(0),add_check(4),to_dict(0)  # Result of post-execution validation.
     ExecutionResult: __init__(0),add_log(1),to_dict(0)  # Result of intent execution.
     Executor: __init__(1),execute(4),_validate_and_fix(3),_validate_endpoints(2),_attempt_fix(3),_add_main_block(1),_restart_container(2),_write_artifacts(2),_find_available_port(1),_execute_docker(2),_execute_local(2),get_container_logs(2),cleanup(0)  # Executes approved intents.
-    execute_intent(ir;workspace;skip_amen_check;validate;auto_fix)
+    execute_intent(ir;workspace;skip_iterun_check;validate;auto_fix)
   ir/__init__.py:
   ir/models.py:
     e: ExecutionMode,RuntimeType,ActionType,Action,Environment,Implementation,Intent,IntentIR
@@ -675,7 +675,7 @@ D:
     Environment: to_dict(0),from_dict(2)  # Runtime environment configuration.
     Implementation: to_dict(0),from_dict(2)  # Implementation details.
     Intent: to_dict(0),from_dict(2)  # Main intent definition.
-    IntentIR: to_dict(0),to_json(1),from_dict(2),from_json(2),add_iteration(2),approve_amen(0)  # Complete Intermediate Representation for an intent.
+    IntentIR: to_dict(0),to_json(1),from_dict(2),from_json(2),add_iteration(2),approve_iterun(0)  # Complete Intermediate Representation for an intent.
   parser/__init__.py:
   parser/dsl_parser.py:
     e: parse_dsl,parse_dsl_file,ParseError,ValidationError,DSLParser
@@ -709,17 +709,17 @@ D:
     e: run_tests,TestDSLParser,TestPlanner,TestCLI,TestIRModel,TestEndToEnd
     TestDSLParser: test_parse_valid_dsl(0),test_parse_missing_intent(0),test_parse_invalid_yaml(0),test_parse_multiple_actions(0),test_parse_action_formats(0)  # Test DSL parsing functionality.
     TestPlanner: test_dry_run_fastapi(0),test_dry_run_express(0),test_resource_estimation(0)  # Test planner/simulator functionality.
-    TestCLI: test_cli_new_intent(0),test_cli_plan(0),test_cli_iterate(0),test_cli_amen_not_approved_without_confirmation(0)  # Test CLI functionality.
-    TestIRModel: test_ir_serialization(0),test_ir_iteration_history(0),test_ir_amen_approval(0)  # Test IR model functionality.
+    TestCLI: test_cli_new_intent(0),test_cli_plan(0),test_cli_iterate(0),test_cli_iterun_not_approved_without_confirmation(0)  # Test CLI functionality.
+    TestIRModel: test_ir_serialization(0),test_ir_iteration_history(0),test_ir_iterun_approval(0)  # Test IR model functionality.
     TestEndToEnd: test_complete_workflow_dry_run(0),test_file_based_workflow(0)  # End-to-end workflow tests.
     run_tests()
   tests/e2e/test_web.py:
-    e: anyio_backend,client,run_tests,TestHealthEndpoint,TestIntentsCRUD,TestPlanningEndpoint,TestIterationEndpoint,TestAmenAndExecution,TestGeneratedCodeEndpoint,TestEndToEndWorkflow,TestHomePage
+    e: anyio_backend,client,run_tests,TestHealthEndpoint,TestIntentsCRUD,TestPlanningEndpoint,TestIterationEndpoint,TestiterunAndExecution,TestGeneratedCodeEndpoint,TestEndToEndWorkflow,TestHomePage
     TestHealthEndpoint: test_health_check(1)  # Test health check endpoint.
     TestIntentsCRUD: test_list_intents_empty(1),test_parse_valid_dsl(1),test_parse_invalid_dsl(1),test_parse_missing_intent_section(1),test_get_intent(1),test_get_nonexistent_intent(1),test_delete_intent(1)  # Test intents CRUD operations.
     TestPlanningEndpoint: test_plan_intent(1),test_plan_express(1)  # Test dry-run planning endpoint.
     TestIterationEndpoint: test_iterate_add_action(1),test_iterate_change_framework(1),test_multiple_iterations(1)  # Test iteration endpoint.
-    TestAmenAndExecution: test_amen_approval(1),test_execute_without_amen(1)  # Test AMEN approval and execution endpoints.
+    TestiterunAndExecution: test_iterun_approval(1),test_execute_without_iterun(1)  # Test ITERUN approval and execution endpoints.
     TestGeneratedCodeEndpoint: test_get_generated_code(1)  # Test generated code endpoint.
     TestEndToEndWorkflow: test_complete_workflow(1)  # Complete end-to-end workflow tests.
     TestHomePage: test_home_page_renders(1)  # Test home page rendering.
@@ -728,7 +728,7 @@ D:
     run_tests()
   web/__init__.py:
   web/app.py:
-    e: home,list_intents,parse_intent,get_intent,delete_intent,plan,iterate,approve_amen,execute,validate_intent,get_container_logs,get_generated_code,health,ai_status,list_models,ai_complete,ai_chat,ai_suggest,ai_apply_suggestions,generate_code,create_app,DSLInput,IterationInput,ExecutionRequest,AICompletionRequest,AISuggestRequest,AIChatRequest
+    e: home,list_intents,parse_intent,get_intent,delete_intent,plan,iterate,approve_iterun,execute,validate_intent,get_container_logs,get_generated_code,health,ai_status,list_models,ai_complete,ai_chat,ai_suggest,ai_apply_suggestions,generate_code,create_app,DSLInput,IterationInput,ExecutionRequest,AICompletionRequest,AISuggestRequest,AIChatRequest
     DSLInput:
     IterationInput:
     ExecutionRequest:
@@ -742,7 +742,7 @@ D:
     delete_intent(intent_id)
     plan(intent_id)
     iterate(intent_id;data)
-    approve_amen(intent_id)
+    approve_iterun(intent_id)
     execute(intent_id;data;validate;auto_fix)
     validate_intent(intent_id)
     get_container_logs(container_id;tail)
@@ -762,7 +762,7 @@ D:
 
 ```prolog markpact:analysis path=project/logic.pl
 % ── Project Metadata ─────────────────────────────────────
-project_metadata('amen', '0.1.0', 'python').
+project_metadata('iterun', '0.1.0', 'python').
 
 % ── Project Files ────────────────────────────────────────
 project_file('ai_gateway/__init__.py', 35, 'python').
@@ -825,7 +825,7 @@ python_function('web/app.py', 'get_intent', 1, 2, 3).
 python_function('web/app.py', 'delete_intent', 1, 2, 2).
 python_function('web/app.py', 'plan', 1, 2, 3).
 python_function('web/app.py', 'iterate', 2, 6, 7).
-python_function('web/app.py', 'approve_amen', 1, 2, 3).
+python_function('web/app.py', 'approve_iterun', 1, 2, 3).
 python_function('web/app.py', 'execute', 4, 5, 5).
 python_function('web/app.py', 'validate_intent', 1, 6, 9).
 python_function('web/app.py', 'get_container_logs', 2, 1, 3).
@@ -889,7 +889,7 @@ python_method('CLI', 'cmd_load', 1, 3, 6).
 python_method('CLI', 'cmd_parse', 1, 2, 4).
 python_method('CLI', 'cmd_plan', 1, 10, 11).
 python_method('CLI', 'cmd_iterate', 2, 12, 12).
-python_method('CLI', 'cmd_amen', 2, 7, 10).
+python_method('CLI', 'cmd_iterun', 2, 7, 10).
 python_method('CLI', 'cmd_execute', 4, 36, 15).
 python_method('CLI', 'cmd_show', 2, 8, 5).
 python_method('CLI', 'cmd_save', 2, 3, 5).
@@ -945,7 +945,7 @@ python_method('IntentIR', 'to_json', 1, 1, 2).
 python_method('IntentIR', 'from_dict', 2, 1, 8).
 python_method('IntentIR', 'from_json', 2, 1, 2).
 python_method('IntentIR', 'add_iteration', 2, 1, 3).
-python_method('IntentIR', 'approve_amen', 0, 1, 2).
+python_method('IntentIR', 'approve_iterun', 0, 1, 2).
 python_class('parser/dsl_parser.py', 'ParseError').
 python_method('ParseError', '__init__', 2, 1, 2).
 python_class('parser/dsl_parser.py', 'ValidationError').
@@ -1021,11 +1021,11 @@ python_class('tests/e2e/test_shell.py', 'TestCLI').
 python_method('TestCLI', 'test_cli_new_intent', 0, 4, 2).
 python_method('TestCLI', 'test_cli_plan', 0, 4, 4).
 python_method('TestCLI', 'test_cli_iterate', 0, 3, 3).
-python_method('TestCLI', 'test_cli_amen_not_approved_without_confirmation', 0, 2, 2).
+python_method('TestCLI', 'test_cli_iterun_not_approved_without_confirmation', 0, 2, 2).
 python_class('tests/e2e/test_shell.py', 'TestIRModel').
 python_method('TestIRModel', 'test_ir_serialization', 0, 4, 4).
 python_method('TestIRModel', 'test_ir_iteration_history', 0, 4, 3).
-python_method('TestIRModel', 'test_ir_amen_approval', 0, 5, 2).
+python_method('TestIRModel', 'test_ir_iterun_approval', 0, 5, 2).
 python_class('tests/e2e/test_shell.py', 'TestEndToEnd').
 python_method('TestEndToEnd', 'test_complete_workflow_dry_run', 0, 8, 3).
 python_method('TestEndToEnd', 'test_file_based_workflow', 0, 4, 7).
@@ -1046,9 +1046,9 @@ python_class('tests/e2e/test_web.py', 'TestIterationEndpoint').
 python_method('TestIterationEndpoint', 'test_iterate_add_action', 1, 5, 3).
 python_method('TestIterationEndpoint', 'test_iterate_change_framework', 1, 3, 2).
 python_method('TestIterationEndpoint', 'test_multiple_iterations', 1, 4, 3).
-python_class('tests/e2e/test_web.py', 'TestAmenAndExecution').
-python_method('TestAmenAndExecution', 'test_amen_approval', 1, 5, 2).
-python_method('TestAmenAndExecution', 'test_execute_without_amen', 1, 3, 2).
+python_class('tests/e2e/test_web.py', 'TestiterunAndExecution').
+python_method('TestiterunAndExecution', 'test_iterun_approval', 1, 5, 2).
+python_method('TestiterunAndExecution', 'test_execute_without_iterun', 1, 3, 2).
 python_class('tests/e2e/test_web.py', 'TestGeneratedCodeEndpoint').
 python_method('TestGeneratedCodeEndpoint', 'test_get_generated_code', 1, 4, 3).
 python_class('tests/e2e/test_web.py', 'TestEndToEndWorkflow').
@@ -1127,7 +1127,7 @@ env_variable('OLLAMA_TIMEOUT', '120', '').
 env_variable('DOCKER_ENABLED', 'true', '=============================================================================').
 env_variable('WORKSPACE_DIR', '/tmp/iterun', '').
 env_variable('AUTO_EXECUTE', 'true', '').
-env_variable('SKIP_AMEN_CONFIRMATION', 'true', '').
+env_variable('SKIP_ITERUN_CONFIRMATION', 'true', '').
 env_variable('CONTAINER_PORT', '8000', '=============================================================================').
 env_variable('CONTAINER_PREFIX', 'intent', '').
 env_variable('VALIDATE_AFTER_EXECUTE', 'true', 'Enable post-execution validation').
@@ -1162,7 +1162,7 @@ testql_scenario('generated-from-pytests.testql.toon.yaml', 'integration').
 | `cmd_ai_apply` *(in cli.main.CLI)* | 8 | 0 | 10 | **10** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
-# code2llm call graph | /home/tom/github/wronai/amen
+# code2llm call graph | /home/tom/github/wronai/iterun
 # generated in 0.02s
 # nodes: 35 | edges: 28 | modules: 8
 # CC̄=4.2

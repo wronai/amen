@@ -55,4 +55,8 @@ python -m mcp.server
 | `intent.yaml` | LLM + validate-retry |
 | `app.py`, `Dockerfile` | `plan` |
 
-Wymaga: `pip install litellm` + działający Ollama lub klucz API.
+Wymaga: `pip install litellm` + w `.env`:
+- `OPENROUTER_API_KEY` + `LLM_MODEL=openrouter/...` (zalecane), lub
+- lokalny Ollama (`DEFAULT_MODEL=llama3.2`)
+
+Model z `.env` jest używany automatycznie (bez `-m`).

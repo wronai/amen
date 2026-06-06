@@ -230,13 +230,13 @@ class TestCLI:
         assert ir.iteration_count == initial_count + 1
         assert ir.implementation.framework == "flask"
     
-    def test_cli_amen_not_approved_without_confirmation(self):
-        """Test that AMEN requires explicit confirmation."""
+    def test_cli_iterun_not_approved_without_confirmation(self):
+        """Test that ITERUN requires explicit confirmation."""
         cli = CLI(no_color=True)
-        ir = cli.cmd_new("amen-test", "Test AMEN")
+        ir = cli.cmd_new("iterun-test", "Test ITERUN")
         
-        # Without explicit "AMEN" input, should not approve
-        assert not ir.amen_approved
+        # Without explicit "ITERUN" input, should not approve
+        assert not ir.iterun_approved
 
 
 class TestIRModel:
@@ -276,18 +276,18 @@ IMPLEMENTATION:
         assert len(ir.iteration_history) == 2
         assert ir.iteration_history[0]["source"] == "test"
     
-    def test_ir_amen_approval(self):
-        """Test AMEN approval."""
+    def test_ir_iterun_approval(self):
+        """Test ITERUN approval."""
         ir = IntentIR()
-        ir.intent.name = "amen-test"
-        ir.intent.goal = "Test AMEN"
+        ir.intent.name = "iterun-test"
+        ir.intent.goal = "Test ITERUN"
         
-        assert not ir.amen_approved
+        assert not ir.iterun_approved
         assert ir.execution_mode == ExecutionMode.DRY_RUN
         
-        ir.approve_amen()
+        ir.approve_iterun()
         
-        assert ir.amen_approved
+        assert ir.iterun_approved
         assert ir.execution_mode == ExecutionMode.TRANSACTIONAL
 
 
@@ -330,7 +330,7 @@ EXECUTION:
         assert ir.iteration_count == 1
         
         # 4. Verify state
-        assert not ir.amen_approved
+        assert not ir.iterun_approved
         assert ir.execution_mode == ExecutionMode.DRY_RUN
     
     def test_file_based_workflow(self):

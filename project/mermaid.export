@@ -49,7 +49,7 @@ flowchart TD
         cli__main__CLI__cmd_parse["cmd_parse"]
         cli__main__CLI__cmd_plan("cmd_plan CC=10")
         cli__main__CLI__cmd_iterate("cmd_iterate CC=12")
-        cli__main__CLI__cmd_amen["cmd_amen"]
+        cli__main__CLI__cmd_iterun["cmd_iterun"]
         cli__main__CLI__cmd_execute{{cmd_execute CC=36}}
         cli__main__CLI__cmd_show("cmd_show CC=8")
         cli__main__CLI__cmd_save["cmd_save"]
@@ -108,7 +108,7 @@ flowchart TD
         ir__models__IntentIR__from_dict["from_dict"]
         ir__models__IntentIR__from_json["from_json"]
         ir__models__IntentIR__add_iteration["add_iteration"]
-        ir__models__IntentIR__approve_amen["approve_amen"]
+        ir__models__IntentIR__approve_iterun["approve_iterun"]
     end
     subgraph parser__dsl_parser
         parser__dsl_parser__ParseError____init__["__init__"]
@@ -151,7 +151,7 @@ flowchart TD
         web__app__delete_intent["delete_intent"]
         web__app__plan["plan"]
         web__app__iterate["iterate"]
-        web__app__approve_amen["approve_amen"]
+        web__app__approve_iterun["approve_iterun"]
         web__app__execute["execute"]
         web__app__validate_intent["validate_intent"]
         web__app__get_container_logs["get_container_logs"]
@@ -186,7 +186,7 @@ flowchart TD
     cli__main__CLI__cmd_load --> parser__dsl_parser__parse_dsl_file
     cli__main__CLI__cmd_parse --> parser__dsl_parser__parse_dsl
     cli__main__CLI__cmd_plan --> planner__simulator__plan_intent
-    cli__main__CLI__cmd_amen --> config__get_config
+    cli__main__CLI__cmd_iterun --> config__get_config
     cli__main__CLI__cmd_execute --> executor__runner__execute_intent
     cli__main__CLI__cmd_execute --> config__get_config
     cli__main__CLI__cmd_ai_suggest --> ai_gateway__feedback_loop__create_feedback_loop

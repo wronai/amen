@@ -266,8 +266,8 @@ EXECUTION:
         
         return ir
     
-    def cmd_amen(self, ir: IntentIR = None, force: bool = False):
-        """Approve intent for execution (AMEN boundary)."""
+    def cmd_iterun(self, ir: IntentIR = None, force: bool = False):
+        """Approve intent for execution (ITERUN boundary)."""
         ir = ir or self.current_ir
         if not ir:
             self.print_error("No intent loaded.")
@@ -277,11 +277,11 @@ EXECUTION:
         try:
             from config import get_config
             config = get_config()
-            skip_confirmation = config.skip_amen_confirmation
+            skip_confirmation = config.skip_iterun_confirmation
         except ImportError:
             skip_confirmation = False
         
-        self.print_header("AMEN Boundary")
+        self.print_header("ITERUN Boundary")
         
         print(f"{Colors.BOLD}Intent Summary:{Colors.RESET}")
         print(f"  Name: {ir.intent.name}")
@@ -292,16 +292,16 @@ EXECUTION:
         
         # Auto-approve if configured or forced
         if skip_confirmation or force:
-            ir.approve_amen()
-            self.print_success("AMEN auto-approved (SKIP_AMEN_CONFIRMATION=true)")
+            ir.approve_iterun()
+            self.print_success("ITERUN auto-approved (SKIP_ITERUN_CONFIRMATION=true)")
             return True
         
         print(f"\n{Colors.YELLOW}This will execute the intent with real side effects.{Colors.RESET}")
-        confirm = input(f"\n{Colors.BOLD}Type 'AMEN' to confirm execution: {Colors.RESET}").strip()
+        confirm = input(f"\n{Colors.BOLD}Type 'ITERUN' to confirm execution: {Colors.RESET}").strip()
         
-        if confirm == 'AMEN':
-            ir.approve_amen()
-            self.print_success("AMEN approved. Intent ready for execution.")
+        if confirm == 'ITERUN':
+            ir.approve_iterun()
+            self.print_success("ITERUN approved. Intent ready for execution.")
             return True
         else:
             self.print_warning("Execution cancelled.")
@@ -318,22 +318,22 @@ EXECUTION:
         try:
             from config import get_config
             config = get_config()
-            skip_amen = config.skip_amen_confirmation
+            skip_iterun = config.skip_iterun_confirmation
         except ImportError:
-            skip_amen = False
+            skip_iterun = False
         
         # Auto-approve if not yet approved and skip is enabled
-        if not ir.amen_approved:
-            if skip_amen:
-                ir.approve_amen()
-                self.print_info("Auto-approved intent (SKIP_AMEN_CONFIRMATION=true)")
+        if not ir.iterun_approved:
+            if skip_iterun:
+                ir.approve_iterun()
+                self.print_info("Auto-approved intent (SKIP_ITERUN_CONFIRMATION=true)")
             else:
-                self.print_error("Intent not approved. Run 'amen' first.")
+                self.print_error("Intent not approved. Run 'iterun' first.")
                 return None
         
         self.print_header(f"Executing: {ir.intent.name}")
         
-        result = execute_intent(ir, workspace, skip_amen_check=skip_amen, validate=validate, auto_fix=auto_fix)
+        result = execute_intent(ir, workspace, skip_iterun_check=skip_iterun, validate=validate, auto_fix=auto_fix)
         
         if self.quiet:
             return result
@@ -430,7 +430,7 @@ EXECUTION:
             print(f"  Goal: {ir.intent.goal}")
             print(f"  Version: {ir.version}")
             print(f"  Mode: {ir.execution_mode.value}")
-            print(f"  AMEN Approved: {ir.amen_approved}")
+            print(f"  ITERUN Approved: {ir.iterun_approved}")
             print(f"\n{Colors.BOLD}Environment:{Colors.RESET}")
             print(f"  Runtime: {ir.environment.runtime.value}")
             print(f"  Base Image: {ir.environment.base_image}")
@@ -456,7 +456,7 @@ EXECUTION:
     def interactive_mode(self):
         """Run interactive shell."""
         self.print_header("ITERUN Shell")
-        print("Commands: new, load, plan, iterate, amen, execute, show, save, help, exit")
+        print("Commands: new, load, plan, iterate, iterun, execute, show, save, help, exit")
         if AI_AVAILABLE:
             print(f"{Colors.CYAN}AI Commands: suggest, apply, chat, models, ai-health{Colors.RESET}")
         print()
@@ -490,8 +490,8 @@ EXECUTION:
                     self.cmd_plan()
                 elif cmd == 'iterate':
                     self.cmd_iterate()
-                elif cmd == 'amen':
-                    self.cmd_amen()
+                elif cmd == 'iterun':
+                    self.cmd_iterun()
                 elif cmd in ('exec', 'execute', 'run'):
                     self.cmd_execute()
                 elif cmd == 'show':
@@ -706,7 +706,7 @@ Available Commands:
   load <file>    - Load intent from DSL file
   plan           - Run dry-run simulation
   iterate        - Apply changes to current intent
-  amen           - Approve intent for execution
+  iterun           - Approve intent for execution
   execute        - Execute approved intent
   show [json]    - Show current intent state
   save <file>    - Save intent to JSON file
@@ -721,7 +721,7 @@ AI Commands (requires Ollama):
   ai-health      - Check AI Gateway status
 
 Workflow:
-  1. new/load → 2. plan → 3. suggest → 4. iterate → 5. amen → 6. execute
+  1. new/load → 2. plan → 3. suggest → 4. iterate → 5. iterun → 6. execute
 """
         print(help_text)
 
@@ -800,7 +800,7 @@ Examples:
         ir = cli.cmd_load(args.file)
         if ir:
             cli.cmd_plan(ir)
-            cli.cmd_amen(ir, force=True)
+            cli.cmd_iterun(ir, force=True)
             result = cli.cmd_execute(ir, args.workspace)
             if args.quiet and result and result.success and not args.json:
                 workspace = args.workspace or "."

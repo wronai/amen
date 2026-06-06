@@ -1,6 +1,6 @@
 # ITERUN
 
-> DSL-based intent execution system with iterative refinement, AMEN boundary, and AI-powered assistance
+> DSL-based intent execution system with iterative refinement, ITERUN boundary, and AI-powered assistance
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -8,11 +8,11 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.4-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$1.19-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-4.0h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.5-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$1.30-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-4.1h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $1.1909 (7 commits)
-- 👤 **Human dev:** ~$400 (4.0h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $1.2995 (8 commits)
+- 👤 **Human dev:** ~$414 (4.1h @ $100/h, 30min dedup)
 
 Generated on 2026-06-06 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -26,7 +26,7 @@ ITERUN is a system that allows you to:
 2. **Simulate execution** with dry-run planning
 3. **Get AI suggestions** using local LLMs via Ollama
 4. **Iteratively refine** your intent through feedback loops
-5. **Execute safely** with the AMEN boundary (explicit approval required)
+5. **Execute safely** with the ITERUN boundary (explicit approval required)
 
 ## Architecture
 
@@ -56,7 +56,7 @@ ITERUN is a system that allows you to:
 └─────────┬───────────┘
           ↓
 ┌─────────────────────┐
-│ AMEN Boundary       │  ← Explicit approval
+│ ITERUN Boundary       │  ← Explicit approval
 └─────────┬───────────┘
           ↓
 ┌─────────────────────┐
@@ -96,8 +96,8 @@ OLLAMA_BASE_URL=http://localhost:11434
 DEFAULT_MODEL=llama3.2
 MAX_MODEL_PARAMS=12.0
 
-# Execution (no AMEN prompt by default)
-SKIP_AMEN_CONFIRMATION=true
+# Execution (no ITERUN prompt by default)
+SKIP_ITERUN_CONFIRMATION=true
 CONTAINER_PORT=8000
 ```
 
@@ -136,7 +136,7 @@ make clean         # Clean temp files
 make shell
 # Or: python -m cli.main
 
-# Execute intent directly (no AMEN prompt)
+# Execute intent directly (no ITERUN prompt)
 make execute
 # Or: python -m cli.main execute examples/user-api.intent.yaml
 ```
@@ -151,7 +151,7 @@ intent> suggest             # Get AI suggestions
 intent> apply               # Auto-apply AI suggestions
 intent> chat                # Chat with AI
 intent> iterate             # Apply manual changes
-intent> amen                # Approve execution
+intent> iterun                # Approve execution
 intent> execute             # Execute approved intent
 intent> show [json]         # Show current state
 intent> models              # List AI models
@@ -249,7 +249,7 @@ EXECUTION:
 | `DELETE` | `/api/intents/{id}` | Delete intent |
 | `POST` | `/api/intents/{id}/plan` | Run dry-run |
 | `POST` | `/api/intents/{id}/iterate` | Apply changes |
-| `POST` | `/api/intents/{id}/amen` | Approve for execution |
+| `POST` | `/api/intents/{id}/iterun` | Approve for execution |
 | `POST` | `/api/intents/{id}/execute` | Execute approved intent |
 | `GET` | `/api/intents/{id}/code` | Get generated code |
 

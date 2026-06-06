@@ -1,6 +1,6 @@
 """
 ITERUN: Executor
-Handles actual execution of approved intents (after AMEN boundary).
+Handles actual execution of approved intents (after ITERUN boundary).
 Includes post-execution validation and auto-fix capabilities.
 """
 
@@ -112,7 +112,7 @@ class ExecutionResult:
 class Executor:
     """
     Executes approved intents.
-    Only runs after AMEN boundary is passed.
+    Only runs after ITERUN boundary is passed.
     Includes validation and auto-fix capabilities.
     """
     
@@ -129,7 +129,7 @@ class Executor:
     def execute(
         self,
         ir: IntentIR,
-        skip_amen_check: bool = None,
+        skip_iterun_check: bool = None,
         validate: bool = True,
         auto_fix: bool = True
     ) -> ExecutionResult:
@@ -138,21 +138,21 @@ class Executor:
         
         Args:
             ir: IntentIR to execute
-            skip_amen_check: Skip AMEN approval check
+            skip_iterun_check: Skip ITERUN approval check
             validate: Run post-execution validation
             auto_fix: Attempt automatic fixes if validation fails
         """
         result = ExecutionResult()
         start_time = datetime.now()
         
-        # Check if we should skip AMEN check
-        skip_check = skip_amen_check if skip_amen_check is not None else self.config.skip_amen_confirmation
+        # Check if we should skip ITERUN check
+        skip_check = skip_iterun_check if skip_iterun_check is not None else self.config.skip_iterun_confirmation
         
-        # Check AMEN approval (unless skipped)
+        # Check ITERUN approval (unless skipped)
         if not skip_check:
-            if not ir.amen_approved:
-                result.error = "Intent not approved. Call approve_amen() first."
-                result.add_log("ERROR: Execution blocked - AMEN boundary not passed")
+            if not ir.iterun_approved:
+                result.error = "Intent not approved. Call approve_iterun() first."
+                result.add_log("ERROR: Execution blocked - ITERUN boundary not passed")
                 return result
             
             if ir.execution_mode != ExecutionMode.TRANSACTIONAL:
@@ -161,9 +161,9 @@ class Executor:
                 return result
         else:
             # Auto-approve if skipping check
-            if not ir.amen_approved:
-                ir.approve_amen()
-                result.add_log("Auto-approved intent (SKIP_AMEN_CONFIRMATION=true)")
+            if not ir.iterun_approved:
+                ir.approve_iterun()
+                result.add_log("Auto-approved intent (SKIP_ITERUN_CONFIRMATION=true)")
         
         result.add_log(f"Starting execution for: {ir.intent.name}")
         result.add_log(f"Workspace: {self.workspace}")
@@ -605,10 +605,10 @@ app.listen({port}, '0.0.0.0', () => {{
 def execute_intent(
     ir: IntentIR,
     workspace: str = None,
-    skip_amen_check: bool = None,
+    skip_iterun_check: bool = None,
     validate: bool = True,
     auto_fix: bool = True
 ) -> ExecutionResult:
     """Convenience function to execute an approved intent."""
     executor = Executor(workspace)
-    return executor.execute(ir, skip_amen_check=skip_amen_check, validate=validate, auto_fix=auto_fix)
+    return executor.execute(ir, skip_iterun_check=skip_iterun_check, validate=validate, auto_fix=auto_fix)

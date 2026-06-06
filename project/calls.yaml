@@ -1,4 +1,4 @@
-project: /home/tom/github/wronai/amen
+project: /home/tom/github/wronai/iterun
 generated_from: code2llm call graph analysis
 stats:
   total_nodes: 35
@@ -416,7 +416,7 @@ entry_points:
 - cli.main.CLI.cmd_ai_chat
 - cli.main.CLI.cmd_ai_health
 - cli.main.CLI.cmd_ai_suggest
-- cli.main.CLI.cmd_amen
+- cli.main.CLI.cmd_iterun
 - cli.main.CLI.cmd_execute
 - cli.main.CLI.cmd_iterate
 - cli.main.CLI.cmd_load
@@ -468,7 +468,7 @@ entry_points:
 - ir.models.Intent.from_dict
 - ir.models.Intent.to_dict
 - ir.models.IntentIR.add_iteration
-- ir.models.IntentIR.approve_amen
+- ir.models.IntentIR.approve_iterun
 - ir.models.IntentIR.from_dict
 - ir.models.IntentIR.from_json
 - ir.models.IntentIR.to_dict
@@ -504,7 +504,7 @@ entry_points:
 - web.app.ai_complete
 - web.app.ai_status
 - web.app.ai_suggest
-- web.app.approve_amen
+- web.app.approve_iterun
 - web.app.create_app
 - web.app.delete_intent
 - web.app.execute

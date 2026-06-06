@@ -2,6 +2,37 @@
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-06-06
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/INTENT_DSL_SPEC.md
+- Update examples/06-iterate-workflow/README.md
+- Update examples/08-llm-generate/README.md
+- Update project/context.md
+
+### Test
+- Update tests/e2e/test_ai_gateway.py
+- Update tests/e2e/test_shell.py
+- Update tests/e2e/test_web.py
+
+### Other
+- Update .env.example
+- Update .pyqual/ruff.json
+- Update Makefile
+- Update ai_gateway/gateway.py
+- Update app.doql.less
+- Update cli/main.py
+- Update config.py
+- Update executor/runner.py
+- Update generator/pipeline.py
+- Update ir/models.py
+- ... and 15 more files
+
 ## [0.1.4] - 2026-06-06
 
 ### Docs
@@ -163,11 +194,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2025-01-01
 
 ### Added
-- Initial release of AMEN (DSL-based intent execution system)
+- Initial release of ITERUN (DSL-based intent execution system)
 - Intent parsing with iterative refinement
 - AI gateway integration
 - CLI interface
-- DSL executor with AMEN boundary support
+- DSL executor with ITERUN boundary support
 - IR (Intermediate Representation) layer
 - Planner module
 - Example configurations

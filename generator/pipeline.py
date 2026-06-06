@@ -77,11 +77,11 @@ def run_pipeline(
             (workspace / "Dockerfile").write_text(plan_result.dockerfile, encoding="utf-8")
 
     if execute:
-        ir.approve_amen()
+        ir.approve_iterun()
         exec_result = execute_intent(
             ir,
             str(workspace) if workspace else None,
-            skip_amen_check=True,
+            skip_iterun_check=True,
         )
         out.execution = exec_result.to_dict()
         out.workspace = str(workspace) if workspace else None

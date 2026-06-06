@@ -1,12 +1,12 @@
 pipeline:
-  name: amen-quality
+  name: iterun-quality
 
   metrics:
     cc_max: 15
     critical_max: 0
 
   custom_tools:
-    - name: code2llm_amen
+    - name: code2llm_iterun
       binary: code2llm
       command: >-
         code2llm {workdir} -f toon -o ./project --no-chunk
@@ -14,7 +14,7 @@ pipeline:
       output: ""
       allow_failure: false
 
-    - name: vallm_amen
+    - name: vallm_iterun
       binary: vallm
       command: >-
         vallm batch {workdir} --recursive --format toon --output ./project
@@ -24,12 +24,12 @@ pipeline:
 
   stages:
     - name: analyze
-      tool: code2llm_amen
+      tool: code2llm_iterun
       optional: true
       timeout: 0
 
     - name: validate
-      tool: vallm_amen
+      tool: vallm_iterun
       optional: true
       timeout: 0
 

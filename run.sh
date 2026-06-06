@@ -115,7 +115,7 @@ case "${1:-help}" in
         echo "  DEFAULT_MODEL=${DEFAULT_MODEL}"
         echo "  CONTAINER_PORT=${CONTAINER_PORT:-8000}"
         echo "  OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://localhost:11434}"
-        echo "  SKIP_AMEN_CONFIRMATION=${SKIP_AMEN_CONFIRMATION:-true}"
+        echo "  SKIP_ITERUN_CONFIRMATION=${SKIP_ITERUN_CONFIRMATION:-true}"
         echo ""
         ;;
     help|*)
@@ -132,7 +132,7 @@ case "${1:-help}" in
         echo "  shell, cli      Start interactive shell"
         echo "  web, server     Start web server (http://localhost:${PORT})"
         echo "  plan [file]     Run dry-run on intent file"
-        echo "  execute [file]  Execute intent file (no AMEN prompt)"
+        echo "  execute [file]  Execute intent file (no ITERUN prompt)"
         echo ""
         echo "Test:"
         echo "  test            Run all tests"
@@ -153,6 +153,6 @@ case "${1:-help}" in
         echo ""
         echo "Environment variables (or .env file):"
         echo "  HOST, PORT, DEFAULT_MODEL, OLLAMA_BASE_URL,"
-        echo "  SKIP_AMEN_CONFIRMATION, CONTAINER_PORT"
+        echo "  SKIP_ITERUN_CONFIRMATION, CONTAINER_PORT"
         ;;
 esac

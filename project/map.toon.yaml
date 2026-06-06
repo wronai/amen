@@ -1,4 +1,4 @@
-# amen | 25f 5727L | python:21,shell:3,less:1 | 2026-06-06
+# iterun | 25f 5727L | python:21,shell:3,less:1 | 2026-06-06
 # stats: 47 func | 52 cls | 25 mod | CC̄=3.0 | critical:3 | cycles:0
 # alerts[5]: CC main=21; CC load_dotenv=15; CC complete=10; CC suggest_improvements=8; CC iterate=6
 # hotspots[5]: main fan=21; load_dotenv fan=11; validate_intent fan=9; iterate fan=7; ai_suggest fan=6
@@ -52,7 +52,7 @@ D:
   cli/main.py:
     e: main,Colors,CLI
     Colors: disable(1)  # ANSI color codes for terminal output.
-    CLI: __init__(1),print_header(1),print_success(1),print_error(1),print_warning(1),print_info(1),cmd_new(2),cmd_load(1),cmd_parse(1),cmd_plan(1),cmd_iterate(2),cmd_amen(2),cmd_execute(4),cmd_show(2),cmd_save(2),interactive_mode(0),cmd_ai_suggest(2),cmd_ai_apply(1),cmd_ai_chat(2),cmd_models(1),cmd_ai_health(0),_show_help(0)  # Interactive CLI for iterun system.
+    CLI: __init__(1),print_header(1),print_success(1),print_error(1),print_warning(1),print_info(1),cmd_new(2),cmd_load(1),cmd_parse(1),cmd_plan(1),cmd_iterate(2),cmd_iterun(2),cmd_execute(4),cmd_show(2),cmd_save(2),interactive_mode(0),cmd_ai_suggest(2),cmd_ai_apply(1),cmd_ai_chat(2),cmd_models(1),cmd_ai_health(0),_show_help(0)  # Interactive CLI for iterun system.
     main()
   config.py:
     e: load_dotenv,get_env,get_env_bool,get_env_int,get_env_float,get_config,reload_config,configure,AppConfig
@@ -72,7 +72,7 @@ D:
     ValidationResult: __init__(0),add_check(4),to_dict(0)  # Result of post-execution validation.
     ExecutionResult: __init__(0),add_log(1),to_dict(0)  # Result of intent execution.
     Executor: __init__(1),execute(4),_validate_and_fix(3),_validate_endpoints(2),_attempt_fix(3),_add_main_block(1),_restart_container(2),_write_artifacts(2),_find_available_port(1),_execute_docker(2),_execute_local(2),get_container_logs(2),cleanup(0)  # Executes approved intents.
-    execute_intent(ir;workspace;skip_amen_check;validate;auto_fix)
+    execute_intent(ir;workspace;skip_iterun_check;validate;auto_fix)
   ir/__init__.py:
   ir/models.py:
     e: ExecutionMode,RuntimeType,ActionType,Action,Environment,Implementation,Intent,IntentIR
@@ -83,7 +83,7 @@ D:
     Environment: to_dict(0),from_dict(2)  # Runtime environment configuration.
     Implementation: to_dict(0),from_dict(2)  # Implementation details.
     Intent: to_dict(0),from_dict(2)  # Main intent definition.
-    IntentIR: to_dict(0),to_json(1),from_dict(2),from_json(2),add_iteration(2),approve_amen(0)  # Complete Intermediate Representation for an intent.
+    IntentIR: to_dict(0),to_json(1),from_dict(2),from_json(2),add_iteration(2),approve_iterun(0)  # Complete Intermediate Representation for an intent.
   parser/__init__.py:
   parser/dsl_parser.py:
     e: parse_dsl,parse_dsl_file,ParseError,ValidationError,DSLParser
@@ -117,17 +117,17 @@ D:
     e: run_tests,TestDSLParser,TestPlanner,TestCLI,TestIRModel,TestEndToEnd
     TestDSLParser: test_parse_valid_dsl(0),test_parse_missing_intent(0),test_parse_invalid_yaml(0),test_parse_multiple_actions(0),test_parse_action_formats(0)  # Test DSL parsing functionality.
     TestPlanner: test_dry_run_fastapi(0),test_dry_run_express(0),test_resource_estimation(0)  # Test planner/simulator functionality.
-    TestCLI: test_cli_new_intent(0),test_cli_plan(0),test_cli_iterate(0),test_cli_amen_not_approved_without_confirmation(0)  # Test CLI functionality.
-    TestIRModel: test_ir_serialization(0),test_ir_iteration_history(0),test_ir_amen_approval(0)  # Test IR model functionality.
+    TestCLI: test_cli_new_intent(0),test_cli_plan(0),test_cli_iterate(0),test_cli_iterun_not_approved_without_confirmation(0)  # Test CLI functionality.
+    TestIRModel: test_ir_serialization(0),test_ir_iteration_history(0),test_ir_iterun_approval(0)  # Test IR model functionality.
     TestEndToEnd: test_complete_workflow_dry_run(0),test_file_based_workflow(0)  # End-to-end workflow tests.
     run_tests()
   tests/e2e/test_web.py:
-    e: anyio_backend,client,run_tests,TestHealthEndpoint,TestIntentsCRUD,TestPlanningEndpoint,TestIterationEndpoint,TestAmenAndExecution,TestGeneratedCodeEndpoint,TestEndToEndWorkflow,TestHomePage
+    e: anyio_backend,client,run_tests,TestHealthEndpoint,TestIntentsCRUD,TestPlanningEndpoint,TestIterationEndpoint,TestiterunAndExecution,TestGeneratedCodeEndpoint,TestEndToEndWorkflow,TestHomePage
     TestHealthEndpoint: test_health_check(1)  # Test health check endpoint.
     TestIntentsCRUD: test_list_intents_empty(1),test_parse_valid_dsl(1),test_parse_invalid_dsl(1),test_parse_missing_intent_section(1),test_get_intent(1),test_get_nonexistent_intent(1),test_delete_intent(1)  # Test intents CRUD operations.
     TestPlanningEndpoint: test_plan_intent(1),test_plan_express(1)  # Test dry-run planning endpoint.
     TestIterationEndpoint: test_iterate_add_action(1),test_iterate_change_framework(1),test_multiple_iterations(1)  # Test iteration endpoint.
-    TestAmenAndExecution: test_amen_approval(1),test_execute_without_amen(1)  # Test AMEN approval and execution endpoints.
+    TestiterunAndExecution: test_iterun_approval(1),test_execute_without_iterun(1)  # Test ITERUN approval and execution endpoints.
     TestGeneratedCodeEndpoint: test_get_generated_code(1)  # Test generated code endpoint.
     TestEndToEndWorkflow: test_complete_workflow(1)  # Complete end-to-end workflow tests.
     TestHomePage: test_home_page_renders(1)  # Test home page rendering.
@@ -136,7 +136,7 @@ D:
     run_tests()
   web/__init__.py:
   web/app.py:
-    e: home,list_intents,parse_intent,get_intent,delete_intent,plan,iterate,approve_amen,execute,validate_intent,get_container_logs,get_generated_code,health,ai_status,list_models,ai_complete,ai_chat,ai_suggest,ai_apply_suggestions,generate_code,create_app,DSLInput,IterationInput,ExecutionRequest,AICompletionRequest,AISuggestRequest,AIChatRequest
+    e: home,list_intents,parse_intent,get_intent,delete_intent,plan,iterate,approve_iterun,execute,validate_intent,get_container_logs,get_generated_code,health,ai_status,list_models,ai_complete,ai_chat,ai_suggest,ai_apply_suggestions,generate_code,create_app,DSLInput,IterationInput,ExecutionRequest,AICompletionRequest,AISuggestRequest,AIChatRequest
     DSLInput:
     IterationInput:
     ExecutionRequest:
@@ -150,7 +150,7 @@ D:
     delete_intent(intent_id)
     plan(intent_id)
     iterate(intent_id;data)
-    approve_amen(intent_id)
+    approve_iterun(intent_id)
     execute(intent_id;data;validate;auto_fix)
     validate_intent(intent_id)
     get_container_logs(container_id;tail)

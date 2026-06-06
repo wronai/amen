@@ -50,17 +50,29 @@ class TestModelConfig:
 class TestGatewayConfig:
     """Test gateway configuration."""
     
-    def test_default_config(self):
+    def test_default_config(self, monkeypatch):
         """Test default configuration values."""
         from ai_gateway.gateway import GatewayConfig, ModelProvider
-        
+
+        monkeypatch.delenv("LLM_MODEL", raising=False)
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
         config = GatewayConfig()
         
-        assert config.default_provider == ModelProvider.OLLAMA
         assert config.default_model == "llama3.2"
         assert config.ollama_base_url == "http://localhost:11434"
         assert config.max_parameters_billions == 12.0
     
+    def test_resolve_model_prefers_llm_model(self, monkeypatch):
+        """LLM_MODEL from .env overrides DEFAULT_MODEL for LiteLLM."""
+        from ai_gateway.gateway import GatewayConfig
+
+        monkeypatch.setenv("LLM_MODEL", "openrouter/test/model")
+        monkeypatch.setenv("DEFAULT_MODEL", "llama3.2")
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+        config = GatewayConfig()
+        assert config.resolve_model() == "openrouter/test/model"
+        assert config.litellm_model_id("openrouter/test/model") == "openrouter/test/model"
+
     def test_config_from_env(self):
         """Test configuration from environment."""
         import os

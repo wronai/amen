@@ -1,6 +1,6 @@
 source: code2llm
 schema: code2llm.planfile_tickets.v1
-project_root: /home/tom/github/wronai/amen
+project_root: /home/tom/github/wronai/iterun
 tickets:
 - signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: cli.main.CLI.cmd_execute (CC=36)'
@@ -585,5 +585,21 @@ tickets:
   files:
   - pyproject.toml
   dedupe_key: test-optimization:general:startup-overhead
+- signal: slow_test_warning
+  title: 'Address slow test: tests.e2e.test_web.TestiterunAndExecution.test_execute_without_iterun'
+  description: 'Test `tests.e2e.test_web.TestiterunAndExecution.test_execute_without_iterun`
+    took 2.88s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/e2e/test_web.py
+  dedupe_key: test-optimization:tests.e2e.test_web.TestiterunAndExecution:test_execute_without_iterun
 applied: []
 skipped: []

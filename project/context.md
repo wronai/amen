@@ -3,7 +3,7 @@
 
 ## Overview
 
-- **Project**: /home/tom/github/wronai/amen
+- **Project**: /home/tom/github/wronai/iterun
 - **Primary Language**: python
 - **Languages**: python: 16, yaml: 5, shell: 3, txt: 1, toml: 1
 - **Analysis Mode**: static
@@ -114,8 +114,8 @@ Main execution flows into the system:
 > Perform dry-run simulation of the intent.
 - **Calls**: DryRunResult, result.add_log, result.add_log, result.add_log, self._estimate_resources, result.add_log, result.add_log, result.add_log
 
-### cli.main.CLI.cmd_amen
-> Approve intent for execution (AMEN boundary).
+### cli.main.CLI.cmd_iterun
+> Approve intent for execution (ITERUN boundary).
 - **Calls**: self.print_header, print, print, print, print, print, print, print
 
 ### cli.main.CLI.cmd_ai_chat
@@ -127,7 +127,7 @@ Main execution flows into the system:
 
 Args:
     ir: IntentIR to execute
-    skip_amen_check: Skip AMEN approval check
+    skip_iterun_check: Skip ITERUN approval check
    
 - **Calls**: ExecutionResult, datetime.now, result.add_log, result.add_log, None.total_seconds, self._write_artifacts, result.add_log, result.add_log
 
@@ -260,7 +260,7 @@ _execute_docker [executor.runner.Executor]
 
 ### executor.runner.Executor
 > Executes approved intents.
-Only runs after AMEN boundary is passed.
+Only runs after ITERUN boundary is passed.
 Includes validation and auto-fix
 - **Methods**: 13
 - **Key Methods**: executor.runner.Executor.__init__, executor.runner.Executor.execute, executor.runner.Executor._validate_and_fix, executor.runner.Executor._validate_endpoints, executor.runner.Executor._attempt_fix, executor.runner.Executor._add_main_block, executor.runner.Executor._restart_container, executor.runner.Executor._write_artifacts, executor.runner.Executor._find_available_port, executor.runner.Executor._execute_docker
@@ -298,7 +298,7 @@ INTENT:
 > Complete Intermediate Representation for an intent.
 This is the canonical representation used by all
 - **Methods**: 6
-- **Key Methods**: ir.models.IntentIR.to_dict, ir.models.IntentIR.to_json, ir.models.IntentIR.from_dict, ir.models.IntentIR.from_json, ir.models.IntentIR.add_iteration, ir.models.IntentIR.approve_amen
+- **Key Methods**: ir.models.IntentIR.to_dict, ir.models.IntentIR.to_json, ir.models.IntentIR.from_dict, ir.models.IntentIR.from_json, ir.models.IntentIR.add_iteration, ir.models.IntentIR.approve_iterun
 
 ### ai_gateway.gateway.GatewayConfig
 > AI Gateway configuration.
@@ -455,7 +455,7 @@ Functions exposed as public API (no underscore prefix):
 - `cli.main.CLI.cmd_ai_suggest` - 21 calls
 - `cli.main.CLI.cmd_iterate` - 19 calls
 - `planner.simulator.Planner.dry_run` - 18 calls
-- `cli.main.CLI.cmd_amen` - 18 calls
+- `cli.main.CLI.cmd_iterun` - 18 calls
 - `cli.main.CLI.cmd_ai_chat` - 18 calls
 - `executor.runner.Executor.execute` - 18 calls
 - `config.load_dotenv` - 15 calls

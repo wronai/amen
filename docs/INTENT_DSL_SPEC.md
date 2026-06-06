@@ -71,10 +71,18 @@ iterun generate "Create a REST API for user management" \
 ITERUN_EXECUTE=1 iterun generate "..." -o out/ --execute
 ```
 
-## Environment
+## Environment (.env)
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `DEFAULT_MODEL` | llama3.2 | LiteLLM model |
-| `OLLAMA_BASE_URL` | http://localhost:11434 | Ollama |
-| `OPENROUTER_API_KEY` | — | OpenRouter via LiteLLM |
+Priorytet modelu: `--model` CLI > `LLM_MODEL` > `DEFAULT_MODEL`
+
+| Variable | Przykład | Opis |
+|----------|----------|------|
+| `OPENROUTER_API_KEY` | `sk-or-...` | Klucz OpenRouter (LiteLLM) |
+| `LLM_MODEL` | `openrouter/deepseek/deepseek-v4-pro` | **Główny model** dla `generate` / LLM |
+| `DEFAULT_MODEL` | `llama3.2` | Fallback Ollama (shell `suggest`) |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama lokalnie |
+
+```bash
+# .env już z OpenRouter — wystarczy:
+iterun generate "Create a REST API for user management" -o generated/
+```

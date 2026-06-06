@@ -63,7 +63,7 @@ PIPELINES[120]:
       PURITY: 100% pure
   [23] Src [iterate]: iterate
       PURITY: 100% pure
-  [24] Src [approve_amen]: approve_amen
+  [24] Src [approve_iterun]: approve_iterun
       PURITY: 100% pure
   [25] Src [execute]: execute → execute_intent
       PURITY: 100% pure
@@ -109,7 +109,7 @@ PIPELINES[120]:
       PURITY: 100% pure
   [46] Src [add_iteration]: add_iteration
       PURITY: 100% pure
-  [47] Src [approve_amen]: approve_amen
+  [47] Src [approve_iterun]: approve_iterun
       PURITY: 100% pure
   [48] Src [__post_init__]: __post_init__ → get_config
       PURITY: 100% pure

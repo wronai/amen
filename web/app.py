@@ -98,7 +98,7 @@ async def list_intents():
                 "name": ir.intent.name,
                 "goal": ir.intent.goal,
                 "mode": ir.execution_mode.value,
-                "amen_approved": ir.amen_approved,
+                "iterun_approved": ir.iterun_approved,
                 "iterations": ir.iteration_count
             }
             for ir in intents_store.values()
@@ -233,18 +233,18 @@ async def iterate(intent_id: str, data: IterationInput):
     }
 
 
-@app.post("/api/intents/{intent_id}/amen")
-async def approve_amen(intent_id: str):
-    """Approve intent for execution (AMEN boundary)."""
+@app.post("/api/intents/{intent_id}/iterun")
+async def approve_iterun(intent_id: str):
+    """Approve intent for execution (ITERUN boundary)."""
     if intent_id not in intents_store:
         raise HTTPException(status_code=404, detail="Intent not found")
     
     ir = intents_store[intent_id]
-    ir.approve_amen()
+    ir.approve_iterun()
     
     return {
         "success": True,
-        "amen_approved": True,
+        "iterun_approved": True,
         "execution_mode": ir.execution_mode.value
     }
 
@@ -257,12 +257,12 @@ async def execute(intent_id: str, data: ExecutionRequest = None, validate: bool 
     
     ir = intents_store[intent_id]
     
-    # Auto-approve if not approved (skip AMEN)
-    if not ir.amen_approved:
-        ir.approve_amen()
+    # Auto-approve if not approved (skip ITERUN)
+    if not ir.iterun_approved:
+        ir.approve_iterun()
     
     workspace = data.workspace if data else None
-    result = execute_intent(ir, workspace, skip_amen_check=True, validate=validate, auto_fix=auto_fix)
+    result = execute_intent(ir, workspace, skip_iterun_check=True, validate=validate, auto_fix=auto_fix)
     
     return {
         "success": result.success,

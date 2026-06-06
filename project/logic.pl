@@ -1,5 +1,5 @@
 % ── Project Metadata ─────────────────────────────────────
-project_metadata('amen', '0.1.0', 'python').
+project_metadata('iterun', '0.1.0', 'python').
 
 % ── Project Files ────────────────────────────────────────
 project_file('ai_gateway/__init__.py', 35, 'python').
@@ -62,7 +62,7 @@ python_function('web/app.py', 'get_intent', 1, 2, 3).
 python_function('web/app.py', 'delete_intent', 1, 2, 2).
 python_function('web/app.py', 'plan', 1, 2, 3).
 python_function('web/app.py', 'iterate', 2, 6, 7).
-python_function('web/app.py', 'approve_amen', 1, 2, 3).
+python_function('web/app.py', 'approve_iterun', 1, 2, 3).
 python_function('web/app.py', 'execute', 4, 5, 5).
 python_function('web/app.py', 'validate_intent', 1, 6, 9).
 python_function('web/app.py', 'get_container_logs', 2, 1, 3).
@@ -126,7 +126,7 @@ python_method('CLI', 'cmd_load', 1, 3, 6).
 python_method('CLI', 'cmd_parse', 1, 2, 4).
 python_method('CLI', 'cmd_plan', 1, 10, 11).
 python_method('CLI', 'cmd_iterate', 2, 12, 12).
-python_method('CLI', 'cmd_amen', 2, 7, 10).
+python_method('CLI', 'cmd_iterun', 2, 7, 10).
 python_method('CLI', 'cmd_execute', 4, 36, 15).
 python_method('CLI', 'cmd_show', 2, 8, 5).
 python_method('CLI', 'cmd_save', 2, 3, 5).
@@ -182,7 +182,7 @@ python_method('IntentIR', 'to_json', 1, 1, 2).
 python_method('IntentIR', 'from_dict', 2, 1, 8).
 python_method('IntentIR', 'from_json', 2, 1, 2).
 python_method('IntentIR', 'add_iteration', 2, 1, 3).
-python_method('IntentIR', 'approve_amen', 0, 1, 2).
+python_method('IntentIR', 'approve_iterun', 0, 1, 2).
 python_class('parser/dsl_parser.py', 'ParseError').
 python_method('ParseError', '__init__', 2, 1, 2).
 python_class('parser/dsl_parser.py', 'ValidationError').
@@ -258,11 +258,11 @@ python_class('tests/e2e/test_shell.py', 'TestCLI').
 python_method('TestCLI', 'test_cli_new_intent', 0, 4, 2).
 python_method('TestCLI', 'test_cli_plan', 0, 4, 4).
 python_method('TestCLI', 'test_cli_iterate', 0, 3, 3).
-python_method('TestCLI', 'test_cli_amen_not_approved_without_confirmation', 0, 2, 2).
+python_method('TestCLI', 'test_cli_iterun_not_approved_without_confirmation', 0, 2, 2).
 python_class('tests/e2e/test_shell.py', 'TestIRModel').
 python_method('TestIRModel', 'test_ir_serialization', 0, 4, 4).
 python_method('TestIRModel', 'test_ir_iteration_history', 0, 4, 3).
-python_method('TestIRModel', 'test_ir_amen_approval', 0, 5, 2).
+python_method('TestIRModel', 'test_ir_iterun_approval', 0, 5, 2).
 python_class('tests/e2e/test_shell.py', 'TestEndToEnd').
 python_method('TestEndToEnd', 'test_complete_workflow_dry_run', 0, 8, 3).
 python_method('TestEndToEnd', 'test_file_based_workflow', 0, 4, 7).
@@ -283,9 +283,9 @@ python_class('tests/e2e/test_web.py', 'TestIterationEndpoint').
 python_method('TestIterationEndpoint', 'test_iterate_add_action', 1, 5, 3).
 python_method('TestIterationEndpoint', 'test_iterate_change_framework', 1, 3, 2).
 python_method('TestIterationEndpoint', 'test_multiple_iterations', 1, 4, 3).
-python_class('tests/e2e/test_web.py', 'TestAmenAndExecution').
-python_method('TestAmenAndExecution', 'test_amen_approval', 1, 5, 2).
-python_method('TestAmenAndExecution', 'test_execute_without_amen', 1, 3, 2).
+python_class('tests/e2e/test_web.py', 'TestiterunAndExecution').
+python_method('TestiterunAndExecution', 'test_iterun_approval', 1, 5, 2).
+python_method('TestiterunAndExecution', 'test_execute_without_iterun', 1, 3, 2).
 python_class('tests/e2e/test_web.py', 'TestGeneratedCodeEndpoint').
 python_method('TestGeneratedCodeEndpoint', 'test_get_generated_code', 1, 4, 3).
 python_class('tests/e2e/test_web.py', 'TestEndToEndWorkflow').
@@ -364,7 +364,7 @@ env_variable('OLLAMA_TIMEOUT', '120', '').
 env_variable('DOCKER_ENABLED', 'true', '=============================================================================').
 env_variable('WORKSPACE_DIR', '/tmp/iterun', '').
 env_variable('AUTO_EXECUTE', 'true', '').
-env_variable('SKIP_AMEN_CONFIRMATION', 'true', '').
+env_variable('SKIP_ITERUN_CONFIRMATION', 'true', '').
 env_variable('CONTAINER_PORT', '8000', '=============================================================================').
 env_variable('CONTAINER_PREFIX', 'intent', '').
 env_variable('VALIDATE_AFTER_EXECUTE', 'true', 'Enable post-execution validation').
@@ -497,6 +497,6 @@ sumd_workflow_step('show-config', 5, 'echo "  DEFAULT_MODEL=$(DEFAULT_MODEL)"').
 sumd_workflow_step('show-config', 6, 'echo "  CONTAINER_PORT=$(CONTAINER_PORT)"').
 sumd_workflow_step('show-config', 7, 'echo "  CONTAINER_PREFIX=$(CONTAINER_PREFIX)"').
 sumd_workflow_step('show-config', 8, 'echo "  OLLAMA_BASE_URL=$(OLLAMA_BASE_URL)"').
-sumd_workflow_step('show-config', 9, 'echo "  SKIP_AMEN_CONFIRMATION=$(SKIP_AMEN_CONFIRMATION)"').
+sumd_workflow_step('show-config', 9, 'echo "  SKIP_ITERUN_CONFIRMATION=$(SKIP_ITERUN_CONFIRMATION)"').
 sumd_workflow_step('show-config', 10, 'echo ""').
 

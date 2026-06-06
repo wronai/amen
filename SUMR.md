@@ -250,7 +250,7 @@ workflow[name="show-config"] {
   step-6: run cmd=echo "  CONTAINER_PORT=$(CONTAINER_PORT)";
   step-7: run cmd=echo "  CONTAINER_PREFIX=$(CONTAINER_PREFIX)";
   step-8: run cmd=echo "  OLLAMA_BASE_URL=$(OLLAMA_BASE_URL)";
-  step-9: run cmd=echo "  SKIP_AMEN_CONFIRMATION=$(SKIP_AMEN_CONFIRMATION)";
+  step-9: run cmd=echo "  SKIP_ITERUN_CONFIRMATION=$(SKIP_ITERUN_CONFIRMATION)";
   step-10: run cmd=echo "";
 }
 
@@ -271,14 +271,14 @@ environment[name="local"] {
 
 ```yaml markpact:pyqual path=pyqual.yaml
 pipeline:
-  name: amen-quality
+  name: iterun-quality
 
   metrics:
     cc_max: 15
     critical_max: 0
 
   custom_tools:
-    - name: code2llm_amen
+    - name: code2llm_iterun
       binary: code2llm
       command: >-
         code2llm {workdir} -f toon -o ./project --no-chunk
@@ -286,7 +286,7 @@ pipeline:
       output: ""
       allow_failure: false
 
-    - name: vallm_amen
+    - name: vallm_iterun
       binary: vallm
       command: >-
         vallm batch {workdir} --recursive --format toon --output ./project
@@ -296,12 +296,12 @@ pipeline:
 
   stages:
     - name: analyze
-      tool: code2llm_amen
+      tool: code2llm_iterun
       optional: true
       timeout: 0
 
     - name: validate
-      tool: vallm_amen
+      tool: vallm_iterun
       optional: true
       timeout: 0
 
@@ -369,7 +369,7 @@ pfix>=0.1.60
 | `cmd_ai_apply` *(in cli.main.CLI)* | 8 | 0 | 10 | **10** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
-# code2llm call graph | /home/tom/github/wronai/amen
+# code2llm call graph | /home/tom/github/wronai/iterun
 # generated in 0.02s
 # nodes: 35 | edges: 28 | modules: 8
 # CC̄=4.2
@@ -520,7 +520,7 @@ EDGES:
 ### Call Graph & Complexity (`project/calls.toon.yaml`)
 
 ```toon markpact:analysis path=project/calls.toon.yaml
-# code2llm call graph | /home/tom/github/wronai/amen
+# code2llm call graph | /home/tom/github/wronai/iterun
 # generated in 0.02s
 # nodes: 35 | edges: 28 | modules: 8
 # CC̄=4.2
@@ -710,7 +710,7 @@ PIPELINES[120]:
       PURITY: 100% pure
   [23] Src [iterate]: iterate
       PURITY: 100% pure
-  [24] Src [approve_amen]: approve_amen
+  [24] Src [approve_iterun]: approve_iterun
       PURITY: 100% pure
   [25] Src [execute]: execute → execute_intent
       PURITY: 100% pure
@@ -756,7 +756,7 @@ PIPELINES[120]:
       PURITY: 100% pure
   [46] Src [add_iteration]: add_iteration
       PURITY: 100% pure
-  [47] Src [approve_amen]: approve_amen
+  [47] Src [approve_iterun]: approve_iterun
       PURITY: 100% pure
   [48] Src [__post_init__]: __post_init__ → get_config
       PURITY: 100% pure

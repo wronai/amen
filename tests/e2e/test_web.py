@@ -373,16 +373,16 @@ IMPLEMENTATION:
         assert len(data["intent"]["iteration_history"]) == 2
 
 
-class TestAmenAndExecution:
-    """Test AMEN approval and execution endpoints."""
+class TestiterunAndExecution:
+    """Test ITERUN approval and execution endpoints."""
     
     @pytest.mark.anyio
-    async def test_amen_approval(self, client):
-        """Test AMEN approval endpoint."""
+    async def test_iterun_approval(self, client):
+        """Test ITERUN approval endpoint."""
         dsl_content = """
 INTENT:
-  name: amen-test
-  goal: Test AMEN approval
+  name: iterun-test
+  goal: Test ITERUN approval
 
 IMPLEMENTATION:
   language: python
@@ -396,22 +396,22 @@ IMPLEMENTATION:
         )
         intent_id = create_response.json()["id"]
         
-        # Approve AMEN
-        response = await client.post(f"/api/intents/{intent_id}/amen")
+        # Approve ITERUN
+        response = await client.post(f"/api/intents/{intent_id}/iterun")
         assert response.status_code == 200
         
         data = response.json()
         assert data["success"] is True
-        assert data["amen_approved"] is True
+        assert data["iterun_approved"] is True
         assert data["execution_mode"] == "transactional"
     
     @pytest.mark.anyio
-    async def test_execute_without_amen(self, client):
-        """Test that execution auto-approves AMEN when skipped."""
+    async def test_execute_without_iterun(self, client):
+        """Test that execution auto-approves ITERUN when skipped."""
         dsl_content = """
 INTENT:
-  name: no-amen-test
-  goal: Test execution without AMEN
+  name: no-iterun-test
+  goal: Test execution without ITERUN
 
 IMPLEMENTATION:
   language: python
@@ -425,7 +425,7 @@ IMPLEMENTATION:
         )
         intent_id = create_response.json()["id"]
         
-        # Execute without explicit AMEN - should auto-approve
+        # Execute without explicit ITERUN - should auto-approve
         response = await client.post(f"/api/intents/{intent_id}/execute")
         # Should return 200 with auto-approval (execution may fail without Docker)
         assert response.status_code == 200
@@ -475,7 +475,7 @@ class TestEndToEndWorkflow:
     
     @pytest.mark.anyio
     async def test_complete_workflow(self, client):
-        """Test complete workflow: parse → plan → iterate → amen."""
+        """Test complete workflow: parse → plan → iterate → iterun."""
         # 1. Parse DSL
         dsl_content = """
 INTENT:
@@ -523,16 +523,16 @@ EXECUTION:
         assert plan_response2.status_code == 200
         assert "@app.post" in plan_response2.json()["generated_code"]
         
-        # 5. Approve AMEN
-        amen_response = await client.post(f"/api/intents/{intent_id}/amen")
-        assert amen_response.status_code == 200
-        assert amen_response.json()["amen_approved"]
+        # 5. Approve ITERUN
+        iterun_response = await client.post(f"/api/intents/{intent_id}/iterun")
+        assert iterun_response.status_code == 200
+        assert iterun_response.json()["iterun_approved"]
         
         # 6. Verify final state
         final_response = await client.get(f"/api/intents/{intent_id}")
         assert final_response.status_code == 200
         final_data = final_response.json()
-        assert final_data["amen_approved"] is True
+        assert final_data["iterun_approved"] is True
         assert final_data["execution_mode"] == "transactional"
         assert final_data["iteration_count"] == 1
 

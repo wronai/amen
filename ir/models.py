@@ -152,7 +152,7 @@ class IntentIR:
     execution_mode: ExecutionMode = ExecutionMode.DRY_RUN
     
     # Execution state
-    amen_approved: bool = False
+    iterun_approved: bool = False
     iteration_count: int = 0
     iteration_history: List[Dict[str, Any]] = field(default_factory=list)
     
@@ -171,7 +171,7 @@ class IntentIR:
             "environment": self.environment.to_dict(),
             "implementation": self.implementation.to_dict(),
             "execution_mode": self.execution_mode.value,
-            "amen_approved": self.amen_approved,
+            "iterun_approved": self.iterun_approved,
             "iteration_count": self.iteration_count,
             "iteration_history": self.iteration_history,
             "generated_code": self.generated_code,
@@ -193,7 +193,7 @@ class IntentIR:
             environment=Environment.from_dict(data.get("environment", {})),
             implementation=Implementation.from_dict(data.get("implementation", {})),
             execution_mode=ExecutionMode(data.get("execution_mode", "dry-run")),
-            amen_approved=data.get("amen_approved", False),
+            iterun_approved=data.get("iterun_approved", False),
             iteration_count=data.get("iteration_count", 0),
             iteration_history=data.get("iteration_history", []),
             generated_code=data.get("generated_code"),
@@ -216,8 +216,8 @@ class IntentIR:
             "changes": changes
         })
     
-    def approve_amen(self):
-        """Approve execution (AMEN boundary)."""
-        self.amen_approved = True
+    def approve_iterun(self):
+        """Approve execution (ITERUN boundary)."""
+        self.iterun_approved = True
         self.execution_mode = ExecutionMode.TRANSACTIONAL
         self.updated_at = datetime.now().isoformat()
