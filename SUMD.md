@@ -1,4 +1,4 @@
-# INTENT-ITERATIVE
+# ITERUN
 
 DSL-based intent execution system with iterative refinement, featuring AI-powered suggestions via Ollama, safe simulation, and automatic health validation.
 
@@ -22,7 +22,7 @@ DSL-based intent execution system with iterative refinement, featuring AI-powere
 
 ## Metadata
 
-- **name**: `intent-iterative`
+- **name**: `iterun`
 - **version**: `0.1.0`
 - **python_requires**: `>=3.11`
 - **license**: Apache-2.0
@@ -42,7 +42,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 // LESS format — define @variables here as needed
 
 app {
-  name: intent-iterative;
+  name: iterun;
   version: 0.1.0;
 }
 
@@ -460,7 +460,7 @@ pipeline:
 
 ```yaml
 project:
-  name: intent-iterative
+  name: iterun
   version: 0.1.0
   env: local
 ```
@@ -492,7 +492,7 @@ pfix>=0.1.60
 ## Deployment
 
 ```bash markpact:run
-pip install intent-iterative
+pip install iterun
 
 # development install
 pip install -e .[dev]
@@ -528,7 +528,7 @@ pip install -e .[dev]
 | `MAX_MODEL_PARAMS` | `12.0` |  |
 | `OLLAMA_TIMEOUT` | `120` |  |
 | `DOCKER_ENABLED` | `true` | ============================================================================= |
-| `WORKSPACE_DIR` | `/tmp/intent-iterative` |  |
+| `WORKSPACE_DIR` | `/tmp/iterun` |  |
 | `AUTO_EXECUTE` | `true` |  |
 | `SKIP_AMEN_CONFIRMATION` | `true` |  |
 | `CONTAINER_PORT` | `8000` | ============================================================================= |
@@ -542,7 +542,7 @@ pip install -e .[dev]
 ## Release Management (`goal.yaml`)
 
 - **versioning**: `semver`
-- **commits**: `conventional` scope=`intent-iterative`
+- **commits**: `conventional` scope=`iterun`
 - **changelog**: `keep-a-changelog`
 - **build strategies**: `python`, `nodejs`, `rust`
 - **version files**: `pyproject.toml:version`, `venv/lib/python3.13/site-packages/httpcore/__init__.py:__version__`
@@ -644,7 +644,7 @@ D:
   cli/main.py:
     e: main,Colors,CLI
     Colors: disable(1)  # ANSI color codes for terminal output.
-    CLI: __init__(1),print_header(1),print_success(1),print_error(1),print_warning(1),print_info(1),cmd_new(2),cmd_load(1),cmd_parse(1),cmd_plan(1),cmd_iterate(2),cmd_amen(2),cmd_execute(4),cmd_show(2),cmd_save(2),interactive_mode(0),cmd_ai_suggest(2),cmd_ai_apply(1),cmd_ai_chat(2),cmd_models(1),cmd_ai_health(0),_show_help(0)  # Interactive CLI for Intent-Iterative system.
+    CLI: __init__(1),print_header(1),print_success(1),print_error(1),print_warning(1),print_info(1),cmd_new(2),cmd_load(1),cmd_parse(1),cmd_plan(1),cmd_iterate(2),cmd_amen(2),cmd_execute(4),cmd_show(2),cmd_save(2),interactive_mode(0),cmd_ai_suggest(2),cmd_ai_apply(1),cmd_ai_chat(2),cmd_models(1),cmd_ai_health(0),_show_help(0)  # Interactive CLI for iterun system.
     main()
   config.py:
     e: load_dotenv,get_env,get_env_bool,get_env_int,get_env_float,get_config,reload_config,configure,AppConfig
@@ -681,7 +681,7 @@ D:
     e: parse_dsl,parse_dsl_file,ParseError,ValidationError,DSLParser
     ParseError: __init__(2)  # Raised when DSL parsing fails.
     ValidationError: __init__(1)  # Raised when DSL validation fails.
-    DSLParser: __init__(0),parse_file(1),parse(1),_parse_intent(1),_parse_environment(1),_parse_implementation(1),_parse_action(1),_parse_execution(1),_validate(1)  # Parser for INTENT-ITERATIVE DSL format.
+    DSLParser: __init__(0),parse_file(1),parse(1),_parse_intent(1),_parse_environment(1),_parse_implementation(1),_parse_action(1),_parse_execution(1),_validate(1)  # Parser for ITERUN DSL format.
     parse_dsl(content)
     parse_dsl_file(filepath)
   planner/__init__.py:
@@ -1125,7 +1125,7 @@ env_variable('DEFAULT_MODEL', 'llama3.2', '').
 env_variable('MAX_MODEL_PARAMS', '12.0', '').
 env_variable('OLLAMA_TIMEOUT', '120', '').
 env_variable('DOCKER_ENABLED', 'true', '=============================================================================').
-env_variable('WORKSPACE_DIR', '/tmp/intent-iterative', '').
+env_variable('WORKSPACE_DIR', '/tmp/iterun', '').
 env_variable('AUTO_EXECUTE', 'true', '').
 env_variable('SKIP_AMEN_CONFIRMATION', 'true', '').
 env_variable('CONTAINER_PORT', '8000', '=============================================================================').

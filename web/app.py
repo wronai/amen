@@ -1,5 +1,5 @@
 """
-INTENT-ITERATIVE: Web Interface
+ITERUN: Web Interface
 FastAPI-based web UI for intent management.
 """
 
@@ -31,7 +31,7 @@ except ImportError:
 
 
 app = FastAPI(
-    title="INTENT-ITERATIVE",
+    title="ITERUN",
     description="DSL-based intent execution system with iterative refinement",
     version="0.1.0"
 )

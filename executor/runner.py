@@ -1,5 +1,5 @@
 """
-INTENT-ITERATIVE: Executor
+ITERUN: Executor
 Handles actual execution of approved intents (after AMEN boundary).
 Includes post-execution validation and auto-fix capabilities.
 """

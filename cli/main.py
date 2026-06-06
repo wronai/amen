@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-INTENT-ITERATIVE: Command Line Interface
+ITERUN: Command Line Interface
 Main entry point for shell-based interaction.
 """
 
@@ -55,7 +55,7 @@ class Colors:
 
 
 class CLI:
-    """Interactive CLI for Intent-Iterative system."""
+    """Interactive CLI for iterun system."""
     
     def __init__(self, no_color: bool = False):
         if no_color:
@@ -414,7 +414,7 @@ EXECUTION:
     
     def interactive_mode(self):
         """Run interactive shell."""
-        self.print_header("INTENT-ITERATIVE Shell")
+        self.print_header("ITERUN Shell")
         print("Commands: new, load, plan, iterate, amen, execute, show, save, help, exit")
         if AI_AVAILABLE:
             print(f"{Colors.CYAN}AI Commands: suggest, apply, chat, models, ai-health{Colors.RESET}")
@@ -688,7 +688,7 @@ Workflow:
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="INTENT-ITERATIVE: DSL-based intent execution system",
+        description="ITERUN: DSL-based intent execution system",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:

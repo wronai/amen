@@ -1,5 +1,5 @@
 """
-INTENT-ITERATIVE: Feedback Loop
+ITERUN: Feedback Loop
 LLM-powered iterative refinement of intents.
 """
 

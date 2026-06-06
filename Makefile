@@ -1,4 +1,4 @@
-# INTENT-ITERATIVE Makefile
+# ITERUN Makefile
 # Usage: make <target>
 
 .PHONY: help install install-dev install-ai setup run web shell test test-shell test-web test-ai \
@@ -35,7 +35,7 @@ RESET := \033[0m
 
 help: ## Show this help
 	@echo ""
-	@echo "$(CYAN)INTENT-ITERATIVE$(RESET) - DSL-based intent execution system"
+	@echo "$(CYAN)ITERUN$(RESET) - DSL-based intent execution system"
 	@echo ""
 	@echo "$(GREEN)Usage:$(RESET) make <target>"
 	@echo ""

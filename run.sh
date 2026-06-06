@@ -1,5 +1,5 @@
 #!/bin/bash
-# INTENT-ITERATIVE startup script
+# ITERUN startup script
 
 set -e
 
@@ -18,11 +18,11 @@ DEFAULT_MODEL=${DEFAULT_MODEL:-llama3.2}
 
 case "${1:-help}" in
     shell|cli)
-        echo "Starting INTENT-ITERATIVE Shell..."
+        echo "Starting ITERUN Shell..."
         python -m cli.main "${@:2}"
         ;;
     web|server|run)
-        echo "Starting INTENT-ITERATIVE Web Server..."
+        echo "Starting ITERUN Web Server..."
         echo "→ http://${HOST}:${PORT}"
         python -m web.app
         ;;
@@ -119,7 +119,7 @@ case "${1:-help}" in
         echo ""
         ;;
     help|*)
-        echo "INTENT-ITERATIVE v0.1.0"
+        echo "ITERUN v0.1.0"
         echo ""
         echo "Usage: ./run.sh <command> [options]"
         echo ""

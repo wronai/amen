@@ -1,5 +1,5 @@
 """
-INTENT-ITERATIVE: DSL Parser
+ITERUN: DSL Parser
 Parses YAML DSL files into Intermediate Representation (IR).
 """
 
@@ -34,7 +34,7 @@ class ValidationError(Exception):
 
 class DSLParser:
     """
-    Parser for INTENT-ITERATIVE DSL format.
+    Parser for ITERUN DSL format.
     
     Example DSL:
     ```yaml

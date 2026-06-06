@@ -1,5 +1,5 @@
 """
-INTENT-ITERATIVE: Configuration
+ITERUN: Configuration
 Environment-based configuration for all components.
 Loads from .env file if present.
 """
@@ -120,7 +120,7 @@ class AppConfig:
     
     # Execution
     docker_enabled: bool = field(default_factory=lambda: get_env_bool("DOCKER_ENABLED", True))
-    workspace_dir: str = field(default_factory=lambda: get_env("WORKSPACE_DIR", "/tmp/intent-iterative"))
+    workspace_dir: str = field(default_factory=lambda: get_env("WORKSPACE_DIR", "/tmp/iterun"))
     auto_execute: bool = field(default_factory=lambda: get_env_bool("AUTO_EXECUTE", True))
     skip_amen_confirmation: bool = field(default_factory=lambda: get_env_bool("SKIP_AMEN_CONFIRMATION", True))
     

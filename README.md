@@ -1,4 +1,4 @@
-# INTENT-ITERATIVE
+# ITERUN
 
 > DSL-based intent execution system with iterative refinement, AMEN boundary, and AI-powered assistance
 
@@ -8,10 +8,10 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.2-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.3-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
 ![AI Cost](https://img.shields.io/badge/AI%20Cost-$1.13-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-4.0h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $1.1294 (5 commits)
+- 🤖 **LLM usage:** $1.1304 (6 commits)
 - 👤 **Human dev:** ~$400 (4.0h @ $100/h, 30min dedup)
 
 Generated on 2026-06-06 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
@@ -20,7 +20,7 @@ Generated on 2026-06-06 using [openrouter/qwen/qwen3-coder-next](https://openrou
 
 ## Overview
 
-INTENT-ITERATIVE is a system that allows you to:
+ITERUN is a system that allows you to:
 
 1. **Define intents** using a simple YAML-based DSL
 2. **Simulate execution** with dry-run planning
@@ -311,7 +311,7 @@ pytest --cov=. --cov-report=html
 ## Project Structure
 
 ```
-intent-iterative/
+iterun/
 ├── ir/                 # Intermediate Representation models
 ├── parser/             # DSL parser
 ├── planner/            # Dry-run simulator

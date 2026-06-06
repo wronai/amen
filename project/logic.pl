@@ -362,7 +362,7 @@ env_variable('DEFAULT_MODEL', 'llama3.2', '').
 env_variable('MAX_MODEL_PARAMS', '12.0', '').
 env_variable('OLLAMA_TIMEOUT', '120', '').
 env_variable('DOCKER_ENABLED', 'true', '=============================================================================').
-env_variable('WORKSPACE_DIR', '/tmp/intent-iterative', '').
+env_variable('WORKSPACE_DIR', '/tmp/iterun', '').
 env_variable('AUTO_EXECUTE', 'true', '').
 env_variable('SKIP_AMEN_CONFIRMATION', 'true', '').
 env_variable('CONTAINER_PORT', '8000', '=============================================================================').

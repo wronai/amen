@@ -1,5 +1,5 @@
 """
-E2E Tests for INTENT-ITERATIVE AI Gateway
+E2E Tests for ITERUN AI Gateway
 Tests for LiteLLM integration and feedback loop.
 """
 

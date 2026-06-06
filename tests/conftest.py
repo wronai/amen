@@ -1,5 +1,5 @@
 """
-Pytest configuration for INTENT-ITERATIVE tests.
+Pytest configuration for ITERUN tests.
 """
 
 import pytest

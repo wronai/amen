@@ -2,6 +2,33 @@
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-06-06
+
+### Docs
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update project/context.md
+
+### Test
+- Update tests/conftest.py
+- Update tests/e2e/test_ai_gateway.py
+- Update tests/e2e/test_shell.py
+- Update tests/e2e/test_web.py
+
+### Other
+- Update .env.example
+- Update Makefile
+- Update ai_gateway/feedback_loop.py
+- Update ai_gateway/gateway.py
+- Update app.doql.less
+- Update cli/main.py
+- Update config.py
+- Update executor/runner.py
+- Update ir/models.py
+- Update parser/dsl_parser.py
+- ... and 7 more files
+
 ## [0.1.2] - 2026-06-06
 
 ### Docs

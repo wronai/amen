@@ -1,5 +1,5 @@
 """
-INTENT-ITERATIVE: Intermediate Representation (IR) Models
+ITERUN: Intermediate Representation (IR) Models
 Canonical data structures for the entire system.
 """
 

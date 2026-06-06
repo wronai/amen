@@ -1,5 +1,5 @@
 """
-INTENT-ITERATIVE: Planner / Simulator
+ITERUN: Planner / Simulator
 Performs dry-run execution and generates artifacts without side effects.
 """
 

@@ -1,5 +1,5 @@
 """
-INTENT-ITERATIVE: AI Gateway
+ITERUN: AI Gateway
 LiteLLM-based AI Gateway for LLM model access.
 Default: Ollama with models up to 12B parameters.
 """

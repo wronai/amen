@@ -1,5 +1,5 @@
 """
-E2E Tests for INTENT-ITERATIVE Shell Interface
+E2E Tests for ITERUN Shell Interface
 """
 
 import pytest

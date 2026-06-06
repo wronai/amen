@@ -1,5 +1,5 @@
 """
-E2E Tests for INTENT-ITERATIVE Web GUI
+E2E Tests for ITERUN Web GUI
 Uses pytest and httpx for async API testing.
 """
 
@@ -546,7 +546,7 @@ class TestHomePage:
         response = await client.get("/")
         assert response.status_code == 200
         assert "text/html" in response.headers["content-type"]
-        assert "INTENT-ITERATIVE" in response.text
+        assert "ITERUN" in response.text
 
 
 def run_tests():

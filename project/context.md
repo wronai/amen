@@ -254,7 +254,7 @@ _execute_docker [executor.runner.Executor]
 ## Key Classes
 
 ### cli.main.CLI
-> Interactive CLI for Intent-Iterative system.
+> Interactive CLI for iterun system.
 - **Methods**: 22
 - **Key Methods**: cli.main.CLI.__init__, cli.main.CLI.print_header, cli.main.CLI.print_success, cli.main.CLI.print_error, cli.main.CLI.print_warning, cli.main.CLI.print_info, cli.main.CLI.cmd_new, cli.main.CLI.cmd_load, cli.main.CLI.cmd_parse, cli.main.CLI.cmd_plan
 
@@ -284,7 +284,7 @@ Uses AI Gateway to suggest and apply impr
 - **Key Methods**: ai_gateway.feedback_loop.FeedbackLoop.__init__, ai_gateway.feedback_loop.FeedbackLoop.analyze, ai_gateway.feedback_loop.FeedbackLoop.apply_suggestions, ai_gateway.feedback_loop.FeedbackLoop.iterate, ai_gateway.feedback_loop.FeedbackLoop.suggest_next_steps, ai_gateway.feedback_loop.FeedbackLoop._build_analysis_prompt, ai_gateway.feedback_loop.FeedbackLoop._parse_suggestions, ai_gateway.feedback_loop.FeedbackLoop._extract_action, ai_gateway.feedback_loop.FeedbackLoop._parse_action, ai_gateway.feedback_loop.FeedbackLoop._process_user_feedback
 
 ### parser.dsl_parser.DSLParser
-> Parser for INTENT-ITERATIVE DSL format.
+> Parser for ITERUN DSL format.
 
 Example DSL:
 ```yaml
